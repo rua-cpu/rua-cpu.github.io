@@ -1,0 +1,9 @@
+# Claude Code / cowork 로컬 설정 — 공개 저장소에 올리지 않음
+.claude/
+scratchpad/
+
+# macOS
+.DS_Store
+
+# 로그/임시
+*.log
