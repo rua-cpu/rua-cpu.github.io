@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>퍼즐 게임 지표 분석 리포트</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f7fb; --panel:#ffffff; --panel2:#f1f4f9; --line:#e3e8f0;
+    --txt:#1c2536; --muted:#69748c; --accent:#3b6cf5; --good:#12a878;
+    --warn:#e08600; --bad:#e53950; --purple:#7c4dff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Pretendard','Apple SD Gothic Neo','Segoe UI',system-ui,sans-serif;
+    background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;line-height:1.6}
+  .app{max-width:1120px;margin:0 auto;padding:22px 20px 40px;min-height:100%;display:flex;flex-direction:column}
+
+  header{padding-bottom:14px}
+  header .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase}
+  header h1{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:4px}
+  header .meta{font-size:12px;color:var(--muted);margin-top:6px}
+
+  /* tabs */
+  .tabbar{display:flex;gap:4px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:12px;padding:5px;margin:14px 0 20px;position:sticky;top:10px;z-index:20;
+    box-shadow:0 1px 3px rgba(20,40,80,.04);flex-wrap:wrap}
+  .tab{flex:1;min-width:120px;text-align:center;padding:10px 12px;border-radius:9px;font-size:13.5px;
+    font-weight:600;color:var(--muted);cursor:pointer;user-select:none;transition:.15s;border:none;background:transparent}
+  .tab:hover{color:var(--txt);background:rgba(59,108,245,.06)}
+  .tab.on{background:var(--panel);color:var(--accent);box-shadow:0 1px 4px rgba(20,40,80,.1)}
+
+  .panel{display:none;animation:fade .25s ease}
+  .panel.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+    box-shadow:0 1px 3px rgba(20,40,80,.04);position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .kpi.bad::before{background:var(--bad)}.kpi.warn::before{background:var(--warn)}
+  .kpi.good::before{background:var(--good)}.kpi.purple::before{background:var(--purple)}
+  .kpi .lbl{font-size:12px;color:var(--muted)}
+  .kpi .val{font-size:25px;font-weight:800;margin-top:5px;letter-spacing:-.5px}
+  .kpi .sub{font-size:11.5px;color:var(--muted);margin-top:3px}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px;
+    margin-bottom:20px;box-shadow:0 1px 3px rgba(20,40,80,.04)}
+  .card h3{font-size:15px;margin-bottom:4px}
+  .card .desc{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .chartbox{position:relative;height:340px}
+  .chartbox.tall{height:400px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:780px){.grid2{grid-template-columns:1fr}.chartbox{height:300px}}
+
+  .callout{background:linear-gradient(135deg,#eef3ff,#f6f9ff);border:1px solid #d8e2ff;
+    border-left:4px solid var(--accent);border-radius:12px;padding:18px 22px;margin-bottom:20px}
+  .callout h2{font-size:15.5px;margin-bottom:12px}
+  .callout ul{list-style:none;display:grid;gap:9px}
+  .callout li{padding-left:24px;position:relative;font-size:13.5px;color:#33405c}
+  .callout li::before{content:"▸";position:absolute;left:4px;color:var(--accent);font-weight:700}
+  .callout b{color:var(--txt)}
+  .tag{font-size:11px;padding:1px 7px;border-radius:6px;font-weight:700;margin-left:2px;white-space:nowrap}
+  .tag.bad{background:#fde8ea;color:var(--bad)}.tag.warn{background:#fbf0dc;color:var(--warn)}.tag.good{background:#e2f6ef;color:var(--good)}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:12px;background:var(--panel2)}
+  .sortable th{cursor:pointer;user-select:none;position:sticky;top:0}
+  .sortable th:hover{color:var(--txt)}
+  tbody tr:hover{background:var(--panel2)}
+  .pill{display:inline-block;min-width:48px;padding:2px 8px;border-radius:8px;font-weight:700;font-size:12px}
+  .p-bad{background:#fde8ea;color:var(--bad)}.p-warn{background:#fbf0dc;color:var(--warn)}.p-good{background:#e2f6ef;color:var(--good)}
+  .p-na{color:var(--muted)}
+  .tablewrap{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:var(--panel2);
+    border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:18px}
+  .controls .grp{display:flex;flex-direction:column;gap:5px}
+  .controls label{font-size:12px;color:var(--muted)}
+  .controls .rangeval{font-size:12.5px;color:var(--accent);font-weight:700}
+  input[type=range]{width:140px;accent-color:var(--accent)}
+  .toggle{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;user-select:none}
+  .switch{width:40px;height:22px;background:var(--line);border-radius:20px;position:relative;transition:.2s;flex:none}
+  .switch::after{content:"";position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .toggle.on .switch{background:var(--accent)}.toggle.on .switch::after{left:21px}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .note{font-size:12px;color:var(--muted);background:#fbf7ee;border:1px solid #f0e4cc;
+    border-left:3px solid var(--warn);border-radius:10px;padding:11px 15px;margin-top:10px}
+  .quad{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .qbox{border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:12.5px}
+  .qbox h4{font-size:13px;margin-bottom:5px}
+  .qbox.bad{border-color:#f3c4cb;background:#fdf3f4}
+  .qbox.warn{border-color:#f0e0c0;background:#fdf9f0}
+  .qbox.ok{border-color:#c7ebdd;background:#f1fbf7}
+  .qbox.info{border-color:#cfdcff;background:#f3f7ff}
+  .rec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 3px rgba(20,40,80,.04)}
+  .rec .num{background:var(--bad);color:#fff;font-weight:800;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;font-size:14px}
+  .rec.p2 .num{background:var(--warn)}.rec.p3 .num{background:var(--accent)}
+  .rec h4{font-size:14px;margin-bottom:3px}.rec p{font-size:12.5px;color:var(--muted)}
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:auto;padding-top:24px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="eyebrow">Puzzle Game · Product Analytics</div>
+    <h1>🧩 퍼즐 게임 지표 분석 리포트</h1>
+    <div class="meta">클리어 소요시간(explore-tool) · 레벨 퍼널(완료율/이탈) · 설치 코호트 · 생성일 2026-07-21</div>
+  </header>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab on" data-p="summary">📋 요약</button>
+    <button class="tab" data-p="time">⏱️ 클리어 시간</button>
+    <button class="tab" data-p="cross">🔀 시간 × 난이도</button>
+    <button class="tab" data-p="funnel">📉 레벨 퍼널</button>
+    <button class="tab" data-p="cohort">🗓️ 코호트</button>
+  </div>
+
+  <!-- ============ TAB: SUMMARY ============ -->
+  <section class="panel on" id="p-summary">
+    <div class="kpis" id="kpiSummary"></div>
+    <div class="callout">
+      <h2>📌 핵심 요약</h2>
+      <ul>
+        <li><b>가장 오래 걸린 스테이지</b> — 유효표본 기준 <b>stage_21 (평균 104초)</b>. 전체로는 stage_56(192초)이 최장이나 표본 4명이라 참고용.<span class="tag warn">긴 플레이</span></li>
+        <li><b>이탈이 가장 높았던 스테이지</b> — <b>stage_40 (이탈 36.4%)</b>, 이어 stage_17(30%)·stage_21(25.9%). 트래픽까지 감안한 실질 최대 병목은 <b>stage_11</b>(시작 82명·이탈 19.8%).<span class="tag bad">이탈</span></li>
+        <li><b>100 스테이지 도달 유저 비율 — 1.59%</b>. stage_1 도달자를 100%로 볼 때 극소수만 100스테이지까지 진행.<span class="tag bad">깊은 이탈</span></li>
+        <li><b>시간 × 난이도가 겹치는 진짜 난관</b> — stage_21·stage_40·stage_17은 <b>오래 걸리면서 동시에 실패율도 높은</b> 구간. 최우선 밸런싱 대상.</li>
+        <li><b>남는 코어는 몰입도 높음</b> — 코호트 Day1 유저당 플레이타임(17.4분)이 Day0(15.6분)보다 김. 진입 장벽만 낮추면 리텐션 개선 여지 큼.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🔭 한눈에 보기 — 클리어 시간(막대) vs 완료율(선), stage_1~50</h3>
+      <div class="desc">막대가 높고(오래 걸림) 선이 낮은(잘 못 깸) 구간이 유저가 가장 어려워한 지점입니다.</div>
+      <div class="chartbox tall"><canvas id="cSummary"></canvas></div>
+    </div>
+    <div class="grid2">
+      <div class="rec"><div class="num">1</div><div><h4>stage_11·13·17·21·40 밸런싱</h4><p>오래 걸리고 이탈도 큰 초반 난관. 난이도 완화 또는 힌트/연습 스테이지 삽입.</p></div></div>
+      <div class="rec p2"><div class="num">2</div><div><h4>Day 1 복귀 훅 강화</h4><p>남는 유저는 더 오래 논다. 데일리 보상·이어하기 알림으로 재접속률만 올려도 효과 큼.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: CLEAR TIME ============ -->
+  <section class="panel" id="p-time">
+    <div class="controls">
+      <div class="grp"><label>표시 스테이지 범위</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="range" id="tmin" min="1" max="137" value="1">
+          <input type="range" id="tmax" min="1" max="137" value="65">
+          <span class="rangeval" id="tlabel">1 – 65</span>
+        </div>
+      </div>
+      <div class="toggle" id="tSort"><div class="switch"></div><span>소요시간 내림차순 정렬</span></div>
+    </div>
+    <div class="card">
+      <h3>⏱️ 스테이지별 평균 클리어 소요시간 (초)</h3>
+      <div class="desc">한 스테이지를 성공할 때까지 걸린 평균 시간. 막대 색 = 완료율(<span style="color:var(--bad)">빨강 어려움</span>/<span style="color:var(--warn)">주황</span>/<span style="color:var(--good)">초록 쉬움</span>/<span style="color:var(--muted)">회색 퍼널데이터 없음</span>).</div>
+      <div class="chartbox tall"><canvas id="cTime"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>📋 클리어 시간 상세 <span style="font-size:12px;color:var(--muted);font-weight:400">(열 클릭 정렬)</span></h3>
+      <div class="tablewrap"><table class="sortable" id="tblTime">
+        <thead><tr><th data-k="n">Stage</th><th data-k="ct">클리어시간(초)</th><th data-k="completion">완료율</th><th data-k="churn">이탈률</th><th data-k="starters">시작 유저</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <div class="note">⚠️ 단위=초. stage_50 이후는 시작 유저 2~7명 표본이라 시간 값 변동성이 큽니다(예 stage_56 192초=4명). stage_101~137은 퍼널 데이터가 없어 완료율 미표기.</div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: CROSS ============ -->
+  <section class="panel" id="p-cross">
+    <div class="card">
+      <h3>🔀 클리어 시간 × 완료율 산점도</h3>
+      <div class="desc">X=평균 클리어 시간(초), Y=완료율(%), 원 크기=시작 유저 수. <b>오른쪽 아래(오래 걸림+낮은 완료율)</b>가 가장 어려운 스테이지입니다.</div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--bad)"></i>이탈 높음(&gt;20%)</span>
+        <span><i class="dot" style="background:var(--warn)"></i>중간(10~20%)</span>
+        <span><i class="dot" style="background:var(--good)"></i>낮음(&lt;10%)</span>
+        <span>원 크기 = 시작 유저 수</span>
+      </div>
+      <div class="chartbox tall"><canvas id="cCross"></canvas></div>
+      <div class="quad">
+        <div class="qbox bad"><h4>🔴 오래 + 못 깸 (최우선)</h4>stage_21(104초·74%), stage_40(78초·64%), stage_17(74초·70%), stage_13(47초·78%), stage_11(59초·80%) — 시간·실패 모두 나쁨.</div>
+        <div class="qbox warn"><h4>🟠 오래 걸리지만 결국 클리어</h4>stage_20·25(60초·100%), stage_30(67초·87%) — 길지만 완주. 페이싱(지루함) 관점 점검.</div>
+        <div class="qbox ok"><h4>🟢 빠르고 쉬움 (양호)</h4>stage_1·2·4·15(2~5초·100%) — 튜토리얼성 구간, 잘 작동.</div>
+        <div class="qbox info"><h4>ℹ️ 표본 부족 주의</h4>stage_56(192초) 등 후반 구간은 유저 2~4명 기록이라 개별값 신뢰도 낮음.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: FUNNEL ============ -->
+  <section class="panel" id="p-funnel">
+    <div class="kpis" id="kpiFunnel"></div>
+    <div class="controls">
+      <div class="grp"><label>표시 레벨 범위 (step)</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="range" id="rmin" min="1" max="100" value="1">
+          <input type="range" id="rmax" min="1" max="100" value="45">
+          <span class="rangeval" id="rlabel">1 – 45</span>
+        </div>
+      </div>
+      <div class="grp"><label>최소 시작 유저 수</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="range" id="minstart" min="0" max="50" value="0">
+          <span class="rangeval" id="mslabel">≥ 0명</span>
+        </div>
+      </div>
+      <div class="toggle on" id="tgOnly"><div class="switch"></div><span>유효표본만(≥10명)</span></div>
+    </div>
+    <div class="card">
+      <h3>📉 누적 리텐션 곡선</h3>
+      <div class="desc">각 레벨 도달 유저 비율(누적). 막대=시작 유저 수(우측 축).</div>
+      <div class="chartbox tall"><canvas id="cRet"></canvas></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>🎯 레벨별 완료율</h3><div class="desc">빨강 ≤75 · 주황 ≤90 · 초록 &gt;90</div><div class="chartbox"><canvas id="cComp"></canvas></div></div>
+      <div class="card"><h3>🩸 추정 이탈 인원 (상위 15)</h3><div class="desc">시작 유저 × 이탈률</div><div class="chartbox"><canvas id="cLost"></canvas></div></div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: COHORT ============ -->
+  <section class="panel" id="p-cohort">
+    <div class="kpis" id="kpiCohort"></div>
+    <div class="grid2">
+      <div class="card"><h3>📉 Day별 리텐션</h3><div class="desc">설치 136명 중 각 Day 복귀 유저 비율</div><div class="chartbox"><canvas id="cRetDay"></canvas></div></div>
+      <div class="card"><h3>⏱️ 유저당 평균 플레이타임(분)</h3><div class="desc">Wgt. Mean 기준</div><div class="chartbox"><canvas id="cPlay"></canvas></div></div>
+    </div>
+    <div class="card">
+      <h3>🗓️ 코호트별 Day 1 리텐션</h3>
+      <div class="desc">설치일별 다음날 복귀율. 7/18(토) 코호트가 압도적. (7/20·21은 관측 부족 제외)</div>
+      <div class="chartbox"><canvas id="cCohortD1"></canvas></div>
+      <div class="note">단위: m=분, h=시간, s=초. 후반 Day 극단값은 잔존 1명 기록이라 의미 약함. 전체 D1 15.4% → D2 7.4% → D3 2.2%.</div>
+    </div>
+  </section>
+
+  <div class="foot">퍼즐 게임 지표 분석 리포트 · 탭 구성 · 자동 생성</div>
+</div>
+
+<script>
+/* ===== DATA ===== */
+const MERGED = [{"stage":"stage_1","n":1,"ct":2.4,"completion":100.0,"churn":0.0,"starters":135,"cum":100.0},{"stage":"stage_2","n":2,"ct":3.8,"completion":97.62,"churn":2.38,"starters":121,"cum":97.62},{"stage":"stage_3","n":3,"ct":12.7,"completion":96.75,"churn":3.25,"starters":119,"cum":94.44},{"stage":"stage_4","n":4,"ct":5.3,"completion":94.96,"churn":5.04,"starters":114,"cum":89.68},{"stage":"stage_5","n":5,"ct":16.6,"completion":90.27,"churn":9.73,"starters":108,"cum":80.95},{"stage":"stage_6","n":6,"ct":9.2,"completion":98.04,"churn":1.96,"starters":100,"cum":79.37},{"stage":"stage_10","n":10,"ct":16.6,"completion":92.47,"churn":7.53,"starters":89,"cum":68.25},{"stage":"stage_11","n":11,"ct":58.9,"completion":80.23,"churn":19.77,"starters":82,"cum":54.76},{"stage":"stage_12","n":12,"ct":40.7,"completion":94.2,"churn":5.8,"starters":65,"cum":51.59},{"stage":"stage_13","n":13,"ct":47.4,"completion":78.46,"churn":21.54,"starters":62,"cum":40.48},{"stage":"stage_14","n":14,"ct":60.1,"completion":82.35,"churn":17.65,"starters":48,"cum":33.33},{"stage":"stage_15","n":15,"ct":4.0,"completion":100.0,"churn":0.0,"starters":41,"cum":33.33},{"stage":"stage_16","n":16,"ct":39.9,"completion":95.24,"churn":4.76,"starters":41,"cum":31.75},{"stage":"stage_17","n":17,"ct":74.4,"completion":70.0,"churn":30.0,"starters":38,"cum":22.22},{"stage":"stage_18","n":18,"ct":46.1,"completion":100.0,"churn":0.0,"starters":28,"cum":22.22},{"stage":"stage_19","n":19,"ct":58.6,"completion":96.43,"churn":3.57,"starters":28,"cum":21.43},{"stage":"stage_20","n":20,"ct":59.2,"completion":100.0,"churn":0.0,"starters":27,"cum":21.43},{"stage":"stage_21","n":21,"ct":104.1,"completion":74.07,"churn":25.93,"starters":26,"cum":15.87},{"stage":"stage_22","n":22,"ct":39.2,"completion":100.0,"churn":0.0,"starters":19,"cum":11.9},{"stage":"stage_23","n":23,"ct":55.2,"completion":100.0,"churn":0.0,"starters":19,"cum":11.9},{"stage":"stage_24","n":24,"ct":52.9,"completion":100.0,"churn":0.0,"starters":19,"cum":11.9},{"stage":"stage_25","n":25,"ct":60.0,"completion":100.0,"churn":0.0,"starters":19,"cum":11.9},{"stage":"stage_26","n":26,"ct":36.9,"completion":100.0,"churn":0.0,"starters":18,"cum":11.9},{"stage":"stage_27","n":27,"ct":42.1,"completion":100.0,"churn":0.0,"starters":18,"cum":11.9},{"stage":"stage_28","n":28,"ct":34.8,"completion":100.0,"churn":0.0,"starters":17,"cum":11.9},{"stage":"stage_29","n":29,"ct":45.5,"completion":75.0,"churn":25.0,"starters":17,"cum":11.9},{"stage":"stage_30","n":30,"ct":66.6,"completion":86.67,"churn":13.33,"starters":15,"cum":10.32},{"stage":"stage_31","n":31,"ct":49.2,"completion":100.0,"churn":0.0,"starters":13,"cum":10.32},{"stage":"stage_32","n":32,"ct":13.9,"completion":100.0,"churn":0.0,"starters":13,"cum":10.32},{"stage":"stage_33","n":33,"ct":23.2,"completion":100.0,"churn":0.0,"starters":13,"cum":10.32},{"stage":"stage_34","n":34,"ct":48.0,"completion":100.0,"churn":0.0,"starters":13,"cum":10.32},{"stage":"stage_35","n":35,"ct":50.8,"completion":100.0,"churn":0.0,"starters":13,"cum":10.32},{"stage":"stage_36","n":36,"ct":40.2,"completion":92.31,"churn":7.69,"starters":13,"cum":9.52},{"stage":"stage_37","n":37,"ct":16.1,"completion":100.0,"churn":0.0,"starters":11,"cum":9.52},{"stage":"stage_38","n":38,"ct":55.7,"completion":100.0,"churn":0.0,"starters":11,"cum":9.52},{"stage":"stage_39","n":39,"ct":38.2,"completion":91.67,"churn":8.33,"starters":11,"cum":8.73},{"stage":"stage_40","n":40,"ct":77.6,"completion":63.64,"churn":36.36,"starters":10,"cum":5.56},{"stage":"stage_41","n":41,"ct":30.0,"completion":100.0,"churn":0.0,"starters":7,"cum":5.56},{"stage":"stage_42","n":42,"ct":42.3,"completion":100.0,"churn":0.0,"starters":7,"cum":5.56},{"stage":"stage_43","n":43,"ct":49.9,"completion":100.0,"churn":0.0,"starters":7,"cum":5.56},{"stage":"stage_44","n":44,"ct":47.3,"completion":100.0,"churn":0.0,"starters":7,"cum":5.56},{"stage":"stage_45","n":45,"ct":72.0,"completion":85.71,"churn":14.29,"starters":7,"cum":4.76},{"stage":"stage_46","n":46,"ct":64.0,"completion":100.0,"churn":0.0,"starters":6,"cum":4.76},{"stage":"stage_47","n":47,"ct":32.8,"completion":100.0,"churn":0.0,"starters":6,"cum":4.76},{"stage":"stage_48","n":48,"ct":35.7,"completion":100.0,"churn":0.0,"starters":6,"cum":4.76},{"stage":"stage_49","n":49,"ct":34.3,"completion":100.0,"churn":0.0,"starters":6,"cum":4.76},{"stage":"stage_50","n":50,"ct":59.2,"completion":83.33,"churn":16.67,"starters":6,"cum":3.97},{"stage":"stage_51","n":51,"ct":14.5,"completion":100.0,"churn":0.0,"starters":5,"cum":3.97},{"stage":"stage_52","n":52,"ct":7.5,"completion":100.0,"churn":0.0,"starters":5,"cum":3.97},{"stage":"stage_53","n":53,"ct":45.5,"completion":100.0,"churn":0.0,"starters":5,"cum":3.97},{"stage":"stage_54","n":54,"ct":20.3,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_55","n":55,"ct":36.5,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_56","n":56,"ct":192.0,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_57","n":57,"ct":22.4,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_58","n":58,"ct":9.4,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_59","n":59,"ct":48.6,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_60","n":60,"ct":68.2,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_61","n":61,"ct":16.4,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_62","n":62,"ct":59.8,"completion":100.0,"churn":0.0,"starters":4,"cum":3.97},{"stage":"stage_63","n":63,"ct":76.2,"completion":80.0,"churn":20.0,"starters":4,"cum":3.17},{"stage":"stage_64","n":64,"ct":90.3,"completion":75.0,"churn":25.0,"starters":3,"cum":2.38},{"stage":"stage_65","n":65,"ct":33.7,"completion":100.0,"churn":0.0,"starters":2,"cum":2.38},{"stage":"stage_100","n":100,"ct":33.3,"completion":100.0,"churn":0.0,"starters":2,"cum":1.59},{"stage":"stage_101","n":101,"ct":49.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_102","n":102,"ct":61.7,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_103","n":103,"ct":45.3,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_104","n":104,"ct":15.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_105","n":105,"ct":25.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_106","n":106,"ct":36.3,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_107","n":107,"ct":52.7,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_108","n":108,"ct":42.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_109","n":109,"ct":17.7,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_110","n":110,"ct":61.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_111","n":111,"ct":43.5,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_112","n":112,"ct":84.5,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_113","n":113,"ct":38.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_114","n":114,"ct":35.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_115","n":115,"ct":31.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_116","n":116,"ct":29.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_117","n":117,"ct":74.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_118","n":118,"ct":71.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_119","n":119,"ct":33.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_120","n":120,"ct":41.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_121","n":121,"ct":33.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_122","n":122,"ct":80.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_123","n":123,"ct":16.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_124","n":124,"ct":11.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_125","n":125,"ct":37.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_126","n":126,"ct":39.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_127","n":127,"ct":45.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_128","n":128,"ct":92.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_129","n":129,"ct":18.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_130","n":130,"ct":9.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_131","n":131,"ct":49.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_132","n":132,"ct":88.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_133","n":133,"ct":12.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_134","n":134,"ct":27.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_135","n":135,"ct":74.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_136","n":136,"ct":44.0,"completion":null,"churn":null,"starters":null,"cum":null},{"stage":"stage_137","n":137,"ct":16.0,"completion":null,"churn":null,"starters":null,"cum":null}];
+
+const FUNNEL_RAW=[[1,"stage_1",135,100.0,0.0,100.0],[2,"stage_2",121,97.62,2.38,97.62],[3,"stage_3",119,96.75,3.25,94.44],[4,"stage_4",114,94.96,5.04,89.68],[5,"stage_5",108,90.27,9.73,80.95],[6,"stage_6",100,98.04,1.96,79.37],[7,"stage_7",98,99.0,1.0,78.57],[8,"stage_8",95,97.98,2.02,76.98],[9,"stage_9",92,95.88,4.12,73.81],[10,"stage_10",89,92.47,7.53,68.25],[11,"stage_11",82,80.23,19.77,54.76],[12,"stage_12",65,94.2,5.8,51.59],[13,"stage_13",62,78.46,21.54,40.48],[14,"stage_14",48,82.35,17.65,33.33],[15,"stage_15",41,100.0,0.0,33.33],[16,"stage_16",41,95.24,4.76,31.75],[17,"stage_17",38,70.0,30.0,22.22],[18,"stage_18",28,100.0,0.0,22.22],[19,"stage_19",28,96.43,3.57,21.43],[20,"stage_20",27,100.0,0.0,21.43],[21,"stage_21",26,74.07,25.93,15.87],[22,"stage_29",17,75.0,25.0,11.9],[23,"stage_22",19,100.0,0.0,11.9],[24,"stage_23",19,100.0,0.0,11.9],[25,"stage_25",19,100.0,0.0,11.9],[26,"stage_24",19,100.0,0.0,11.9],[27,"stage_26",18,100.0,0.0,11.9],[28,"stage_27",18,100.0,0.0,11.9],[29,"stage_28",17,100.0,0.0,11.9],[30,"stage_30",15,86.67,13.33,10.32],[31,"stage_31",13,100.0,0.0,10.32],[32,"stage_32",13,100.0,0.0,10.32],[33,"stage_33",13,100.0,0.0,10.32],[34,"stage_34",13,100.0,0.0,10.32],[35,"stage_35",13,100.0,0.0,10.32],[36,"stage_36",13,92.31,7.69,9.52],[37,"stage_37",11,100.0,0.0,9.52],[38,"stage_38",11,100.0,0.0,9.52],[39,"stage_39",11,91.67,8.33,8.73],[40,"stage_40",10,63.64,36.36,5.56],[41,"stage_41",7,100.0,0.0,5.56],[42,"stage_42",7,100.0,0.0,5.56],[43,"stage_43",7,100.0,0.0,5.56],[44,"stage_44",7,100.0,0.0,5.56],[45,"stage_45",7,85.71,14.29,4.76],[46,"stage_46",6,100.0,0.0,4.76],[47,"stage_47",6,100.0,0.0,4.76],[48,"stage_48",6,100.0,0.0,4.76],[49,"stage_49",6,100.0,0.0,4.76],[50,"stage_50",6,83.33,16.67,3.97],[51,"stage_51",5,100.0,0.0,3.97],[52,"stage_52",5,100.0,0.0,3.97],[53,"stage_53",5,100.0,0.0,3.97],[54,"stage_54",4,100.0,0.0,3.97],[55,"stage_55",4,100.0,0.0,3.97],[56,"stage_56",4,100.0,0.0,3.97],[57,"stage_57",4,100.0,0.0,3.97],[58,"stage_58",4,100.0,0.0,3.97],[59,"stage_59",4,100.0,0.0,3.97],[60,"stage_60",4,100.0,0.0,3.97],[61,"stage_61",4,100.0,0.0,3.97],[62,"stage_62",4,100.0,0.0,3.97],[63,"stage_63",4,80.0,20.0,3.17],[64,"stage_64",3,75.0,25.0,2.38],[65,"stage_65",2,100.0,0.0,2.38],[66,"stage_66",2,100.0,0.0,2.38],[67,"stage_67",2,100.0,0.0,2.38],[68,"stage_68",2,100.0,0.0,2.38],[69,"stage_69",2,100.0,0.0,2.38],[70,"stage_70",2,66.67,33.33,1.59],[71,"stage_71",2,100.0,0.0,1.59],[72,"stage_72",2,100.0,0.0,1.59],[73,"stage_73",2,100.0,0.0,1.59],[74,"stage_74",2,100.0,0.0,1.59],[75,"stage_75",2,100.0,0.0,1.59],[80,"stage_80",2,100.0,0.0,1.59],[90,"stage_90",2,100.0,0.0,1.59],[100,"stage_100",2,100.0,0.0,1.59]];
+const DATA = FUNNEL_RAW.map(r=>({step:r[0],stage:r[1],starters:r[2],completion:r[3],churn:r[4],cum:r[5],lost:+(r[2]*r[4]/100).toFixed(1)}));
+
+const COHORT={days:['Day 0','Day 1','Day 2','Day 3','Day 4'],retentionUsers:[136,21,10,3,0],installs:136,
+  playtimeMin:[15.6,17.4,4.9,4.0,0],
+  rows:[{date:'7/16',dow:'목',installs:44,d1:4},{date:'7/17',dow:'금',installs:30,d1:4},{date:'7/18',dow:'토',installs:25,d1:8},{date:'7/19',dow:'일',installs:30,d1:5}]};
+
+Chart.defaults.color='#69748c';
+Chart.defaults.font.family="'Pretendard','Apple SD Gothic Neo','Segoe UI',sans-serif";
+const GRID='rgba(30,50,90,0.08)';
+const compColor=(v,a=1)=>v==null?`rgba(150,160,180,${a*.5})`:v<=75?`rgba(229,57,80,${a})`:v<=90?`rgba(224,134,0,${a})`:`rgba(18,168,120,${a})`;
+
+/* ===== TAB SYSTEM (lazy chart init) ===== */
+const built={};
+const initers={summary:initSummary,time:initTime,cross:initCross,funnel:initFunnel,cohort:initCohort};
+document.getElementById('tabbar').addEventListener('click',e=>{
+  const b=e.target.closest('.tab'); if(!b)return;
+  const id=b.dataset.p;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+id));
+  if(!built[id]){initers[id]();built[id]=true;}
+  window.dispatchEvent(new Event('resize'));
+});
+
+/* ===== SUMMARY ===== */
+function initSummary(){
+  const cards=[
+    {c:'warn',lbl:'최장 클리어(유효표본)',val:'stage_21',sub:'평균 104초'},
+    {c:'bad',lbl:'최고 이탈 스테이지',val:'stage_40',sub:'이탈 36.4%'},
+    {c:'bad',lbl:'최대 병목(트래픽)',val:'stage_11',sub:'시작 82명·이탈 19.8%'},
+    {c:'purple',lbl:'100 스테이지 도달률',val:'1.59%',sub:'stage_1 기준'},
+    {c:'good',lbl:'평균 클리어 시간',val:'29.8초',sub:'Wgt. Mean'},
+  ];
+  document.getElementById('kpiSummary').innerHTML=cards.map(k=>
+    `<div class="kpi ${k.c}"><div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+  const f=MERGED.filter(d=>d.n<=50&&d.completion!==null);
+  new Chart(document.getElementById('cSummary'),{
+    data:{labels:f.map(d=>'L'+d.n),datasets:[
+      {type:'bar',label:'클리어 시간(초)',data:f.map(d=>d.ct),yAxisID:'y',
+        backgroundColor:f.map(d=>compColor(d.completion,.75)),borderRadius:3,order:2},
+      {type:'line',label:'완료율(%)',data:f.map(d=>d.completion),yAxisID:'y1',
+        borderColor:'#3b6cf5',backgroundColor:'rgba(59,108,245,.1)',tension:.3,pointRadius:2,borderWidth:2,order:1}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{usePointStyle:true,boxWidth:8}}},
+      scales:{y:{position:'left',beginAtZero:true,grid:{color:GRID},title:{display:true,text:'클리어 시간(초)'}},
+        y1:{position:'right',min:0,max:105,grid:{drawOnChartArea:false},title:{display:true,text:'완료율 %'}},
+        x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:25}}}}
+  });
+}
+
+/* ===== CLEAR TIME ===== */
+let cTime,tState={min:1,max:65,sort:false,sortKey:'n',sortDir:1};
+function timeFiltered(){return MERGED.filter(d=>d.n>=tState.min&&d.n<=tState.max);}
+function initTime(){
+  buildTime();
+  const tmin=document.getElementById('tmin'),tmax=document.getElementById('tmax'),tlabel=document.getElementById('tlabel'),tSort=document.getElementById('tSort');
+  function sync(){let a=+tmin.value,b=+tmax.value;if(a>b){[a,b]=[b,a];}tState.min=a;tState.max=b;tlabel.textContent=`${a} – ${b}`;}
+  tmin.oninput=()=>{sync();buildTime();};tmax.oninput=()=>{sync();buildTime();};
+  tSort.onclick=()=>{tState.sort=!tState.sort;tSort.classList.toggle('on',tState.sort);buildTime();};
+  document.querySelectorAll('#tblTime th').forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k;if(tState.sortKey===k)tState.sortDir*=-1;else{tState.sortKey=k;tState.sortDir=(k==='n')?1:-1;}timeTable();});
+}
+function buildTime(){
+  let f=timeFiltered();
+  if(tState.sort)f=[...f].sort((a,b)=>b.ct-a.ct);
+  const cfg={type:'bar',data:{labels:f.map(d=>'L'+d.n),datasets:[{label:'클리어 시간(초)',data:f.map(d=>d.ct),
+    backgroundColor:f.map(d=>compColor(d.completion,.8)),borderColor:f.map(d=>compColor(d.completion,1)),borderWidth:1,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:(c)=>{const d=f[c.dataIndex];return [`클리어: ${d.ct}초`,d.completion!=null?`완료율: ${d.completion}% · 이탈 ${d.churn}%`:'퍼널데이터 없음',d.starters!=null?`시작 유저: ${d.starters}명`:''].filter(Boolean);}}}},
+      scales:{y:{beginAtZero:true,grid:{color:GRID},title:{display:true,text:'초'}},x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:28}}}}};
+  if(cTime){cTime.data=cfg.data;cTime.options=cfg.options;cTime.update();}else cTime=new Chart(document.getElementById('cTime'),cfg);
+  timeTable();
+}
+function timeTable(){
+  const f=timeFiltered().slice().sort((a,b)=>{const va=a[tState.sortKey],vb=b[tState.sortKey];
+    return ((va==null?-1:vb==null?1:va>vb?1:va<vb?-1:0))*tState.sortDir;});
+  const cls=v=>v==null?'p-na':v<=75?'p-bad':v<=90?'p-warn':'p-good';
+  document.querySelector('#tblTime tbody').innerHTML=f.map(d=>`<tr>
+    <td>${d.stage}</td><td>${d.ct}</td>
+    <td>${d.completion!=null?`<span class="pill ${cls(d.completion)}">${d.completion}%</span>`:'<span class="p-na">–</span>'}</td>
+    <td>${d.churn!=null?d.churn+'%':'–'}</td><td>${d.starters!=null?d.starters:'–'}</td></tr>`).join('');
+}
+
+/* ===== CROSS ===== */
+function initCross(){
+  const pts=MERGED.filter(d=>d.completion!=null);
+  const col=c=>c>20?'#e53950':c>=10?'#e08600':'#12a878';
+  new Chart(document.getElementById('cCross'),{
+    type:'bubble',
+    data:{datasets:[{label:'스테이지',data:pts.map(d=>({x:d.ct,y:d.completion,r:Math.max(4,Math.sqrt(d.starters)*1.7),_s:d})),
+      backgroundColor:pts.map(d=>col(d.churn)+'cc'),borderColor:pts.map(d=>col(d.churn)),borderWidth:1}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const d=c.raw._s;
+        return [`${d.stage}`,`클리어 ${d.ct}초 · 완료율 ${d.completion}%`,`이탈 ${d.churn}% · 시작 ${d.starters}명`];}}}},
+      scales:{x:{grid:{color:GRID},title:{display:true,text:'평균 클리어 시간(초) →'}},
+        y:{min:55,max:105,grid:{color:GRID},title:{display:true,text:'완료율(%) ↑'}}}}
+  });
+}
+
+/* ===== FUNNEL (interactive) ===== */
+let cRet,cComp,cLost,fState={min:1,max:45,minstart:0,onlySig:true,sortKey:'lost',sortDir:-1};
+function initFunnel(){
+  const s15=DATA.find(d=>d.stage==='stage_15').cum,s20=DATA.find(d=>d.stage==='stage_20').cum,finalCum=1.59;
+  const sig=DATA.filter(d=>d.starters>=10),hardest=sig.reduce((a,b)=>b.completion<a.completion?b:a),bn=DATA.reduce((a,b)=>b.lost>a.lost?b:a);
+  const cards=[{c:'',lbl:'stage_1 도달(기준)',val:'135명',sub:'퍼널 표본'},{c:'warn',lbl:'stage_15 도달률',val:s15+'%',sub:'초반 2/3 이탈'},
+    {c:'bad',lbl:'최종 도달률',val:finalCum+'%',sub:'stage_20 '+s20+'%'},{c:'purple',lbl:'최난이도(유효)',val:hardest.stage,sub:'완료율 '+hardest.completion+'%'},
+    {c:'bad',lbl:'최대 병목',val:bn.stage,sub:'추정 이탈 ≈'+bn.lost+'명'}];
+  document.getElementById('kpiFunnel').innerHTML=cards.map(k=>`<div class="kpi ${k.c}"><div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+  const rmin=document.getElementById('rmin'),rmax=document.getElementById('rmax'),rlabel=document.getElementById('rlabel'),
+    minstart=document.getElementById('minstart'),mslabel=document.getElementById('mslabel'),tgOnly=document.getElementById('tgOnly');
+  function sync(){let a=+rmin.value,b=+rmax.value;if(a>b){[a,b]=[b,a];}fState.min=a;fState.max=b;rlabel.textContent=`${a} – ${b}`;}
+  rmin.oninput=()=>{sync();buildFunnel();};rmax.oninput=()=>{sync();buildFunnel();};
+  minstart.oninput=()=>{fState.minstart=+minstart.value;mslabel.textContent=`≥ ${minstart.value}명`;buildFunnel();};
+  tgOnly.onclick=()=>{fState.onlySig=!fState.onlySig;tgOnly.classList.toggle('on',fState.onlySig);buildFunnel();};
+  buildFunnel();
+}
+const funFiltered=()=>DATA.filter(d=>d.step>=fState.min&&d.step<=fState.max&&d.starters>=fState.minstart&&(!fState.onlySig||d.starters>=10));
+function buildFunnel(){
+  const f=funFiltered(),labels=f.map(d=>'L'+d.step),fr=DATA.filter(d=>d.step>=fState.min&&d.step<=fState.max),rlabels=fr.map(d=>'L'+d.step);
+  const retCfg={type:'line',data:{labels:rlabels,datasets:[
+    {label:'누적 도달률(%)',data:fr.map(d=>d.cum),yAxisID:'y',borderColor:'#3b6cf5',backgroundColor:'rgba(59,108,245,.12)',fill:true,tension:.3,pointRadius:2,pointHoverRadius:6,borderWidth:2.5,order:1},
+    {type:'bar',label:'시작 유저 수',data:fr.map(d=>d.starters),yAxisID:'y1',backgroundColor:'rgba(124,77,255,.28)',borderColor:'rgba(124,77,255,.5)',borderWidth:1,order:2}]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{usePointStyle:true,boxWidth:8}},tooltip:{callbacks:{afterBody:(it)=>{const d=fr[it[0].dataIndex];return `완료율 ${d.completion}% · 이탈 ${d.churn}%`;}}}},
+      scales:{y:{min:0,max:100,grid:{color:GRID},title:{display:true,text:'누적 %'}},y1:{position:'right',min:0,grid:{drawOnChartArea:false},title:{display:true,text:'시작 유저'}},x:{grid:{color:GRID},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:24}}}}};
+  const compCfg={type:'bar',data:{labels,datasets:[{data:f.map(d=>d.completion),backgroundColor:f.map(d=>compColor(d.completion,.8)),borderColor:f.map(d=>compColor(d.completion,1)),borderWidth:1,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const d=f[c.dataIndex];return [`완료율 ${d.completion}%`,`이탈 ${d.churn}% · 시작 ${d.starters}명`];}}}},scales:{y:{min:0,max:100,grid:{color:GRID}},x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:20}}}}};
+  const lf=[...f].sort((a,b)=>b.lost-a.lost).filter(d=>d.lost>0).slice(0,15);
+  const lostCfg={type:'bar',data:{labels:lf.map(d=>d.stage.replace('stage_','L')),datasets:[{data:lf.map(d=>d.lost),backgroundColor:'rgba(229,57,80,.7)',borderColor:'#e53950',borderWidth:1,borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const d=lf[c.dataIndex];return [`추정 이탈 ≈${d.lost}명`,`완료율 ${d.completion}% · 시작 ${d.starters}명`];}}}},scales:{x:{grid:{color:GRID},title:{display:true,text:'추정 이탈(명)'}},y:{grid:{display:false}}}}};
+  if(cRet){cRet.data=retCfg.data;cRet.options=retCfg.options;cRet.update();}else cRet=new Chart(document.getElementById('cRet'),retCfg);
+  if(cComp){cComp.data=compCfg.data;cComp.options=compCfg.options;cComp.update();}else cComp=new Chart(document.getElementById('cComp'),compCfg);
+  if(cLost){cLost.data=lostCfg.data;cLost.options=lostCfg.options;cLost.update();}else cLost=new Chart(document.getElementById('cLost'),lostCfg);
+}
+
+/* ===== COHORT ===== */
+function initCohort(){
+  const inst=COHORT.installs,ru=COHORT.retentionUsers;
+  const cards=[{c:'',lbl:'총 설치(7/16~21)',val:inst+'명',sub:'6일 누적'},
+    {c:'bad',lbl:'Day 1 리텐션',val:(ru[1]/inst*100).toFixed(1)+'%',sub:ru[1]+'명'},
+    {c:'warn',lbl:'Day 2 리텐션',val:(ru[2]/inst*100).toFixed(1)+'%',sub:ru[2]+'명'},
+    {c:'warn',lbl:'Day 3 리텐션',val:(ru[3]/inst*100).toFixed(1)+'%',sub:ru[3]+'명'},
+    {c:'good',lbl:'Day1 유저당 플레이',val:'17.4분',sub:'D0(15.6분)보다 김'}];
+  document.getElementById('kpiCohort').innerHTML=cards.map(k=>`<div class="kpi ${k.c}"><div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+  new Chart(document.getElementById('cRetDay'),{type:'line',data:{labels:COHORT.days,datasets:[{data:ru.map(u=>+(u/inst*100).toFixed(1)),borderColor:'#3b6cf5',backgroundColor:'rgba(59,108,245,.12)',fill:true,tension:.3,pointRadius:5,borderWidth:2.5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.parsed.y}% (${ru[c.dataIndex]}명)`}}},scales:{y:{min:0,max:100,grid:{color:GRID}},x:{grid:{display:false}}}}});
+  new Chart(document.getElementById('cPlay'),{type:'bar',data:{labels:COHORT.days,datasets:[{data:COHORT.playtimeMin,backgroundColor:['#3b6cf5','#12a878','#e08600','#e08600','#c3cad8'],borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.parsed.y}분/유저`}}},scales:{y:{beginAtZero:true,grid:{color:GRID}},x:{grid:{display:false}}}}});
+  new Chart(document.getElementById('cCohortD1'),{type:'bar',data:{labels:COHORT.rows.map(r=>r.date+'('+r.dow+')'),datasets:[{data:COHORT.rows.map(r=>+(r.d1/r.installs*100).toFixed(1)),
+    backgroundColor:COHORT.rows.map(r=>{const v=r.d1/r.installs*100;return v>=25?'#12a878':v>=15?'#3b6cf5':'#e08600';}),borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const r=COHORT.rows[c.dataIndex];return `${c.parsed.y}% (${r.d1}/${r.installs}명)`;}}}},scales:{y:{beginAtZero:true,grid:{color:GRID}},x:{grid:{display:false}}}}});
+}
+
+initSummary();built.summary=true;
+</script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>퍼즐 게임 지표 분석 리포트</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{--bg:#f5f7fb;--panel:#fff;--panel2:#f1f4f9;--line:#e3e8f0;--txt:#1c2536;--muted:#69748c;--accent:#3b6cf5;--good:#12a878;--warn:#e08600;--bad:#e53950;--purple:#7c4dff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard','Apple SD Gothic Neo','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;line-height:1.6}
+  .app{max-width:1120px;margin:0 auto;padding:22px 20px 40px}
+  header .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase}
+  header h1{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:4px}
+  header .meta{font-size:12px;color:var(--muted);margin-top:6px}
+
+  /* dropzone */
+  .drop{margin:16px 0 4px;border:2px dashed #c3d0ea;border-radius:14px;background:#fbfdff;padding:16px 18px;transition:.15s;cursor:pointer}
+  .drop.over{border-color:var(--accent);background:#eef3ff}
+  .drop .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .drop .big{font-size:14px;font-weight:700}
+  .drop .hint{font-size:12px;color:var(--muted)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+  .chip{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--muted)}
+  .chip.up{border-color:#bfe6d5;background:#eafaf3;color:var(--good)}
+  .drop .status{font-size:12px;margin-top:8px;color:var(--muted);min-height:16px}
+  .drop .status b{color:var(--txt)}
+  .btn{font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+  .btn.ghost{background:#fff;color:var(--accent)}
+
+  .tabbar{display:flex;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:5px;margin:16px 0 20px;position:sticky;top:10px;z-index:20;box-shadow:0 1px 3px rgba(20,40,80,.04);flex-wrap:wrap}
+  .tab{flex:1;min-width:110px;text-align:center;padding:10px 12px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;user-select:none;transition:.15s;border:none;background:transparent}
+  .tab:hover{color:var(--txt);background:rgba(59,108,245,.06)}
+  .tab.on{background:var(--panel);color:var(--accent);box-shadow:0 1px 4px rgba(20,40,80,.1)}
+  .panel{display:none;animation:fade .25s ease}.panel.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(20,40,80,.04);position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .kpi.bad::before{background:var(--bad)}.kpi.warn::before{background:var(--warn)}.kpi.good::before{background:var(--good)}.kpi.purple::before{background:var(--purple)}
+  .kpi .lbl{font-size:12px;color:var(--muted)}.kpi .val{font-size:25px;font-weight:800;margin-top:5px;letter-spacing:-.5px}.kpi .sub{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(20,40,80,.04)}
+  .card h3{font-size:15px;margin-bottom:4px}.card .desc{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .chartbox{position:relative;height:340px}.chartbox.tall{height:400px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:780px){.grid2{grid-template-columns:1fr}.chartbox{height:300px}}
+  .callout{background:linear-gradient(135deg,#eef3ff,#f6f9ff);border:1px solid #d8e2ff;border-left:4px solid var(--accent);border-radius:12px;padding:18px 22px;margin-bottom:20px}
+  .callout h2{font-size:15.5px;margin-bottom:12px}.callout ul{list-style:none;display:grid;gap:9px}
+  .callout li{padding-left:24px;position:relative;font-size:13.5px;color:#33405c}.callout li::before{content:"▸";position:absolute;left:4px;color:var(--accent);font-weight:700}
+  .callout b{color:var(--txt)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:12px;background:var(--panel2)}
+  .sortable th{cursor:pointer;user-select:none;position:sticky;top:0}.sortable th:hover{color:var(--txt)}
+  tbody tr:hover{background:var(--panel2)}
+  .pill{display:inline-block;min-width:48px;padding:2px 8px;border-radius:8px;font-weight:700;font-size:12px}
+  .p-bad{background:#fde8ea;color:var(--bad)}.p-warn{background:#fbf0dc;color:var(--warn)}.p-good{background:#e2f6ef;color:var(--good)}.p-na{color:var(--muted)}
+  .tablewrap{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+  .controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:18px}
+  .controls .grp{display:flex;flex-direction:column;gap:5px}.controls label{font-size:12px;color:var(--muted)}
+  .controls .rangeval{font-size:12.5px;color:var(--accent);font-weight:700}
+  input[type=range]{width:140px;accent-color:var(--accent)}
+  .toggle{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;user-select:none}
+  .switch{width:40px;height:22px;background:var(--line);border-radius:20px;position:relative;transition:.2s;flex:none}
+  .switch::after{content:"";position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .toggle.on .switch{background:var(--accent)}.toggle.on .switch::after{left:21px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .note{font-size:12px;color:var(--muted);background:#fbf7ee;border:1px solid #f0e4cc;border-left:3px solid var(--warn);border-radius:10px;padding:11px 15px;margin-top:10px}
+  .quad{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .qbox{border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:12.5px}.qbox h4{font-size:13px;margin-bottom:5px}
+  .qbox.bad{border-color:#f3c4cb;background:#fdf3f4}.qbox.warn{border-color:#f0e0c0;background:#fdf9f0}.qbox.ok{border-color:#c7ebdd;background:#f1fbf7}.qbox.info{border-color:#cfdcff;background:#f3f7ff}
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="eyebrow">Puzzle Game · Product Analytics</div>
+    <h1>🧩 퍼즐 게임 지표 분석 리포트</h1>
+    <div class="meta">클리어 소요시간 · 레벨 퍼널(완료율/이탈) · 설치 코호트 · <span id="metaSrc">기본 데이터</span></div>
+  </header>
+
+  <div class="drop" id="drop">
+    <div class="row">
+      <div>
+        <div class="big">📂 새 데이터 올리기 — CSV 파일을 여기로 끌어다 놓으세요</div>
+        <div class="hint">퍼널(Start/Complete) · 클리어시간(explore-tool) · 코호트 CSV를 자동 인식합니다. 여러 파일 동시 가능.</div>
+      </div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="status" id="dropStatus"></div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn" id="pickBtn">파일 선택</button>
+      <button class="btn ghost" id="resetBtn">기본 데이터로 초기화</button>
+      <input type="file" id="fileInput" accept=".csv,.tsv,.txt" multiple style="display:none">
+    </div>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab on" data-p="summary">📋 요약</button>
+    <button class="tab" data-p="time">⏱️ 클리어 시간</button>
+    <button class="tab" data-p="cross">🔀 시간 × 난이도</button>
+    <button class="tab" data-p="funnel">📉 레벨 퍼널</button>
+    <button class="tab" data-p="cohort">🗓️ 코호트</button>
+  </div>
+
+  <section class="panel on" id="p-summary">
+    <div class="kpis" id="kpiSummary"></div>
+    <div class="callout"><h2>📌 핵심 요약</h2><ul id="sumList"></ul></div>
+    <div class="card">
+      <h3>🔭 한눈에 보기 — 클리어 시간(막대) vs 완료율(선), 앞 50스테이지</h3>
+      <div class="desc">막대가 높고(오래 걸림) 선이 낮은(잘 못 깸) 구간이 유저가 가장 어려워한 지점입니다.</div>
+      <div class="chartbox tall"><canvas id="cSummary"></canvas></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-time">
+    <div class="controls">
+      <div class="grp"><label>표시 스테이지 범위</label>
+        <div style="display:flex;gap:10px;align-items:center"><input type="range" id="tmin" min="1" max="200" value="1"><input type="range" id="tmax" min="1" max="200" value="65"><span class="rangeval" id="tlabel">1 – 65</span></div>
+      </div>
+      <div class="toggle" id="tSort"><div class="switch"></div><span>소요시간 내림차순</span></div>
+    </div>
+    <div class="card">
+      <h3>⏱️ 스테이지별 평균 클리어 소요시간 (초)</h3>
+      <div class="desc">막대 색 = 완료율(<span style="color:var(--bad)">빨강 어려움</span>/<span style="color:var(--warn)">주황</span>/<span style="color:var(--good)">초록 쉬움</span>/<span style="color:var(--muted)">회색 퍼널데이터 없음</span>).</div>
+      <div class="chartbox tall"><canvas id="cTime"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>📋 클리어 시간 상세 <span style="font-size:12px;color:var(--muted);font-weight:400">(열 클릭 정렬)</span></h3>
+      <div class="tablewrap"><table class="sortable" id="tblTime"><thead><tr><th data-k="n">Stage</th><th data-k="ct">클리어시간(초)</th><th data-k="completion">완료율</th><th data-k="churn">이탈률</th><th data-k="starters">시작 유저</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-cross">
+    <div class="card">
+      <h3>🔀 클리어 시간 × 완료율 산점도</h3>
+      <div class="desc">X=평균 클리어 시간(초), Y=완료율(%), 원 크기=시작 유저 수. <b>오른쪽 아래</b>가 가장 어려운 스테이지입니다.</div>
+      <div class="legend"><span><i class="dot" style="background:var(--bad)"></i>이탈&gt;20%</span><span><i class="dot" style="background:var(--warn)"></i>10~20%</span><span><i class="dot" style="background:var(--good)"></i>&lt;10%</span><span>원 크기=시작 유저</span></div>
+      <div class="chartbox tall"><canvas id="cCross"></canvas></div>
+      <div class="note" id="crossNote"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-funnel">
+    <div class="kpis" id="kpiFunnel"></div>
+    <div class="controls">
+      <div class="grp"><label>표시 레벨 범위 (step)</label>
+        <div style="display:flex;gap:10px;align-items:center"><input type="range" id="rmin" min="1" max="200" value="1"><input type="range" id="rmax" min="1" max="200" value="45"><span class="rangeval" id="rlabel">1 – 45</span></div>
+      </div>
+      <div class="grp"><label>최소 시작 유저 수</label>
+        <div style="display:flex;gap:10px;align-items:center"><input type="range" id="minstart" min="0" max="50" value="0"><span class="rangeval" id="mslabel">≥ 0명</span></div>
+      </div>
+      <div class="toggle on" id="tgOnly"><div class="switch"></div><span>유효표본만(≥10명)</span></div>
+    </div>
+    <div class="card"><h3>📉 누적 리텐션 곡선</h3><div class="desc">각 레벨 도달 유저 비율(누적). 막대=시작 유저 수(우측 축).</div><div class="chartbox tall"><canvas id="cRet"></canvas></div></div>
+    <div class="grid2">
+      <div class="card"><h3>🎯 레벨별 완료율</h3><div class="desc">빨강 ≤75 · 주황 ≤90 · 초록 &gt;90</div><div class="chartbox"><canvas id="cComp"></canvas></div></div>
+      <div class="card"><h3>🩸 추정 이탈 인원 (상위 15)</h3><div class="desc">시작 유저 × 이탈률</div><div class="chartbox"><canvas id="cLost"></canvas></div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-cohort">
+    <div class="kpis" id="kpiCohort"></div>
+    <div class="grid2">
+      <div class="card"><h3>📉 Day별 리텐션</h3><div class="desc">설치 유저 중 각 Day 복귀 비율</div><div class="chartbox"><canvas id="cRetDay"></canvas></div></div>
+      <div class="card"><h3>⏱️ 유저당 평균 플레이타임(분)</h3><div class="desc">Wgt. Mean 기준</div><div class="chartbox"><canvas id="cPlay"></canvas></div></div>
+    </div>
+    <div class="card"><h3>🗓️ 코호트별 Day 1 리텐션</h3><div class="desc">설치일별 다음날 복귀율</div><div class="chartbox"><canvas id="cCohortD1"></canvas></div>
+      <div class="note" id="cohortNote"></div>
+    </div>
+  </section>
+
+  <div class="foot">퍼즐 게임 지표 분석 리포트 · 드래그앤드롭 업로드 지원 · 자동 생성</div>
+</div>
+
+<script>
+/* ===== DEFAULT DATA ===== */
+const FUNNEL_RAW=[[1,"stage_1",135,100.0,0.0,100.0],[2,"stage_2",121,97.62,2.38,97.62],[3,"stage_3",119,96.75,3.25,94.44],[4,"stage_4",114,94.96,5.04,89.68],[5,"stage_5",108,90.27,9.73,80.95],[6,"stage_6",100,98.04,1.96,79.37],[7,"stage_7",98,99.0,1.0,78.57],[8,"stage_8",95,97.98,2.02,76.98],[9,"stage_9",92,95.88,4.12,73.81],[10,"stage_10",89,92.47,7.53,68.25],[11,"stage_11",82,80.23,19.77,54.76],[12,"stage_12",65,94.2,5.8,51.59],[13,"stage_13",62,78.46,21.54,40.48],[14,"stage_14",48,82.35,17.65,33.33],[15,"stage_15",41,100.0,0.0,33.33],[16,"stage_16",41,95.24,4.76,31.75],[17,"stage_17",38,70.0,30.0,22.22],[18,"stage_18",28,100.0,0.0,22.22],[19,"stage_19",28,96.43,3.57,21.43],[20,"stage_20",27,100.0,0.0,21.43],[21,"stage_21",26,74.07,25.93,15.87],[22,"stage_29",17,75.0,25.0,11.9],[23,"stage_22",19,100.0,0.0,11.9],[24,"stage_23",19,100.0,0.0,11.9],[25,"stage_25",19,100.0,0.0,11.9],[26,"stage_24",19,100.0,0.0,11.9],[27,"stage_26",18,100.0,0.0,11.9],[28,"stage_27",18,100.0,0.0,11.9],[29,"stage_28",17,100.0,0.0,11.9],[30,"stage_30",15,86.67,13.33,10.32],[31,"stage_31",13,100.0,0.0,10.32],[36,"stage_36",13,92.31,7.69,9.52],[39,"stage_39",11,91.67,8.33,8.73],[40,"stage_40",10,63.64,36.36,5.56],[45,"stage_45",7,85.71,14.29,4.76],[50,"stage_50",6,83.33,16.67,3.97],[63,"stage_63",4,80.0,20.0,3.17],[64,"stage_64",3,75.0,25.0,2.38],[70,"stage_70",2,66.67,33.33,1.59],[100,"stage_100",2,100.0,0.0,1.59]];
+const DEFAULT_CT={"stage_1":2.4,"stage_2":3.8,"stage_3":12.7,"stage_4":5.3,"stage_5":16.6,"stage_6":9.2,"stage_10":16.6,"stage_11":58.9,"stage_12":40.7,"stage_13":47.4,"stage_14":60.1,"stage_15":4.0,"stage_16":39.9,"stage_17":74.4,"stage_18":46.1,"stage_19":58.6,"stage_20":59.2,"stage_21":104.1,"stage_22":39.2,"stage_23":55.2,"stage_24":52.9,"stage_25":60.0,"stage_26":36.9,"stage_27":42.1,"stage_28":34.8,"stage_29":45.5,"stage_30":66.6,"stage_31":49.2,"stage_32":13.9,"stage_33":23.2,"stage_34":48.0,"stage_35":50.8,"stage_36":40.2,"stage_37":16.1,"stage_38":55.7,"stage_39":38.2,"stage_40":77.6,"stage_41":30.0,"stage_42":42.3,"stage_43":49.9,"stage_44":47.3,"stage_45":72.0,"stage_46":64.0,"stage_47":32.8,"stage_48":35.7,"stage_49":34.3,"stage_50":59.2,"stage_51":14.5,"stage_52":7.5,"stage_53":45.5,"stage_54":20.3,"stage_55":36.5,"stage_56":192.0,"stage_57":22.4,"stage_58":9.4,"stage_59":48.6,"stage_60":68.2,"stage_61":16.4,"stage_62":59.8,"stage_63":76.2,"stage_64":90.3,"stage_65":33.7,"stage_100":33.3,"stage_101":49.0,"stage_102":61.7,"stage_103":45.3,"stage_104":15.0,"stage_105":25.0,"stage_106":36.3,"stage_107":52.7,"stage_108":42.0,"stage_109":17.7,"stage_110":61.0,"stage_111":43.5,"stage_112":84.5,"stage_113":38.0,"stage_114":35.0,"stage_115":31.0,"stage_116":29.0,"stage_117":74.0,"stage_118":71.0,"stage_119":33.0,"stage_120":41.0,"stage_121":33.0,"stage_122":80.0,"stage_123":16.0,"stage_124":11.0,"stage_125":37.0,"stage_126":39.0,"stage_127":45.0,"stage_128":92.0,"stage_129":18.0,"stage_130":9.0,"stage_131":49.0,"stage_132":88.0,"stage_133":12.0,"stage_134":27.0,"stage_135":74.0,"stage_136":44.0,"stage_137":16.0};
+const DEFAULT_COHORT={days:['Day 0','Day 1','Day 2','Day 3','Day 4'],retentionUsers:[136,21,10,3,0],installs:136,playtimeMin:[15.6,17.4,4.9,4.0,0],rows:[{date:'7/16',dow:'목',installs:44,d1:4},{date:'7/17',dow:'금',installs:30,d1:4},{date:'7/18',dow:'토',installs:25,d1:8},{date:'7/19',dow:'일',installs:30,d1:5}]};
+
+/* ===== STORE + DERIVE ===== */
+const store={};
+function loadDefaults(){
+  store.funnelComplete=FUNNEL_RAW.map(r=>({step:r[0],stage:r[1],completion:r[3],churn:r[4],cum:r[5]}));
+  store.funnelStart={};FUNNEL_RAW.forEach(r=>store.funnelStart[r[1]]=r[2]);
+  store.ct=Object.assign({},DEFAULT_CT);
+  store.cohort=JSON.parse(JSON.stringify(DEFAULT_COHORT));
+  store.srcFunnel='기본';store.srcCT='기본';store.srcCohort='기본';
+}
+let DATA=[],MERGED=[],COHORT={};
+const snum=s=>{const m=String(s).match(/(\d+)/);return m?+m[1]:0;};
+function recompute(){
+  DATA=store.funnelComplete.map(r=>{const st=store.funnelStart[r.stage];const starters=(st==null?null:st);
+    return {step:r.step,stage:r.stage,completion:r.completion,churn:r.churn,cum:r.cum,starters:starters,lost:starters!=null?+(starters*r.churn/100).toFixed(1):0};}).sort((a,b)=>a.step-b.step);
+  const fmap={};DATA.forEach(d=>fmap[d.stage]=d);
+  MERGED=Object.keys(store.ct).map(st=>{const f=fmap[st]||{};return {stage:st,n:snum(st),ct:store.ct[st],
+    completion:(f.completion==null?null:f.completion),churn:(f.churn==null?null:f.churn),starters:(f.starters==null?null:f.starters),cum:(f.cum==null?null:f.cum)};}).sort((a,b)=>a.n-b.n);
+  COHORT=store.cohort;
+}
+
+/* ===== PARSERS ===== */
+function parseText(text){
+  const lines=text.replace(/\r/g,'').split('\n').filter(l=>l.trim()!=='');
+  if(!lines.length)return null;
+  const delim=lines[0].includes('\t')?'\t':',';
+  const rows=lines.map(l=>l.split(delim).map(c=>c.trim()));
+  const header=rows[0].map(c=>c.toLowerCase());
+  const flat=text.toLowerCase();
+  const f=v=>{const m=String(v).replace(/,/g,'').match(/-?[\d.]+/);return m?parseFloat(m[0]):NaN;};
+  // FUNNEL
+  if(header.some(h=>h.includes('details'))||(header.includes('step')&&header.some(h=>h.includes('churn')))){
+    const iD=header.findIndex(h=>h.includes('details'));
+    const iC=header.findIndex(h=>h.includes('completion')&&!h.includes('total'));
+    const iH=header.findIndex(h=>h.includes('churn'));
+    const iT=header.findIndex(h=>h.includes('total'));
+    const body=rows.slice(1).filter(r=>r[iD]);
+    const isStart=flat.includes('or start'),isComp=flat.includes('or complete');
+    if(isStart&&!isComp){const m={};body.forEach(r=>{m[r[iD].split(' or')[0].trim()]=f(r[iC]);});store.funnelStart=m;store.srcFunnel='업로드';return {type:'퍼널(Start)',n:body.length};}
+    const arr=body.map((r,i)=>({step:parseInt(f(r[0]))||i+1,stage:r[iD].split(' or')[0].trim(),completion:f(r[iC]),churn:iH>=0?f(r[iH]):0,cum:iT>=0?f(r[iT]):f(r[iC])}));
+    store.funnelComplete=arr;store.srcFunnel='업로드';return {type:'퍼널(Complete)',n:arr.length};
+  }
+  // COHORT
+  if(header.some(h=>/day\s*0/.test(h))||header.some(h=>h.includes('install'))){
+    try{
+      const dayIdx=[];header.forEach((h,i)=>{if(/day\s*\d+/.test(h))dayIdx.push(i);});
+      const instIdx=header.findIndex(h=>h.includes('install'));
+      const usersOf=s=>{const m=String(s).match(/([\d.]+)\s*users?/i);return m?+m[1]:null;};
+      const playOf=s=>{const m=String(s).match(/([\d.]+)\s*(h|m|s)\b/i);if(!m)return 0;const v=+m[1];return m[2]=='h'?v*60:m[2]=='s'?v/60:v;};
+      const findRow=k=>rows.find(r=>r[0]&&r[0].toLowerCase().includes(k));
+      const tot=findRow('total'),wgt=findRow('wgt');
+      const drows=rows.slice(1).filter(r=>/\d/.test(r[0])&&!/total|wgt/i.test(r[0]));
+      const ru=dayIdx.map(di=>{if(tot){const u=usersOf(tot[di]);if(u!=null)return u;}return null;});
+      const installs=tot&&instIdx>=0?f(tot[instIdx]):drows.reduce((a,r)=>a+(f(r[instIdx])||0),0);
+      if(ru[0]==null)ru[0]=installs;
+      const play=dayIdx.map(di=>wgt?+playOf(wgt[di]).toFixed(1):0);
+      const crows=drows.slice(0,8).map(r=>{const d=String(r[0]).match(/(\d+)\s*([A-Za-z]+)/);return {date:d?d[1]+'/'+d[2].slice(0,3):r[0].slice(0,6),dow:'',installs:f(r[instIdx])||0,d1:usersOf(r[dayIdx[1]])||0};}).filter(x=>x.installs>0);
+      store.cohort={days:dayIdx.map((_,i)=>'Day '+i),retentionUsers:ru.map(x=>x||0),installs:installs||0,playtimeMin:play,rows:crows};
+      store.srcCohort='업로드';return {type:'코호트',n:crows.length};
+    }catch(e){return {type:'코호트(파싱실패)',n:0,err:1};}
+  }
+  // CLEAR-TIME
+  const st=rows.filter(r=>/^stage_\d+$/i.test(r[0]));
+  if(st.length){const m={};st.forEach(r=>{const v=f(r[1]);if(!isNaN(v))m[r[0].toLowerCase()]=Math.round(v*10)/10;});store.ct=m;store.srcCT='업로드';return {type:'클리어시간',n:st.length};}
+  return null;
+}
+
+/* ===== CHART HELPERS ===== */
+Chart.defaults.color='#69748c';Chart.defaults.font.family="'Pretendard','Apple SD Gothic Neo','Segoe UI',sans-serif";
+const GRID='rgba(30,50,90,0.08)';
+const compColor=(v,a=1)=>v==null?`rgba(150,160,180,${a*.5})`:v<=75?`rgba(229,57,80,${a})`:v<=90?`rgba(224,134,0,${a})`:`rgba(18,168,120,${a})`;
+function mk(id,cfg){const ex=Chart.getChart(id);if(ex)ex.destroy();return new Chart(document.getElementById(id),cfg);}
+
+/* ===== TAB SYSTEM ===== */
+let activeTab='summary';let built={};
+const initers={summary:initSummary,time:initTime,cross:initCross,funnel:initFunnel,cohort:initCohort};
+document.getElementById('tabbar').addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;
+  activeTab=b.dataset.p;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+activeTab));
+  if(!built[activeTab]){initers[activeTab]();built[activeTab]=true;}
+  window.dispatchEvent(new Event('resize'));});
+
+function refreshActive(){built={};initers[activeTab]();built[activeTab]=true;
+  const srcs=[`퍼널 ${store.srcFunnel}`,`클리어시간 ${store.srcCT}`,`코호트 ${store.srcCohort}`];
+  document.getElementById('metaSrc').textContent=srcs.join(' · ');
+  const chips=[['퍼널',store.srcFunnel],['클리어시간',store.srcCT],['코호트',store.srcCohort]];
+  document.getElementById('chips').innerHTML=chips.map(c=>`<span class="chip ${c[1]==='업로드'?'up':''}">${c[0]}: ${c[1]}</span>`).join('');
+}
+
+/* ===== SUMMARY ===== */
+function initSummary(){
+  const sig=MERGED.filter(d=>d.starters!=null&&d.starters>=10&&d.completion!=null);
+  const ctPool=(sig.length?sig:MERGED);
+  const longest=ctPool.reduce((a,b)=>b.ct>a.ct?b:a,ctPool[0]);
+  const churnPool=DATA.filter(d=>d.churn!=null);
+  const hiChurn=churnPool.length?churnPool.reduce((a,b)=>b.churn>a.churn?b:a):{stage:'-',churn:0};
+  const bnPool=DATA.filter(d=>d.lost>0);
+  const bn=bnPool.length?bnPool.reduce((a,b)=>b.lost>a.lost?b:a):{stage:'-',lost:0};
+  const s100=(DATA.find(d=>d.stage==='stage_100')||{}).cum;
+  const lastCum=DATA.length?DATA[DATA.length-1].cum:null;
+  const reach=s100!=null?s100:lastCum;
+  const ctVals=Object.values(store.ct);const avgct=ctVals.length?(ctVals.reduce((a,b)=>a+b,0)/ctVals.length).toFixed(1):'-';
+  const cards=[
+    {c:'warn',lbl:'최장 클리어(유효표본)',val:longest.stage,sub:'평균 '+longest.ct+'초'},
+    {c:'bad',lbl:'최고 이탈 스테이지',val:hiChurn.stage,sub:'이탈 '+(hiChurn.churn||0)+'%'},
+    {c:'bad',lbl:'최대 병목(트래픽)',val:bn.stage,sub:'추정 이탈 ≈'+(bn.lost||0)+'명'},
+    {c:'purple',lbl:'최종 도달률',val:(reach!=null?reach+'%':'-'),sub:(s100!=null?'stage_100 기준':'마지막 스테이지')},
+    {c:'good',lbl:'평균 클리어 시간',val:avgct+'초',sub:'전체 평균'}
+  ];
+  document.getElementById('kpiSummary').innerHTML=cards.map(k=>`<div class="kpi ${k.c}"><div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+  const hard=MERGED.filter(d=>d.completion!=null&&d.starters>=10).sort((a,b)=>(b.ct/(b.completion))-(a.ct/(a.completion))).slice(0,3).map(d=>d.stage).join(', ');
+  const d1=COHORT.installs?(COHORT.retentionUsers[1]/COHORT.installs*100).toFixed(1):'-';
+  document.getElementById('sumList').innerHTML=[
+    `<b>가장 오래 걸린 스테이지</b> — 유효표본 기준 <b>${longest.stage} (평균 ${longest.ct}초)</b>.`,
+    `<b>이탈이 가장 높았던 스테이지</b> — <b>${hiChurn.stage} (이탈 ${hiChurn.churn||0}%)</b>. 트래픽까지 감안한 실질 최대 병목은 <b>${bn.stage}</b>(추정 이탈 ≈${bn.lost||0}명).`,
+    `<b>최종 도달률 — ${reach!=null?reach+'%':'-'}</b>. 극소수만 끝까지 진행.`,
+    `<b>시간 × 난이도가 겹치는 진짜 난관</b> — <b>${hard}</b> 등 오래 걸리면서 실패율도 높은 구간이 최우선 밸런싱 대상.`,
+    `<b>코호트 Day 1 리텐션 ${d1}%</b> — 남는 코어 유저의 몰입도는 높아, 초반 진입 장벽만 낮추면 개선 여지 큼.`
+  ].map(t=>`<li>${t}</li>`).join('');
+  const f=MERGED.filter(d=>d.n<=50&&d.completion!=null);
+  mk('cSummary',{data:{labels:f.map(d=>'L'+d.n),datasets:[
+    {type:'bar',label:'클리어 시간(초)',data:f.map(d=>d.ct),yAxisID:'y',backgroundColor:f.map(d=>compColor(d.completion,.75)),borderRadius:3,order:2},
+    {type:'line',label:'완료율(%)',data:f.map(d=>d.completion),yAxisID:'y1',borderColor:'#3b6cf5',backgroundColor:'rgba(59,108,245,.1)',tension:.3,pointRadius:2,borderWidth:2,order:1}]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{usePointStyle:true,boxWidth:8}}},
+      scales:{y:{position:'left',beginAtZero:true,grid:{color:GRID},title:{display:true,text:'클리어 시간(초)'}},y1:{position:'right',min:0,max:105,grid:{drawOnChartArea:false},title:{display:true,text:'완료율 %'}},x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:25}}}}});
+}
+
+/* ===== CLEAR TIME ===== */
+let tState={min:1,max:65,sort:false,sortKey:'n',sortDir:1};
+const timeFiltered=()=>MERGED.filter(d=>d.n>=tState.min&&d.n<=tState.max);
+function initTime(){
+  buildTime();
+  const tmin=document.getElementById('tmin'),tmax=document.getElementById('tmax'),tlabel=document.getElementById('tlabel'),tSort=document.getElementById('tSort');
+  const mx=Math.max(...MERGED.map(d=>d.n),65);tmin.max=mx;tmax.max=mx;
+  function sync(){let a=+tmin.value,b=+tmax.value;if(a>b){[a,b]=[b,a];}tState.min=a;tState.max=b;tlabel.textContent=`${a} – ${b}`;}
+  tmin.oninput=()=>{sync();buildTime();};tmax.oninput=()=>{sync();buildTime();};
+  tSort.onclick=()=>{tState.sort=!tState.sort;tSort.classList.toggle('on',tState.sort);buildTime();};
+  document.querySelectorAll('#tblTime th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(tState.sortKey===k)tState.sortDir*=-1;else{tState.sortKey=k;tState.sortDir=(k==='n')?1:-1;}timeTable();});
+}
+function buildTime(){
+  let f=timeFiltered();if(tState.sort)f=[...f].sort((a,b)=>b.ct-a.ct);
+  mk('cTime',{type:'bar',data:{labels:f.map(d=>'L'+d.n),datasets:[{label:'클리어 시간(초)',data:f.map(d=>d.ct),backgroundColor:f.map(d=>compColor(d.completion,.8)),borderColor:f.map(d=>compColor(d.completion,1)),borderWidth:1,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const d=f[c.dataIndex];return [`클리어: ${d.ct}초`,d.completion!=null?`완료율 ${d.completion}% · 이탈 ${d.churn}%`:'퍼널데이터 없음',d.starters!=null?`시작 유저 ${d.starters}명`:''].filter(Boolean);}}}},
+      scales:{y:{beginAtZero:true,grid:{color:GRID},title:{display:true,text:'초'}},x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:28}}}}});
+  timeTable();
+}
+function timeTable(){
+  const f=timeFiltered().slice().sort((a,b)=>{const va=a[tState.sortKey],vb=b[tState.sortKey];return ((va==null?-1:vb==null?1:va>vb?1:va<vb?-1:0))*tState.sortDir;});
+  const cls=v=>v==null?'p-na':v<=75?'p-bad':v<=90?'p-warn':'p-good';
+  document.querySelector('#tblTime tbody').innerHTML=f.map(d=>`<tr><td>${d.stage}</td><td>${d.ct}</td><td>${d.completion!=null?`<span class="pill ${cls(d.completion)}">${d.completion}%</span>`:'<span class="p-na">–</span>'}</td><td>${d.churn!=null?d.churn+'%':'–'}</td><td>${d.starters!=null?d.starters:'–'}</td></tr>`).join('');
+}
+
+/* ===== CROSS ===== */
+function initCross(){
+  const pts=MERGED.filter(d=>d.completion!=null&&d.starters!=null);
+  const col=c=>c>20?'#e53950':c>=10?'#e08600':'#12a878';
+  mk('cCross',{type:'bubble',data:{datasets:[{label:'스테이지',data:pts.map(d=>({x:d.ct,y:d.completion,r:Math.max(4,Math.sqrt(d.starters)*1.7),_s:d})),backgroundColor:pts.map(d=>col(d.churn)+'cc'),borderColor:pts.map(d=>col(d.churn)),borderWidth:1}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const d=c.raw._s;return [`${d.stage}`,`클리어 ${d.ct}초 · 완료율 ${d.completion}%`,`이탈 ${d.churn}% · 시작 ${d.starters}명`];}}}},
+      scales:{x:{grid:{color:GRID},title:{display:true,text:'평균 클리어 시간(초) →'}},y:{suggestedMin:55,max:105,grid:{color:GRID},title:{display:true,text:'완료율(%) ↑'}}}}});
+  const worst=pts.filter(d=>d.starters>=10).sort((a,b)=>(b.ct/b.completion)-(a.ct/a.completion)).slice(0,5).map(d=>`${d.stage}(${d.ct}초·${d.completion}%)`).join(', ');
+  document.getElementById('crossNote').innerHTML=`🔴 <b>오래 걸리면서 완료율도 낮은 최우선 구간</b>: ${worst||'-'} — 시간·실패가 겹쳐 이탈로 이어지는 진짜 난관입니다.`;
+}
+
+/* ===== FUNNEL ===== */
+let fState={min:1,max:45,minstart:0,onlySig:true};
+const funFiltered=()=>DATA.filter(d=>d.step>=fState.min&&d.step<=fState.max&&(d.starters==null||d.starters>=fState.minstart)&&(!fState.onlySig||(d.starters!=null&&d.starters>=10)));
+function initFunnel(){
+  const g=st=>{const d=DATA.find(x=>x.stage===st);return d?d.cum:'-';};
+  const sig=DATA.filter(d=>d.starters!=null&&d.starters>=10&&d.completion!=null);
+  const hardest=sig.length?sig.reduce((a,b)=>b.completion<a.completion?b:a):{stage:'-',completion:0};
+  const bnP=DATA.filter(d=>d.lost>0);const bn=bnP.length?bnP.reduce((a,b)=>b.lost>a.lost?b:a):{stage:'-',lost:0};
+  const first=DATA.find(d=>d.starters!=null);
+  const cards=[{c:'',lbl:'시작 기준 유저',val:(first?first.starters+'명':'-'),sub:(first?first.stage:'')},
+    {c:'warn',lbl:'stage_15 도달률',val:g('stage_15')+'%',sub:'초반 이탈 확인'},
+    {c:'bad',lbl:'최종 도달률',val:(DATA.length?DATA[DATA.length-1].cum+'%':'-'),sub:'마지막 스테이지'},
+    {c:'purple',lbl:'최난이도(유효)',val:hardest.stage,sub:'완료율 '+hardest.completion+'%'},
+    {c:'bad',lbl:'최대 병목',val:bn.stage,sub:'추정 이탈 ≈'+(bn.lost||0)+'명'}];
+  document.getElementById('kpiFunnel').innerHTML=cards.map(k=>`<div class="kpi ${k.c}"><div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+  const rmin=document.getElementById('rmin'),rmax=document.getElementById('rmax'),rlabel=document.getElementById('rlabel'),minstart=document.getElementById('minstart'),mslabel=document.getElementById('mslabel'),tgOnly=document.getElementById('tgOnly');
+  const mx=Math.max(...DATA.map(d=>d.step),45);rmin.max=mx;rmax.max=mx;
+  function sync(){let a=+rmin.value,b=+rmax.value;if(a>b){[a,b]=[b,a];}fState.min=a;fState.max=b;rlabel.textContent=`${a} – ${b}`;}
+  rmin.oninput=()=>{sync();buildFunnel();};rmax.oninput=()=>{sync();buildFunnel();};
+  minstart.oninput=()=>{fState.minstart=+minstart.value;mslabel.textContent=`≥ ${minstart.value}명`;buildFunnel();};
+  tgOnly.onclick=()=>{fState.onlySig=!fState.onlySig;tgOnly.classList.toggle('on',fState.onlySig);buildFunnel();};
+  buildFunnel();
+}
+function buildFunnel(){
+  const f=funFiltered(),labels=f.map(d=>'L'+d.step),fr=DATA.filter(d=>d.step>=fState.min&&d.step<=fState.max),rlabels=fr.map(d=>'L'+d.step);
+  mk('cRet',{type:'line',data:{labels:rlabels,datasets:[
+    {label:'누적 도달률(%)',data:fr.map(d=>d.cum),yAxisID:'y',borderColor:'#3b6cf5',backgroundColor:'rgba(59,108,245,.12)',fill:true,tension:.3,pointRadius:2,pointHoverRadius:6,borderWidth:2.5,order:1},
+    {type:'bar',label:'시작 유저 수',data:fr.map(d=>d.starters),yAxisID:'y1',backgroundColor:'rgba(124,77,255,.28)',borderColor:'rgba(124,77,255,.5)',borderWidth:1,order:2}]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{usePointStyle:true,boxWidth:8}},tooltip:{callbacks:{afterBody:(it)=>{const d=fr[it[0].dataIndex];return `완료율 ${d.completion}% · 이탈 ${d.churn}%`;}}}},
+      scales:{y:{min:0,max:100,grid:{color:GRID},title:{display:true,text:'누적 %'}},y1:{position:'right',min:0,grid:{drawOnChartArea:false},title:{display:true,text:'시작 유저'}},x:{grid:{color:GRID},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:24}}}}});
+  mk('cComp',{type:'bar',data:{labels,datasets:[{data:f.map(d=>d.completion),backgroundColor:f.map(d=>compColor(d.completion,.8)),borderColor:f.map(d=>compColor(d.completion,1)),borderWidth:1,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const d=f[c.dataIndex];return [`완료율 ${d.completion}%`,`이탈 ${d.churn}% · 시작 ${d.starters}명`];}}}},scales:{y:{min:0,max:100,grid:{color:GRID}},x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:20}}}}});
+  const lf=[...f].sort((a,b)=>b.lost-a.lost).filter(d=>d.lost>0).slice(0,15);
+  mk('cLost',{type:'bar',data:{labels:lf.map(d=>d.stage.replace('stage_','L')),datasets:[{data:lf.map(d=>d.lost),backgroundColor:'rgba(229,57,80,.7)',borderColor:'#e53950',borderWidth:1,borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const d=lf[c.dataIndex];return [`추정 이탈 ≈${d.lost}명`,`완료율 ${d.completion}% · 시작 ${d.starters}명`];}}}},scales:{x:{grid:{color:GRID},title:{display:true,text:'추정 이탈(명)'}},y:{grid:{display:false}}}}});
+}
+
+/* ===== COHORT ===== */
+function initCohort(){
+  const C=COHORT,inst=C.installs||1,ru=C.retentionUsers;
+  const cards=[{c:'',lbl:'총 설치',val:(C.installs||0)+'명',sub:C.rows&&C.rows.length?C.rows.length+'개 코호트':''},
+    {c:'bad',lbl:'Day 1 리텐션',val:(ru[1]!=null?(ru[1]/inst*100).toFixed(1):'-')+'%',sub:(ru[1]||0)+'명'},
+    {c:'warn',lbl:'Day 2 리텐션',val:(ru[2]!=null?(ru[2]/inst*100).toFixed(1):'-')+'%',sub:(ru[2]||0)+'명'},
+    {c:'warn',lbl:'Day 3 리텐션',val:(ru[3]!=null?(ru[3]/inst*100).toFixed(1):'-')+'%',sub:(ru[3]||0)+'명'},
+    {c:'good',lbl:'Day1 유저당 플레이',val:(C.playtimeMin&&C.playtimeMin[1]!=null?C.playtimeMin[1]:'-')+'분',sub:'D0 '+(C.playtimeMin?C.playtimeMin[0]:'-')+'분'}];
+  document.getElementById('kpiCohort').innerHTML=cards.map(k=>`<div class="kpi ${k.c}"><div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+  mk('cRetDay',{type:'line',data:{labels:C.days,datasets:[{data:ru.map(u=>+(u/inst*100).toFixed(1)),borderColor:'#3b6cf5',backgroundColor:'rgba(59,108,245,.12)',fill:true,tension:.3,pointRadius:5,borderWidth:2.5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.parsed.y}% (${ru[c.dataIndex]}명)`}}},scales:{y:{min:0,max:100,grid:{color:GRID}},x:{grid:{display:false}}}}});
+  mk('cPlay',{type:'bar',data:{labels:C.days,datasets:[{data:C.playtimeMin,backgroundColor:['#3b6cf5','#12a878','#e08600','#e08600','#c3cad8'],borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.parsed.y}분/유저`}}},scales:{y:{beginAtZero:true,grid:{color:GRID}},x:{grid:{display:false}}}}});
+  const rws=C.rows||[];
+  mk('cCohortD1',{type:'bar',data:{labels:rws.map(r=>r.date+(r.dow?'('+r.dow+')':'')),datasets:[{data:rws.map(r=>+(r.d1/(r.installs||1)*100).toFixed(1)),backgroundColor:rws.map(r=>{const v=r.d1/(r.installs||1)*100;return v>=25?'#12a878':v>=15?'#3b6cf5':'#e08600';}),borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{const r=rws[c.dataIndex];return `${c.parsed.y}% (${r.d1}/${r.installs}명)`;}}}},scales:{y:{beginAtZero:true,grid:{color:GRID}},x:{grid:{display:false}}}}});
+  document.getElementById('cohortNote').textContent='단위: m=분, h=시간, s=초. 후반 Day 극단값은 잔존 소수 유저 기록이라 의미가 약합니다.';
+}
+
+/* ===== UPLOAD WIRING ===== */
+const drop=document.getElementById('drop'),fileInput=document.getElementById('fileInput'),dropStatus=document.getElementById('dropStatus');
+function handleFiles(files){
+  const msgs=[];let ok=0;
+  const arr=[...files];let pending=arr.length;
+  if(!pending)return;
+  arr.forEach(file=>{const rd=new FileReader();rd.onload=()=>{
+    let res=null;try{res=parseText(rd.result);}catch(e){res=null;}
+    if(res&&!res.err){msgs.push(`✅ ${file.name} → ${res.type} (${res.n}행)`);ok++;}
+    else msgs.push(`⚠️ ${file.name} → 형식 인식 실패`);
+    if(--pending===0){if(ok){recompute();refreshActive();}dropStatus.innerHTML=msgs.join('<br>')+(ok?`<br><b>반영 완료.</b> 현재 탭이 새 데이터로 갱신되었습니다.`:'');}
+  };rd.readAsText(file,'utf-8');});
+}
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over');});
+drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('over');handleFiles(e.dataTransfer.files);});
+document.getElementById('pickBtn').onclick=()=>fileInput.click();
+fileInput.onchange=()=>handleFiles(fileInput.files);
+document.getElementById('resetBtn').onclick=()=>{loadDefaults();recompute();refreshActive();dropStatus.innerHTML='<b>기본 데이터로 초기화했습니다.</b>';};
+
+/* ===== BOOT ===== */
+loadDefaults();recompute();
+initSummary();built.summary=true;
+document.getElementById('chips').innerHTML=[['퍼널',store.srcFunnel],['클리어시간',store.srcCT],['코호트',store.srcCohort]].map(c=>`<span class="chip">${c[0]}: ${c[1]}</span>`).join('');
+</script>
+</body>
+</html>
