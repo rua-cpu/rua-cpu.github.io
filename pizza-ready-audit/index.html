@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pizza Ready A→Z 작업 프로세스 점검판</title>
+  <style>
+    :root {
+      --bg: #f5f3fa;
+      --panel: #ffffff;
+      --ink: #24202e;
+      --muted: #6f687c;
+      --line: #e6e0ed;
+      --purple: #6f3fc8;
+      --purple-2: #9a72df;
+      --purple-soft: #efe8ff;
+      --brown: #6a3e2d;
+      --brown-soft: #f5e8e0;
+      --green: #21835f;
+      --green-soft: #ddf5e9;
+      --yellow: #b56a16;
+      --yellow-soft: #fff0d9;
+      --red: #c54e5a;
+      --red-soft: #ffe7ea;
+      --blue: #3267b1;
+      --blue-soft: #e5efff;
+      --shadow: 0 18px 48px rgba(54, 37, 79, .10);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% -5%, rgba(154,114,223,.17), transparent 29%),
+        radial-gradient(circle at 92% 3%, rgba(213,129,55,.12), transparent 25%),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+      line-height: 1.62;
+    }
+    a { color: inherit; }
+    button, select, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .page { max-width: 1460px; margin: 0 auto; padding: 24px 24px 90px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 46px 48px;
+      color: #fff;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #452178 0%, #6f3fc8 48%, #9d75df 100%);
+      box-shadow: var(--shadow);
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,.10);
+    }
+    .hero::before { width: 380px; height: 380px; right: -120px; top: -190px; }
+    .hero::after { width: 250px; height: 250px; right: 130px; bottom: -180px; }
+    .hero-top { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+    .hero-copy { max-width: 980px; }
+    .kicker {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 13px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.32); background: rgba(255,255,255,.10);
+      font-size: 13px; font-weight: 900; letter-spacing: .05em;
+    }
+    h1 { margin: 17px 0 12px; font-size: clamp(34px, 5vw, 62px); line-height: 1.08; letter-spacing: -.05em; }
+    .hero p { margin: 0; max-width: 900px; font-size: 18px; color: rgba(255,255,255,.91); }
+    .hero .thesis {
+      margin-top: 26px; padding: 18px 20px; border-radius: 16px;
+      background: rgba(29,12,58,.28); border-left: 5px solid #ffd09b;
+      font-size: 20px; font-weight: 900; line-height: 1.48;
+    }
+    .hero-actions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; min-width: 230px; }
+    .hero-btn {
+      border: 1px solid rgba(255,255,255,.34); color: #fff; background: rgba(255,255,255,.12);
+      padding: 10px 13px; border-radius: 12px; font-weight: 900;
+    }
+    .hero-btn:hover { background: rgba(255,255,255,.20); }
+    .scope-row { position: relative; z-index: 1; margin-top: 26px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; }
+    .scope-item { padding: 15px 16px; border-radius: 15px; background: rgba(255,255,255,.11); border: 1px solid rgba(255,255,255,.15); }
+    .scope-item b { display: block; margin-bottom: 3px; font-size: 17px; }
+    .scope-item span { font-size: 13px; color: rgba(255,255,255,.78); }
+
+    .tabs {
+      position: sticky; top: 10px; z-index: 50;
+      display: flex; gap: 7px; overflow-x: auto;
+      margin: 20px 0 26px; padding: 9px;
+      background: rgba(255,255,255,.91); border: 1px solid rgba(111,63,200,.13);
+      border-radius: 17px; backdrop-filter: blur(14px); box-shadow: 0 8px 25px rgba(54,37,79,.08);
+    }
+    .tab-btn {
+      flex: 0 0 auto; border: 0; background: transparent; color: var(--muted);
+      padding: 10px 14px; border-radius: 11px; font-weight: 900; white-space: nowrap;
+    }
+    .tab-btn.active { background: var(--purple); color: #fff; }
+    .section { display: none; animation: fade .24s ease; }
+    .section.active { display: block; }
+    @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+    .grid { display: grid; gap: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 24px; box-shadow: 0 9px 27px rgba(55,38,80,.055);
+    }
+    .card h2, .card h3, .card h4 { margin-top: 0; letter-spacing: -.03em; }
+    .card h2 { font-size: 28px; }
+    .card h3 { font-size: 21px; }
+    .card h4 { font-size: 17px; }
+    .eyebrow { color: var(--purple); font-size: 12px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+    .note { padding: 15px 17px; border-radius: 14px; background: #faf8fd; border: 1px solid var(--line); color: var(--muted); }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; font-size: 12px; font-weight: 950; }
+    .badge.green { color: var(--green); background: var(--green-soft); }
+    .badge.yellow { color: var(--yellow); background: var(--yellow-soft); }
+    .badge.red { color: var(--red); background: var(--red-soft); }
+    .badge.purple { color: var(--purple); background: var(--purple-soft); }
+    .badge.blue { color: var(--blue); background: var(--blue-soft); }
+
+    .summary-kpis { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+    .summary-kpi { padding: 18px; border-radius: 18px; background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 24px rgba(55,38,80,.05); }
+    .summary-kpi .num { font-size: 31px; font-weight: 950; line-height: 1; }
+    .summary-kpi .label { margin-top: 8px; color: var(--muted); font-size: 13px; font-weight: 800; }
+
+    .finding { position: relative; padding-left: 40px; }
+    .finding + .finding { margin-top: 18px; }
+    .finding .icon { position: absolute; left: 0; top: 1px; width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; font-weight: 950; }
+    .finding .icon.good { background: var(--green-soft); color: var(--green); }
+    .finding .icon.risk { background: var(--red-soft); color: var(--red); }
+    .finding .icon.watch { background: var(--yellow-soft); color: var(--yellow); }
+    .finding b { display: block; margin-bottom: 3px; }
+
+    .health-row { display: grid; grid-template-columns: 190px 1fr 78px; gap: 13px; align-items: center; margin: 13px 0; }
+    .health-row .name { font-weight: 900; }
+    .bar { height: 10px; border-radius: 99px; background: #eeeaf3; overflow: hidden; }
+    .bar > i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--purple), var(--purple-2)); }
+    .health-row .state { text-align: right; font-size: 12px; font-weight: 950; }
+
+    .flow-banner { margin-bottom: 18px; padding: 20px 22px; border-radius: 18px; background: linear-gradient(135deg, var(--purple-soft), #fff); border: 1px solid #d9cdf2; }
+    .flow-banner strong { color: var(--purple); }
+    .process-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; }
+    .process-card { position: relative; min-height: 300px; padding: 21px; border-radius: 20px; background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 22px rgba(55,38,80,.05); }
+    .process-card::after { content: "→"; position: absolute; right: -14px; top: 44px; z-index: 2; color: var(--purple-2); font-size: 25px; font-weight: 950; }
+    .process-card:nth-child(4n)::after, .process-card:last-child::after { display: none; }
+    .process-no { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; background: var(--purple-soft); color: var(--purple); font-weight: 950; }
+    .process-card h3 { margin: 14px 0 8px; }
+    .process-meta { display: grid; gap: 7px; margin-top: 14px; }
+    .meta-line { padding: 8px 10px; border-radius: 10px; background: #f8f6fb; font-size: 13px; }
+    .meta-line b { color: var(--purple); }
+    .signal { margin-top: 13px; padding: 11px 12px; border-radius: 12px; font-size: 13px; }
+    .signal.good { background: var(--green-soft); color: #1b654b; }
+    .signal.watch { background: var(--yellow-soft); color: #805018; }
+    .signal.risk { background: var(--red-soft); color: #8e3640; }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; margin-bottom: 15px; padding: 14px; border-radius: 17px; background: #fff; border: 1px solid var(--line); }
+    .toolbar label { font-size: 12px; font-weight: 900; color: var(--muted); }
+    .toolbar select, .toolbar button { border: 1px solid var(--line); background: #fff; padding: 9px 11px; border-radius: 10px; }
+    .toolbar button.primary { background: var(--purple); border-color: var(--purple); color: #fff; font-weight: 900; }
+    .toolbar button.danger { color: var(--red); }
+    .assessment-summary { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 11px; margin-bottom: 16px; }
+    .assess-stat { padding: 16px; border-radius: 16px; background: #fff; border: 1px solid var(--line); }
+    .assess-stat b { display: block; font-size: 24px; }
+    .assess-stat span { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .audit-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+    .audit-card { background: #fff; border: 1px solid var(--line); border-radius: 21px; padding: 21px; box-shadow: 0 8px 23px rgba(55,38,80,.05); }
+    .audit-head { display: flex; justify-content: space-between; gap: 15px; align-items: flex-start; }
+    .audit-title { display: flex; gap: 12px; }
+    .audit-letter { flex: 0 0 auto; width: 39px; height: 39px; display: grid; place-items: center; border-radius: 12px; background: var(--purple-soft); color: var(--purple); font-weight: 950; }
+    .audit-title h3 { margin: 0; }
+    .status-select { border: 1px solid var(--line); border-radius: 10px; padding: 8px; font-weight: 900; background: #fff; }
+    .audit-evidence { margin: 13px 0; padding: 12px 13px; background: #faf8fd; border-left: 4px solid var(--purple-2); border-radius: 10px; color: var(--muted); font-size: 13px; }
+    .checklist { display: grid; gap: 8px; margin: 13px 0; }
+    .check-row { display: flex; gap: 9px; align-items: flex-start; padding: 9px 10px; border-radius: 10px; background: #fbfafc; }
+    .check-row input { margin-top: 4px; accent-color: var(--purple); }
+    .audit-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .field label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 900; }
+    .field input, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; background: #fff; }
+    .field textarea { min-height: 66px; resize: vertical; }
+    .field.full { grid-column: 1 / -1; }
+    .completion { margin-top: 12px; }
+    .completion-top { display: flex; justify-content: space-between; font-size: 12px; font-weight: 900; color: var(--muted); }
+
+    .root-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 17px; }
+    .root-card { padding: 22px; border-radius: 20px; background: #fff; border: 1px solid var(--line); }
+    .root-card h3 { display: flex; align-items: center; gap: 8px; }
+    .cause-chain { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; align-items: stretch; margin: 17px 0; }
+    .cause-item { position: relative; padding: 13px; border-radius: 13px; background: #f8f6fb; border: 1px solid var(--line); font-size: 13px; }
+    .cause-item:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); z-index: 2; color: var(--purple-2); font-weight: 950; }
+    .diagnosis-table { width: 100%; border-collapse: collapse; }
+    .diagnosis-table th, .diagnosis-table td { padding: 13px 12px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+    .diagnosis-table th { background: #faf8fd; font-size: 12px; color: var(--muted); }
+
+    .gate-line { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+    .gate { padding: 20px; border-radius: 19px; background: #fff; border: 1px solid var(--line); }
+    .gate-code { display: inline-grid; place-items: center; min-width: 42px; height: 32px; padding: 0 9px; border-radius: 10px; background: var(--purple); color: #fff; font-size: 13px; font-weight: 950; }
+    .gate h3 { margin: 12px 0 8px; }
+    .gate ul { margin: 9px 0 0; padding-left: 18px; }
+    .gate .go { margin-top: 13px; padding: 9px 10px; border-radius: 10px; background: var(--green-soft); color: #1d684e; font-size: 13px; font-weight: 900; }
+    .raci { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .raci th, .raci td { padding: 11px 10px; border: 1px solid var(--line); text-align: center; }
+    .raci th:first-child, .raci td:first-child { text-align: left; font-weight: 900; }
+    .raci th { background: #f8f6fb; }
+    .r { background: var(--blue-soft); color: var(--blue); font-weight: 950; }
+    .a { background: var(--purple-soft); color: var(--purple); font-weight: 950; }
+    .c { background: var(--yellow-soft); color: var(--yellow); font-weight: 950; }
+    .i { background: #f2f0f4; color: var(--muted); font-weight: 950; }
+
+    .ui-logic { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+    .mini-screen { padding: 18px; border-radius: 20px; background: #f7f5fa; border: 1px solid var(--line); }
+    .game-shell { overflow: hidden; border-radius: 18px; border: 5px solid #352d3c; background: #fff; box-shadow: 0 12px 24px rgba(40,30,55,.12); }
+    .game-top { height: 72px; display: grid; place-items: center; font-weight: 950; }
+    .game-house { height: 130px; display: grid; place-items: center; background: linear-gradient(#ffe5cf,#fff7e9); font-size: 48px; }
+    .game-ribbon { height: 44px; display: grid; place-items: center; color: #fff; font-weight: 950; }
+    .game-board { height: 180px; margin: 12px; border-radius: 16px; display: grid; place-items: center; font-size: 30px; }
+    .no-color .game-top, .no-color .game-ribbon, .no-color .game-board { background: #d7d5dc; color: #55515d; }
+    .with-color .game-top { background: #fff0cd; color: #6b3f2f; }
+    .with-color .game-ribbon { background: #66331f; }
+    .with-color .game-board { background: #f5d7c8; border: 9px solid #66331f; color: #6f3fc8; }
+    .ui-rule { padding: 15px 16px; border-radius: 15px; background: var(--purple-soft); border: 1px solid #dacbf5; }
+
+    .week-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
+    .week { padding: 21px; border-radius: 20px; background: #fff; border: 1px solid var(--line); }
+    .week-no { color: var(--purple); font-size: 30px; font-weight: 950; }
+    .cadence-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+    .cadence { padding: 18px; border-radius: 17px; background: #faf8fd; border: 1px solid var(--line); }
+
+    .source-list { display: grid; gap: 11px; }
+    .source-item { display: grid; grid-template-columns: 115px 1fr auto; gap: 14px; align-items: center; padding: 15px 16px; border-radius: 15px; background: #fff; border: 1px solid var(--line); }
+    .source-date { font-size: 12px; font-weight: 950; color: var(--purple); }
+    .source-item h4 { margin: 0 0 3px; }
+    .source-link { text-decoration: none; color: var(--purple); font-size: 13px; font-weight: 950; }
+    .source-link:hover { text-decoration: underline; }
+
+    .summary-box { margin-top: 14px; padding: 16px; border-radius: 15px; background: #17131f; color: #f7f4fb; white-space: pre-wrap; min-height: 170px; font-size: 13px; }
+    .footer-note { margin-top: 25px; text-align: center; color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 1120px) {
+      .scope-row, .summary-kpis, .assessment-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .process-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      .process-card:nth-child(4n)::after { display: block; }
+      .process-card:nth-child(3n)::after { display: none; }
+      .gate-line { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .week-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width: 820px) {
+      .page { padding: 14px 14px 70px; }
+      .hero { padding: 30px 25px; }
+      .hero-top { display: block; }
+      .hero-actions { justify-content: flex-start; margin-top: 20px; }
+      .scope-row, .grid.two, .grid.three, .grid.four, .summary-kpis, .audit-grid, .root-grid, .ui-logic, .cadence-grid { grid-template-columns: 1fr; }
+      .process-grid { grid-template-columns: 1fr; }
+      .process-card::after { display: none !important; }
+      .gate-line, .week-grid { grid-template-columns: 1fr; }
+      .cause-chain { grid-template-columns: 1fr; }
+      .cause-item::after { display: none; }
+      .audit-fields { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .source-item { grid-template-columns: 1fr; }
+      .health-row { grid-template-columns: 135px 1fr 62px; }
+      .assessment-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media print {
+      body { background: #fff; }
+      .page { max-width: none; padding: 0; }
+      .hero { border-radius: 0; box-shadow: none; }
+      .tabs, .hero-actions, .toolbar, .footer-note { display: none !important; }
+      .section { display: block !important; break-before: page; }
+      .section:first-of-type { break-before: auto; }
+      .card, .audit-card, .process-card, .gate, .root-card, .week { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <div class="hero-copy">
+          <span class="kicker">PIZZA READY · END-TO-END PROCESS AUDIT</span>
+          <h1>피자레디 A→Z<br />작업 프로세스 점검판</h1>
+          <p>기획·BM·UI·3D·개발·데이터·QA·배포·라이브 운영까지 하나의 흐름으로 연결하여, 현재 병목이 어디에서 만들어지고 다음 단계로 무엇이 미확정 상태로 넘어가는지 점검합니다.</p>
+          <div class="thesis">핵심 문제는 특정 팀의 “피드백 횟수”가 아니라, 앞 단계의 결정·승인·산출물이 잠기지 않은 상태로 다음 단계가 시작되는 구조입니다.</div>
+        </div>
+        <div class="hero-actions">
+          <button class="hero-btn" onclick="window.print()">PDF / 인쇄</button>
+          <button class="hero-btn" onclick="exportAudit()">점검 결과 JSON</button>
+          <button class="hero-btn" onclick="copyMeetingSummary()">회의 요약 복사</button>
+        </div>
+      </div>
+      <div class="scope-row">
+        <div class="scope-item"><b>점검 범위</b><span>기획 → 라이브 학습 루프 전체</span></div>
+        <div class="scope-item"><b>근거 표본</b><span>#s2_pizzaready · 2026.06~07</span></div>
+        <div class="scope-item"><b>점검 방식</b><span>실제 사례 + 팀 자체 체크</span></div>
+        <div class="scope-item"><b>사용 목적</b><span>책임 추궁이 아닌 재작업 감소</span></div>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="자료 탭">
+      <button class="tab-btn active" data-tab="overview">01. 전체 요약</button>
+      <button class="tab-btn" data-tab="asis">02. 현재 프로세스</button>
+      <button class="tab-btn" data-tab="audit">03. A→Z 점검표</button>
+      <button class="tab-btn" data-tab="bottleneck">04. 병목 진단</button>
+      <button class="tab-btn" data-tab="tobe">05. 개선 프로세스</button>
+      <button class="tab-btn" data-tab="ui">06. UI·아트 원칙</button>
+      <button class="tab-btn" data-tab="action">07. 30일 실행안</button>
+      <button class="tab-btn" data-tab="sources">08. 근거 타임라인</button>
+    </nav>
+
+    <section id="overview" class="section active">
+      <div class="summary-kpis">
+        <div class="summary-kpi"><div class="num">12</div><div class="label">현재 점검 도메인</div></div>
+        <div class="summary-kpi"><div class="num">8+</div><div class="label">SP59 QA 빌드 반복 신호</div></div>
+        <div class="summary-kpi"><div class="num">2</div><div class="label">기능 QA + 데이터 QA 게이트</div></div>
+        <div class="summary-kpi"><div class="num">Daily</div><div class="label">유저 피드백 모니터링</div></div>
+        <div class="summary-kpi"><div class="num">G0–G8</div><div class="label">권장 승인 게이트</div></div>
+      </div>
+
+      <div class="grid two">
+        <article class="card">
+          <div class="eyebrow">Observed strengths</div>
+          <h2>현재 잘하고 있는 부분</h2>
+          <div class="finding"><span class="icon good">✓</span><b>실제 데이터로 의사결정하려는 문화</b><span class="muted">A/B 테스트, 퍼널, RV_impDAU, 성능, 스토어 리뷰를 지속적으로 확인합니다.</span></div>
+          <div class="finding"><span class="icon good">✓</span><b>QA와 데이터 QA를 배포 조건으로 인식</b><span class="muted">기능 정상 동작뿐 아니라 이벤트 적재 여부까지 확인하려는 안전장치가 존재합니다.</span></div>
+          <div class="finding"><span class="icon good">✓</span><b>점진 배포와 롤백 검토</b><span class="muted">50% 롤아웃, 국가 제한 배포, SDK 복구 테스트처럼 위험을 제한하려는 운영 방식이 보입니다.</span></div>
+          <div class="finding"><span class="icon good">✓</span><b>크로스펑셔널 공개 커뮤니케이션</b><span class="muted">기획·사업·아트·개발·DA·QA가 같은 채널에서 진행 상황을 확인할 수 있습니다.</span></div>
+        </article>
+
+        <article class="card">
+          <div class="eyebrow">Primary risks</div>
+          <h2>현재 가장 큰 구조적 위험</h2>
+          <div class="finding"><span class="icon risk">!</span><b>승인 기준이 아닌 대화의 종료로 다음 단계가 시작됨</b><span class="muted">기획·BM·컬러·리소스 범위가 잠기지 않은 상태로 제작과 개발이 병행될 수 있습니다.</span></div>
+          <div class="finding"><span class="icon risk">!</span><b>Single Source of Truth 부재</b><span class="muted">슬랙·Notion·Sheets·Slides에 정보가 흩어져 작업리스트 누락과 리마인드가 발생합니다.</span></div>
+          <div class="finding"><span class="icon watch">△</span><b>검증이 후반에 집중</b><span class="muted">QA 반복과 데이터 이벤트 누락은 구현 전 체크가 충분하지 않았다는 신호일 수 있습니다.</span></div>
+          <div class="finding"><span class="icon watch">△</span><b>수집된 인사이트가 다음 계획으로 닫히는 과정이 약함</b><span class="muted">리포트와 테스트는 활발하지만 Decision Log·학습 아카이브·후속 우선순위가 한곳에서 연결되는지는 불명확합니다.</span></div>
+        </article>
+      </div>
+
+      <div class="grid two" style="margin-top:18px;">
+        <article class="card">
+          <div class="eyebrow">Provisional health view</div>
+          <h2>표본 기반 현재 상태</h2>
+          <p class="muted small">아래 값은 팀 평가가 아니라, 최근 Slack 사례에서 관찰한 프로세스 신호를 5단계로 환산한 임시 기준입니다. 실제 평가는 03. A→Z 점검표에서 조정합니다.</p>
+          <div class="health-row"><span class="name">목표·KPI</span><span class="bar"><i style="width:72%"></i></span><span class="state" style="color:var(--yellow)">관찰</span></div>
+          <div class="health-row"><span class="name">기획·인수조건</span><span class="bar"><i style="width:48%"></i></span><span class="state" style="color:var(--red)">위험</span></div>
+          <div class="health-row"><span class="name">UI·3D·아트</span><span class="bar"><i style="width:44%"></i></span><span class="state" style="color:var(--red)">위험</span></div>
+          <div class="health-row"><span class="name">개발 협업</span><span class="bar"><i style="width:67%"></i></span><span class="state" style="color:var(--yellow)">관찰</span></div>
+          <div class="health-row"><span class="name">QA·데이터 QA</span><span class="bar"><i style="width:56%"></i></span><span class="state" style="color:var(--yellow)">고강도</span></div>
+          <div class="health-row"><span class="name">배포·모니터링</span><span class="bar"><i style="width:82%"></i></span><span class="state" style="color:var(--green)">강점</span></div>
+          <div class="health-row"><span class="name">학습·회고</span><span class="bar"><i style="width:62%"></i></span><span class="state" style="color:var(--yellow)">관찰</span></div>
+        </article>
+
+        <article class="card">
+          <div class="eyebrow">How to use</div>
+          <h2>이 자료의 사용 순서</h2>
+          <ol>
+            <li><b>02. 현재 프로세스</b>에서 실제 흐름과 핸드오프를 함께 확인합니다.</li>
+            <li><b>03. A→Z 점검표</b>에서 각 담당자가 체크하고 상태·오너·액션을 입력합니다.</li>
+            <li><b>04. 병목 진단</b>에서 증상과 원인을 분리합니다.</li>
+            <li><b>05. 개선 프로세스</b>의 G0–G8 승인 게이트 중 필요한 항목만 먼저 도입합니다.</li>
+            <li><b>07. 30일 실행안</b>으로 다음 스프린트부터 적용합니다.</li>
+          </ol>
+          <div class="note"><b>권장 회의 방식</b><br />전체 단계를 한 번에 완벽하게 만들기보다, 현재 진행 중인 SP에서 가장 큰 재작업 2개를 고르고 그 앞단의 승인 기준부터 고정합니다.</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="asis" class="section">
+      <div class="flow-banner"><strong>현재 관찰 흐름:</strong> 시장·사업·데이터 요구 → 기획서·리소스 미팅 → UI/3D 제작 → 개발 적용 → 다차 QA → 데이터 QA → 배포 → 지표·리뷰 모니터링 → 다음 A/B 및 수정. 흐름 자체는 존재하지만 단계 사이의 <b>입력 조건과 승인 조건</b>이 명시적으로 잠기지 않는 것이 핵심 위험입니다.</div>
+      <div class="process-grid" id="processGrid"></div>
+    </section>
+
+    <section id="audit" class="section">
+      <div class="toolbar">
+        <label>단계</label>
+        <select id="phaseFilter"><option value="all">전체</option><option value="discover">발견·전략</option><option value="define">기획·설계</option><option value="make">제작·개발</option><option value="verify">검증·배포</option><option value="learn">운영·학습</option></select>
+        <label>상태</label>
+        <select id="statusFilter"><option value="all">전체</option><option value="healthy">정상</option><option value="watch">관찰</option><option value="risk">위험</option></select>
+        <button class="primary" onclick="generateMeetingSummary()">회의 요약 생성</button>
+        <button onclick="saveAudit()">현재 상태 저장</button>
+        <button class="danger" onclick="resetAudit()">초기화</button>
+      </div>
+
+      <div class="assessment-summary">
+        <div class="assess-stat"><b id="domainCount">12</b><span>표시 도메인</span></div>
+        <div class="assess-stat"><b id="healthyCount" style="color:var(--green)">0</b><span>정상</span></div>
+        <div class="assess-stat"><b id="watchCount" style="color:var(--yellow)">0</b><span>관찰</span></div>
+        <div class="assess-stat"><b id="riskCount" style="color:var(--red)">0</b><span>위험</span></div>
+        <div class="assess-stat"><b id="completionCount">0%</b><span>체크 완료율</span></div>
+      </div>
+
+      <div id="auditGrid" class="audit-grid"></div>
+      <div class="card" style="margin-top:18px;">
+        <div class="eyebrow">Meeting output</div>
+        <h2>자동 생성 회의 요약</h2>
+        <p class="muted small">위험·관찰 상태와 미체크 항목을 기준으로 생성됩니다. 입력 내용은 현재 브라우저에만 저장됩니다.</p>
+        <div id="meetingSummary" class="summary-box">“회의 요약 생성” 버튼을 누르면 이곳에 정리됩니다.</div>
+      </div>
+    </section>
+
+    <section id="bottleneck" class="section">
+      <div class="root-grid">
+        <article class="root-card">
+          <span class="badge red">증상 1</span>
+          <h3>“기획 피드백이 너무 많다”</h3>
+          <div class="cause-chain">
+            <div class="cause-item">기획서 표현과 시안 간 차이</div>
+            <div class="cause-item">컬러·컨셉·레이아웃 동시 재논의</div>
+            <div class="cause-item">Slack 순차 댓글 수정</div>
+            <div class="cause-item">피드백 횟수 증가</div>
+          </div>
+          <p><b>근본 원인:</b> 피드백 자체보다, 컨셉 승인 기준·대표 컬러·검토 범위가 단계별로 잠기지 않은 상태입니다.</p>
+        </article>
+
+        <article class="root-card">
+          <span class="badge red">증상 2</span>
+          <h3>QA 빌드가 계속 반복된다</h3>
+          <div class="cause-chain">
+            <div class="cause-item">기능·데이터·폰트·예외 조건 분산</div>
+            <div class="cause-item">QA 진입 후 순차 발견</div>
+            <div class="cause-item">수정별 신규 빌드</div>
+            <div class="cause-item">8차 이상 반복</div>
+          </div>
+          <p><b>근본 원인 후보:</b> Feature Complete 이전 자체 체크, 이벤트 스키마 리뷰, QA 진입 조건이 하나의 체크리스트로 묶이지 않았을 가능성입니다.</p>
+        </article>
+
+        <article class="root-card">
+          <span class="badge yellow">증상 3</span>
+          <h3>일정이 자주 움직이고 리마인드가 필요하다</h3>
+          <div class="cause-chain">
+            <div class="cause-item">리소스 범위·의존성 후확정</div>
+            <div class="cause-item">Notion 작업리스트 갱신 지연</div>
+            <div class="cause-item">개발 대기·병렬 작업 충돌</div>
+            <div class="cause-item">수동 리마인드</div>
+          </div>
+          <p><b>근본 원인:</b> 일정표가 실행의 기준이 아니라 결과를 뒤늦게 반영하는 기록으로 사용될 때 발생합니다.</p>
+        </article>
+
+        <article class="root-card">
+          <span class="badge yellow">증상 4</span>
+          <h3>데이터는 많지만 결정이 복잡하다</h3>
+          <div class="cause-chain">
+            <div class="cause-item">동시에 보고 싶은 변수가 많음</div>
+            <div class="cause-item">테스트 데이터 성숙 대기</div>
+            <div class="cause-item">다음 테스트 일정과 충돌</div>
+            <div class="cause-item">3회차로 이월</div>
+          </div>
+          <p><b>근본 원인:</b> 실험의 Primary KPI, 최소 관찰 기간, 다음 테스트 착수 조건이 로드맵과 함께 잠기지 않은 상태입니다.</p>
+        </article>
+      </div>
+
+      <article class="card" style="margin-top:18px;">
+        <div class="eyebrow">Symptom vs root cause</div>
+        <h2>해결하면 안 되는 방식과 실제 해결 방향</h2>
+        <div style="overflow-x:auto;">
+          <table class="diagnosis-table">
+            <thead><tr><th>보이는 문제</th><th>피상적 해결</th><th>실제 개선 방향</th></tr></thead>
+            <tbody>
+              <tr><td>UI 피드백이 많음</td><td>기획 피드백을 줄이고 바로 개발</td><td>레이아웃+대표 컬러+강조 위계를 Concept Gate에서 승인하고, 이후 피드백 범위를 제한</td></tr>
+              <tr><td>QA 빌드가 많음</td><td>QA 시간을 줄임</td><td>Feature Complete 진입 체크와 기능·데이터·성능 체크를 앞당김</td></tr>
+              <tr><td>일정이 자주 변경됨</td><td>더 강하게 마감 독촉</td><td>작업 시작 전 리소스 수량·의존성·승인자·변경 비용을 잠금</td></tr>
+              <tr><td>슬랙 메시지가 많음</td><td>슬랙 사용 제한</td><td>Slack은 알림·토론, Notion은 현재 상태·결정·최종 산출물로 역할 분리</td></tr>
+              <tr><td>데이터 해석이 늦음</td><td>더 빨리 결론</td><td>Primary KPI·Guardrail·관찰 기간·샘플 조건을 실험 시작 전에 확정</td></tr>
+              <tr><td>출시 후 긴급 대응</td><td>모든 리스크를 출시 전에 제거</td><td>점진 배포·Rollback Trigger·Owner·모니터링 창을 Release Gate에 명시</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section id="tobe" class="section">
+      <div class="flow-banner"><strong>권장 운영 모델:</strong> 문서가 완벽해질 때까지 기다리는 Waterfall이 아니라, 각 단계에서 다음 팀이 작업을 시작해도 되는 <b>최소 승인 조건</b>을 정의하는 Gate 방식입니다.</div>
+      <div class="gate-line" id="gateLine"></div>
+
+      <div class="grid two" style="margin-top:18px;">
+        <article class="card">
+          <div class="eyebrow">Definition of Ready</div>
+          <h2>개발 착수 전 최소 조건</h2>
+          <ul>
+            <li>문제·목표 유저·Primary KPI가 한 문장으로 합의됨</li>
+            <li>핵심 플로우·진입·종료·예외 조건이 정의됨</li>
+            <li>BM/RV/IAP의 존재·트리거·가격 또는 미정 항목이 표시됨</li>
+            <li>UI/3D는 레이아웃과 대표 컬러 방향이 승인됨</li>
+            <li>필요 리소스 목록·수량·파일 상태·의존성이 등록됨</li>
+            <li>이벤트 스키마·Remote Config·A/B 변수와 기본값이 정의됨</li>
+            <li>QA 인수 조건과 Rollback 조건이 작성됨</li>
+          </ul>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Definition of Done</div>
+          <h2>완료 처리 최소 조건</h2>
+          <ul>
+            <li>기획 인수 조건 충족</li>
+            <li>실기기 시각 QA 및 주요 해상도 확인</li>
+            <li>기능 QA·데이터 QA·성능 Guardrail 통과</li>
+            <li>최종 리소스·프리팹·버전·경로가 문서화됨</li>
+            <li>Release Note·Remote Config·롤아웃 비율·담당자가 확정됨</li>
+            <li>출시 후 24/72시간 모니터링 항목과 임계치가 설정됨</li>
+            <li>결과·결정·후속 액션이 Decision Log에 기록됨</li>
+          </ul>
+        </article>
+      </div>
+
+      <article class="card" style="margin-top:18px; overflow-x:auto;">
+        <div class="eyebrow">RACI</div>
+        <h2>권장 책임 구조</h2>
+        <p class="muted small">R = 실행 책임, A = 최종 승인, C = 사전 협의, I = 결과 공유</p>
+        <table class="raci">
+          <thead><tr><th>단계</th><th>PM/기획</th><th>사업/BM</th><th>UI/3D</th><th>개발</th><th>DA</th><th>QA</th></tr></thead>
+          <tbody>
+            <tr><td>문제·KPI 정의</td><td class="a">A</td><td class="c">C</td><td class="i">I</td><td class="c">C</td><td class="r">R</td><td class="i">I</td></tr>
+            <tr><td>기획·플로우</td><td class="a">A/R</td><td class="c">C</td><td class="c">C</td><td class="c">C</td><td class="c">C</td><td class="c">C</td></tr>
+            <tr><td>BM/RV/IAP</td><td class="c">C</td><td class="a">A/R</td><td class="c">C</td><td class="c">C</td><td class="c">C</td><td class="i">I</td></tr>
+            <tr><td>UI·3D 컨셉</td><td class="a">A</td><td class="c">C</td><td class="r">R</td><td class="c">C</td><td class="i">I</td><td class="i">I</td></tr>
+            <tr><td>구현·통계</td><td class="c">C</td><td class="i">I</td><td class="c">C</td><td class="a">A/R</td><td class="c">C</td><td class="i">I</td></tr>
+            <tr><td>기능·데이터 QA</td><td class="c">C</td><td class="i">I</td><td class="c">C</td><td class="r">R</td><td class="r">R</td><td class="a">A/R</td></tr>
+            <tr><td>배포·롤백 결정</td><td class="a">A</td><td class="c">C</td><td class="i">I</td><td class="r">R</td><td class="c">C</td><td class="c">C</td></tr>
+            <tr><td>결과·학습</td><td class="a">A</td><td class="c">C</td><td class="i">I</td><td class="i">I</td><td class="r">R</td><td class="c">C</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section id="ui" class="section">
+      <div class="ui-rule"><b>UI·아트에 대한 핵심 합의:</b> 색상은 장식이 아니라 정보 위계·영역 구분·보상 강조·시인성을 결정하는 기능 요소입니다. 따라서 “무채색 레이아웃 승인 → 개발 → 색상 수정”은 피자레디 이벤트 UI에서 재작업을 줄이는 방식이 아닙니다.</div>
+      <div class="ui-logic" style="margin-top:18px;">
+        <article class="card">
+          <span class="badge red">비권장</span>
+          <h2>레이아웃만 확인</h2>
+          <div class="mini-screen no-color">
+            <div class="game-shell">
+              <div class="game-top">EVENT TITLE</div><div class="game-house">🍪🏠</div><div class="game-ribbon">보상 진행</div><div class="game-board">◆ ◆ ◆</div>
+            </div>
+          </div>
+          <ul>
+            <li>요소의 위치는 확인 가능</li>
+            <li>실제 주목 순서와 대비 판단 불가</li>
+            <li>보드·리본·아이콘 간 시인성 문제를 개발 후 발견</li>
+            <li>리소스·이펙트·텍스트 색을 다시 수정할 가능성</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="badge green">권장</span>
+          <h2>레이아웃 + 대표 컬러 확인</h2>
+          <div class="mini-screen with-color">
+            <div class="game-shell">
+              <div class="game-top">SECRET SWEET SHOP</div><div class="game-house">🍪🏠</div><div class="game-ribbon">달콤한 보상</div><div class="game-board">⛏ ◆ 🎁</div>
+            </div>
+          </div>
+          <ul>
+            <li>완성도는 60~70%여도 대표 컬러는 실제에 가깝게</li>
+            <li>메인·보조·강조 색과 정보 위계를 함께 승인</li>
+            <li>세부 데코·하이라이트는 1차 시안에서 취합</li>
+            <li>개발 후에는 구현·실기기 문제만 수정</li>
+          </ul>
+        </article>
+      </div>
+      <div class="grid three" style="margin-top:18px;">
+        <article class="card"><span class="badge purple">Concept Gate</span><h3>초기 확인</h3><p>구조, 대표 컬러, 강조 순서, 룩앤필(Look & Feel: 화면의 전반적 인상)을 확정합니다.</p></article>
+        <article class="card"><span class="badge yellow">Review Gate</span><h3>1차 시안 확인</h3><p>색상 세부, 테두리, 질감, 데코, 보상감을 한 번에 취합하여 수정합니다.</p></article>
+        <article class="card"><span class="badge green">In-game QA</span><h3>개발 적용 후</h3><p>실기기 가독성, Safe Area, 애니메이션, 해상도, Unity 적용 색 왜곡만 확인합니다.</p></article>
+      </div>
+      <div class="card" style="margin-top:18px;">
+        <h2>피드백을 줄이되 품질을 낮추지 않는 규칙</h2>
+        <div class="grid four">
+          <div class="note"><b>1. DRI 1명</b><br />기획 의견은 단일 결정 책임자가 취합</div>
+          <div class="note"><b>2. 검토 범위 고정</b><br />이번 시안에서 볼 것·보지 않을 것을 명시</div>
+          <div class="note"><b>3. 필수/선택/추후</b><br />모든 피드백을 같은 중요도로 전달하지 않음</div>
+          <div class="note"><b>4. Concept GO 이후</b><br />전면 변경은 Change Request로 일정 영향 재산정</div>
+        </div>
+        <p style="margin-top:18px;"><a href="./ui_feedback_process_visualization.html" style="color:var(--purple);font-weight:950;">기존 UI 피드백 프로세스 상세 자료 열기 →</a></p>
+      </div>
+    </section>
+
+    <section id="action" class="section">
+      <div class="week-grid">
+        <article class="week"><div class="week-no">W1</div><h3>현재 상태 고정</h3><ul><li>진행 중 SP 1개 선택</li><li>12단계 점검표 공동 작성</li><li>Notion 기준 페이지 1개 지정</li><li>각 단계 DRI와 승인자 명시</li></ul></article>
+        <article class="week"><div class="week-no">W2</div><h3>착수 게이트 적용</h3><ul><li>기획·BM·리소스·데이터 체크 통합</li><li>UI/3D Concept Gate 시범 운영</li><li>이벤트 스키마 리뷰 선행</li><li>변경 요청 분류 시작</li></ul></article>
+        <article class="week"><div class="week-no">W3</div><h3>QA 진입 조건 적용</h3><ul><li>Feature Complete 체크</li><li>자체 플레이·실기기 확인</li><li>기능 QA와 데이터 QA 계획 동시 확정</li><li>RC 빌드 기준 고정</li></ul></article>
+        <article class="week"><div class="week-no">W4</div><h3>출시·회고 연결</h3><ul><li>24/72시간 모니터링 템플릿</li><li>Rollback Trigger 정의</li><li>Decision Log 작성</li><li>재작업·QA 빌드 수 회고</li></ul></article>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <div class="eyebrow">Recommended cadence</div>
+        <h2>최소 회의 체계</h2>
+        <div class="cadence-grid">
+          <div class="cadence"><b>주 1회 · 30분</b><br /><span class="muted">Roadmap & Gate Review</span><p>다음 단계 진입 여부, 미확정 항목, 일정 영향만 결정</p></div>
+          <div class="cadence"><b>필요 시 · 30~45분</b><br /><span class="muted">Concept / Art Review</span><p>복합 UI·3D만 진행하며 Slack 개별 피드백을 대체</p></div>
+          <div class="cadence"><b>출시 후 · 30분</b><br /><span class="muted">Learning Review</span><p>KPI, 리뷰, 퍼널, 기술 이슈를 다음 액션과 연결</p></div>
+        </div>
+      </div>
+
+      <div class="grid two" style="margin-top:18px;">
+        <article class="card">
+          <h2>첫 달에 측정할 프로세스 KPI</h2>
+          <ul>
+            <li>기획 승인 후 Change Request 수</li>
+            <li>UI/3D 시안 리뷰 라운드 수</li>
+            <li>QA 빌드 횟수와 원인 분류</li>
+            <li>데이터 QA에서 발견된 이벤트 누락 수</li>
+            <li>작업 대기 시간과 승인 대기 시간</li>
+            <li>배포 후 72시간 내 긴급 수정 수</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>성공 판단 기준</h2>
+          <ul>
+            <li>피드백 메시지 수가 아니라 <b>재작업량</b>이 감소</li>
+            <li>기획 의도와 최종 화면의 차이가 감소</li>
+            <li>QA 발견 시점이 앞당겨짐</li>
+            <li>배포 전 데이터 신뢰도가 상승</li>
+            <li>담당자가 상태를 묻지 않아도 기준 페이지에서 확인 가능</li>
+            <li>출시 결과가 다음 기획의 가설로 재사용됨</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="sources" class="section">
+      <div class="card">
+        <div class="eyebrow">Evidence timeline</div>
+        <h2>현재 프로세스 판단에 사용한 실제 사례</h2>
+        <p class="muted">Slack 표본을 통한 프로세스 진단이며, 개별 담당자의 성과 평가가 아닙니다. 각 링크는 접근 권한이 있는 경우 Slack에서 열립니다.</p>
+        <div class="source-list" id="sourceList"></div>
+      </div>
+    </section>
+
+    <div class="footer-note">Pizza Ready Process Audit · 브라우저 내 입력값은 localStorage에 저장됩니다.</div>
+  </main>
+
+<script>
+  const processSteps = [
+    {n:'01', title:'기회·문제 정의', phase:'발견', artifact:'데이터/리뷰/사업 요청', gate:'문제·유저·목표 KPI', status:'watch', signal:'데이터와 사업 요청은 활발하지만, 모든 작업이 하나의 Primary KPI로 시작하는지는 점검 필요'},
+    {n:'02', title:'로드맵·우선순위', phase:'전략', artifact:'SP 로드맵·A/B 순서', gate:'선행 결과·용량·의존성', status:'watch', signal:'테스트 데이터 성숙 시점과 다음 회차 일정이 충돌하는 사례가 있음'},
+    {n:'03', title:'기획·BM 설계', phase:'정의', artifact:'Slides·Sheets·Notion', gate:'플로우·RV·IAP·인수조건', status:'risk', signal:'기획서 공유 후 RV/IAP·테스트 구조 논의가 계속 이어지는 신호'},
+    {n:'04', title:'리소스 분해·일정', phase:'정의', artifact:'작업리스트·스프린트', gate:'수량·오너·의존성·마감', status:'risk', signal:'작업리스트 갱신 지연과 수동 리마인드 사례가 확인됨'},
+    {n:'05', title:'UI·3D 컨셉', phase:'제작', artifact:'러프·대표 컬러·동작', gate:'Concept GO', status:'risk', signal:'Slack 반복 피드백 비용으로 별도 리뷰 미팅 방식이 제안됨'},
+    {n:'06', title:'개발·통계 구현', phase:'제작', artifact:'기능·RC·이벤트 스키마', gate:'Feature Complete', status:'watch', signal:'리소스 변경·데이터 조건·Remote Config가 개발과 병렬로 조정되는 경우'},
+    {n:'07', title:'내부 플레이 리뷰', phase:'검증', artifact:'실제 속도 플레이·UX 확인', gate:'의도·재미·병목 확인', status:'watch', signal:'구현 후 UX·UI·연출·광고 지면을 함께 다시 보는 흐름이 존재'},
+    {n:'08', title:'기능 QA', phase:'검증', artifact:'QA 빌드·이슈 리스트', gate:'Blocker 0·인수조건 통과', status:'risk', signal:'SP59에서 8차 QA 빌드까지 반복된 강한 후반 검증 신호'},
+    {n:'09', title:'데이터·성능 QA', phase:'검증', artifact:'funnel/resources·성능', gate:'이벤트 적재·Guardrail', status:'risk', signal:'데이터 QA에서 funnel/resources 미적재 문제가 발견됨'},
+    {n:'10', title:'배포·롤아웃', phase:'배포', artifact:'업로드 빌드·Remote Config', gate:'비율·국가·Rollback Trigger', status:'healthy', signal:'50% 롤아웃·국가 제한·SDK 복구 테스트 등 위험 제한 방식은 강점'},
+    {n:'11', title:'라이브 모니터링', phase:'운영', artifact:'퍼널·RV_impDAU·리뷰', gate:'24/72시간 판단', status:'healthy', signal:'일일/주간 피드백 리포트와 출시 후 지표 체크가 지속됨'},
+    {n:'12', title:'학습·다음 액션', phase:'학습', artifact:'A/B 결과·Decision Log', gate:'채택·수정·중단', status:'watch', signal:'실험 설계 논의는 깊지만 결과와 후속 우선순위를 단일 기록으로 닫는 구조는 점검 필요'}
+  ];
+
+  const auditDomains = [
+    {id:'A', phase:'discover', title:'문제·유저·목표', owner:'PM/기획·DA', status:'watch', evidence:'스토어 리뷰·퍼널·사업 요구가 활발히 공유되지만, 모든 작업이 단일 문제 문장과 Primary KPI로 연결되는지는 확인이 필요합니다.', action:'모든 신규 작업에 Problem Statement + Primary KPI 1개를 필수로 작성', checks:['해결하려는 유저 문제가 한 문장으로 정의되어 있다','대상 유저·국가·버전 범위가 명확하다','Primary KPI와 Guardrail KPI가 구분되어 있다','현재 Baseline 값과 목표값이 있다','하지 않을 범위가 명시되어 있다']},
+    {id:'B', phase:'discover', title:'로드맵·우선순위', owner:'PM/기획·사업', status:'watch', evidence:'A/B 테스트 회차는 계획되지만 데이터 성숙에 2주가 필요해 다음 회차와 의존성이 충돌하는 논의가 있었습니다.', action:'테스트별 최소 관찰 기간과 다음 실험 착수 조건을 로드맵에 표시', checks:['선행 실험의 결과 없이 시작할 수 있는지 구분되어 있다','팀 용량과 핵심 의존성이 반영되어 있다','우선순위 기준이 KPI·위험·비용으로 설명된다','중단/보류 기준이 있다','로드맵 변경 시 영향 범위가 기록된다']},
+    {id:'C', phase:'define', title:'기획·UX 플로우', owner:'PM/기획', status:'risk', evidence:'기획서 공유 이후에도 UI 구조·온보딩·RV/IAP 조건·예외가 지속 논의되는 사례가 있어, 인수 조건 잠금이 필요합니다.', action:'플로우·상태·예외·문구·인수조건을 1페이지 체크리스트로 통합', checks:['진입·진행·완료·실패·재진입 플로우가 있다','모든 화면 상태와 예외가 정의되어 있다','문구와 숫자 표현 규칙이 정의되어 있다','기획 인수 조건이 테스트 가능한 형태다','미정 항목이 명시적으로 표시되어 있다']},
+    {id:'D', phase:'define', title:'BM·경제·A/B 설계', owner:'사업/BM·기획·DA', status:'watch', evidence:'재화 구조·병목·RV·IAP를 분리 검증하려는 설계는 강점이나, 존재/타이밍/형태 변수와 개발 준비 상태를 재정리하는 과정이 있었습니다.', action:'실험 변수 1~2개, 고정 변수, 데이터 성숙 기간을 사전 합의', checks:['RV/IAP의 목적과 유저 가치가 정의되어 있다','가격·환율·Ceiling Rule이 확정되어 있다','실험 변수와 고정 변수가 구분되어 있다','컨트롤·샘플·관찰 기간이 정의되어 있다','의사결정 기준과 후속 액션이 사전 작성되어 있다']},
+    {id:'E', phase:'define', title:'리소스·일정·의존성', owner:'PM·UI/3D·개발', status:'risk', evidence:'3D 작업리스트가 기준 Notion에 갱신되지 않아 리마인드가 발생했고, 실제 작업 연계성에 따라 일정 조정이 필요했습니다.', action:'작업 시작 전 Asset Breakdown과 Dependency Map을 승인', checks:['UI·3D·애니메이션·이펙트 수량이 정리되어 있다','각 리소스의 담당자와 마감이 있다','선행/후행 의존성이 표시되어 있다','재활용 가능한 리소스와 신규 제작이 구분된다','기준 일정 페이지가 최신 상태다']},
+    {id:'F', phase:'make', title:'UI·3D 컨셉 승인', owner:'UI/3D·기획 DRI', status:'risk', evidence:'기획 의도와 시안 표현 차이로 반복 피드백이 발생했고, 이를 줄이기 위해 시안 리뷰 미팅 방식이 새로 제안되었습니다.', action:'레이아웃+대표 컬러+강조 위계를 Concept Gate에서 함께 승인', checks:['이번 리뷰 범위가 명시되어 있다','대표 컬러와 대비가 실제에 가깝다','메인 강조 요소와 정보 위계가 합의되었다','Concept GO 승인자가 1명이다','GO 이후 전면 변경은 Change Request로 처리한다']},
+    {id:'G', phase:'make', title:'개발·Remote Config·이벤트 구현', owner:'개발·DA', status:'watch', evidence:'기능, 통계, Remote Config, SDK 작업이 빌드에 함께 반영되며 변경 조합 관리가 중요합니다.', action:'Implementation Ready 체크에 통계·기본값·버전 호환 포함', checks:['기술 설계와 영향 범위가 검토되었다','Remote Config 기본값·Fallback이 있다','이벤트명·파라미터·발생 시점이 정의되었다','버전/세이브/마이그레이션 영향이 확인되었다','개발 자체 테스트 항목이 있다']},
+    {id:'H', phase:'make', title:'내부 플레이·셀프 리뷰', owner:'기획·개발·아트', status:'watch', evidence:'공장 콘텐츠 리뷰에서 버그뿐 아니라 UX·UI·연출·광고 지면까지 함께 수정 대상이 된 사례가 있습니다.', action:'QA 이전 실제 속도 End-to-End 플레이 세션을 고정', checks:['치트가 아닌 실제 속도로 전체 플로우를 플레이했다','의도한 병목과 보상감이 확인되었다','UI/3D/카메라/연출이 실제 게임에서 확인되었다','광고·IAP 노출이 플레이 흐름과 충돌하지 않는다','셀프 리뷰 이슈가 QA 전 처리되었다']},
+    {id:'I', phase:'verify', title:'기능 QA·회귀 QA', owner:'QA·개발', status:'risk', evidence:'SP59는 8차 QA 빌드까지 공유되어, QA 진입 전 완료 기준과 수정 묶음 관리의 필요성이 큽니다.', action:'QA Entry Criteria와 수정 배치 규칙을 도입', checks:['QA 진입 전 Feature Complete가 선언되었다','기획 인수 조건이 테스트 케이스에 연결되어 있다','Blocker/Critical/Major 우선순위가 통일되어 있다','수정사항을 가능한 한 묶어 빌드한다','회귀 범위와 종료 조건이 정의되어 있다']},
+    {id:'J', phase:'verify', title:'데이터·성능 QA', owner:'DA·QA·개발', status:'risk', evidence:'SP59 데이터 QA에서 funnel/resources 이벤트 미적재가 발견되었고, 성능은 별도 대규모 테스트로 검증되었습니다.', action:'이벤트 스키마 리뷰를 구현 전으로 이동하고 RC에서 자동 적재 확인', checks:['핵심 이벤트가 빌드 전 스키마 리뷰를 통과했다','퍼널·재화·광고·구매 이벤트가 테스트되었다','중복·누락·잘못된 파라미터가 없다','성능·크래시 Guardrail을 통과했다','데이터 확인 담당자와 완료 시점이 정해져 있다']},
+    {id:'K', phase:'verify', title:'릴리즈·롤아웃·롤백', owner:'PM·개발·사업', status:'healthy', evidence:'50% 롤아웃, 인도 한정 배포, 구 SDK 복구 테스트처럼 위험 범위를 제한하는 운영 사례가 확인됩니다.', action:'강점을 표준 Release Checklist와 Rollback Trigger로 문서화', checks:['배포 버전과 포함 스펙이 확정되어 있다','국가·OS·비율·시작 시간이 정의되어 있다','Remote Config 및 서버 설정 순서가 있다','Rollback Trigger와 의사결정자가 있다','24/72시간 모니터링 담당자가 있다']},
+    {id:'L', phase:'learn', title:'라이브 모니터링·학습·회고', owner:'PM·DA·사업·CS', status:'watch', evidence:'일일/주간 리뷰 리포트와 SP59 출시 후 RV_impDAU·퍼널 점검은 강점입니다. 다만 결과가 다음 계획으로 닫히는 Decision Log가 필요합니다.', action:'출시 결과를 Keep/Change/Stop 결정과 다음 Backlog로 연결', checks:['24/72시간 핵심 지표가 확인되었다','유저 리뷰·버그·광고 불만이 분류되었다','실험 결과가 통계적/사업적으로 해석되었다','Keep/Change/Stop 결정이 기록되었다','후속 액션·오너·기한이 Backlog에 연결되었다']}
+  ];
+
+  const gates = [
+    {code:'G0', title:'Opportunity Gate', desc:'왜 지금 이 일을 하는지 합의', items:['문제·유저·Baseline','Primary KPI·Guardrail','우선순위 근거'], go:'GO: 목표가 한 문장으로 설명됨'},
+    {code:'G1', title:'Plan Gate', desc:'기획과 BM의 작동 원리 확정', items:['핵심 플로우·예외','RV/IAP·재화 규칙','인수 조건'], go:'GO: 테스트 가능한 기획'},
+    {code:'G2', title:'Scope Gate', desc:'작업량과 의존성 확정', items:['리소스 수량·재활용','개발·데이터 영향','오너·일정'], go:'GO: 누가 언제 무엇을 만드는지 명확'},
+    {code:'G3', title:'Concept Gate', desc:'UI·3D 방향을 개발 전 잠금', items:['레이아웃','대표 컬러·대비','강조 위계·룩앤필'], go:'GO: 전면 컨셉 변경 종료'},
+    {code:'G4', title:'Implementation Ready', desc:'개발 착수 자료 완료', items:['기술 설계','이벤트 스키마','Remote Config·기본값'], go:'GO: 구현 중 핵심 질문 없음'},
+    {code:'G5', title:'Feature Complete', desc:'QA 진입 전 자체 검증', items:['End-to-End 플레이','셀프 체크','기획·아트 실게임 리뷰'], go:'GO: 알려진 핵심 미완료 없음'},
+    {code:'G6', title:'Release Candidate', desc:'기능·데이터·성능 동시 통과', items:['기능 QA','데이터 QA','성능·크래시'], go:'GO: 배포 후보 빌드 고정'},
+    {code:'G7', title:'Rollout Gate', desc:'안전하게 노출하고 관찰', items:['국가·비율·시간','Rollback Trigger','24/72h Owner'], go:'GO: 위험 제한·복구 가능'},
+    {code:'G8', title:'Learning Gate', desc:'결과를 다음 계획으로 환류', items:['KPI·리뷰·기술 결과','Keep/Change/Stop','Decision Log·Backlog'], go:'GO: 학습이 재사용 가능'}
+  ];
+
+  const sources = [
+    {date:'2026.06.18', title:'작업리스트 및 스프린트 일정 갱신 리마인드', desc:'3D 작업리스트가 기준 Notion 페이지에 반영되지 않아 개발 일정 확인을 위해 리마인드가 발생.', url:'https://molip0225.slack.com/archives/C05FT5754SK/p1781753332200629'},
+    {date:'2026.06.23', title:'SP60 라이브 이벤트 기획서 2종 공유', desc:'리소스 미팅 전 기획서를 공유하고 RV/IAP는 사업팀과 추가 논의가 필요하다고 명시.', url:'https://molip0225.slack.com/archives/C05FT5754SK/p1782211702781079'},
+    {date:'2026.07.07', title:'SP59 A/B 테스트 계획 및 회차 재정리', desc:'재화·병목·RV·IAP 변수와 데이터 성숙 기간을 논의하며 3회차 실험으로 이월.', url:'https://molip0225.slack.com/archives/C05FT5754SK/p1783385447300559'},
+    {date:'2026.07.20', title:'3D & UI 아트 피드백 절차 변경', desc:'Slack 다회 피드백 비용을 줄이기 위해 시안 리뷰 미팅에서 GO/재작업을 결정하는 방식 제안.', url:'https://supercent.slack.com/archives/C05FT5754SK/p1784543983619739'},
+    {date:'2026.07.23', title:'SP59 8차 QA 빌드 공유', desc:'기능·표현·예외 수정이 누적된 다차 QA 루프의 대표 신호.', url:'https://molip0225.slack.com/archives/C05FT5754SK/p1784798579098229'},
+    {date:'2026.07.23', title:'SP59 데이터 QA 이벤트 미적재 발견', desc:'funnel/resources 이벤트가 적재되지 않는 이슈가 데이터 QA 단계에서 확인됨.', url:'https://molip0225.slack.com/archives/C05FT5754SK/p1784789502367869'},
+    {date:'2026.07.27', title:'SP59 배포 후 퍼널·RV_impDAU 확인 요청', desc:'미국 신규 유저 RV_impDAU 하락 신호에 대해 안정성과 퍼널 이탈을 함께 빠르게 확인.', url:'https://molip0225.slack.com/archives/C05FT5754SK/p1785122625482619'},
+    {date:'2026.07.27', title:'일일·주간 유저 피드백 리포트', desc:'스토어 리뷰, 부정 감정, Critical 이슈를 일일/주간으로 자동 공유.', url:'https://supercent.slack.com/archives/C05FT5754SK'},
+    {date:'2026.07.28', title:'광고 SDK 문제 대응 빌드·제한 배포 검토', desc:'구 SDK 복구 테스트와 인도 한정 배포를 통해 위험을 제한하려는 운영 사례.', url:'https://supercent.slack.com/archives/C05FT5754SK/p1785217345506799'}
+  ];
+
+  const stateKey = 'pizzaReadyAuditStateV1';
+  let auditState = {};
+
+  function statusLabel(s){ return s==='healthy'?'정상':s==='watch'?'관찰':'위험'; }
+  function statusColor(s){ return s==='healthy'?'var(--green)':s==='watch'?'var(--yellow)':'var(--red)'; }
+  function statusBg(s){ return s==='healthy'?'var(--green-soft)':s==='watch'?'var(--yellow-soft)':'var(--red-soft)'; }
+
+  function renderProcess(){
+    const root = document.getElementById('processGrid');
+    root.innerHTML = processSteps.map(p => `
+      <article class="process-card">
+        <div class="process-no">${p.n}</div>
+        <h3>${p.title}</h3>
+        <span class="badge ${p.status==='healthy'?'green':p.status==='watch'?'yellow':'red'}">${statusLabel(p.status)}</span>
+        <div class="process-meta">
+          <div class="meta-line"><b>구간</b> ${p.phase}</div>
+          <div class="meta-line"><b>주요 산출물</b> ${p.artifact}</div>
+          <div class="meta-line"><b>다음 단계 조건</b> ${p.gate}</div>
+        </div>
+        <div class="signal ${p.status}">${p.signal}</div>
+      </article>`).join('');
+  }
+
+  function loadState(){
+    try { auditState = JSON.parse(localStorage.getItem(stateKey) || '{}'); } catch(e){ auditState = {}; }
+    auditDomains.forEach(d => {
+      if(!auditState[d.id]) auditState[d.id] = {status:d.status, checks:d.checks.map(()=>false), owner:'', due:'', action:d.action};
+    });
+  }
+
+  function saveAudit(show=true){
+    let saved = true;
+    try { localStorage.setItem(stateKey, JSON.stringify(auditState)); } catch(e) { saved = false; }
+    if(show) alert(saved ? '현재 점검 상태를 이 브라우저에 저장했습니다.' : '브라우저 보안 설정으로 자동 저장은 제한되지만, 현재 화면에서는 계속 점검할 수 있습니다.');
+  }
+
+  function resetAudit(){
+    if(!confirm('입력한 점검 상태를 모두 초기화할까요?')) return;
+    localStorage.removeItem(stateKey); auditState={}; loadState(); renderAudit(); generateMeetingSummary();
+  }
+
+  function renderAudit(){
+    const phase = document.getElementById('phaseFilter').value;
+    const status = document.getElementById('statusFilter').value;
+    const filtered = auditDomains.filter(d => (phase==='all'||d.phase===phase) && (status==='all'||auditState[d.id].status===status));
+    const root = document.getElementById('auditGrid');
+    root.innerHTML = filtered.map(d => {
+      const s = auditState[d.id];
+      const done = s.checks.filter(Boolean).length;
+      const pct = Math.round(done / d.checks.length * 100);
+      return `<article class="audit-card" data-id="${d.id}">
+        <div class="audit-head">
+          <div class="audit-title"><div class="audit-letter">${d.id}</div><div><h3>${d.title}</h3><div class="small muted">기본 책임: ${d.owner}</div></div></div>
+          <select class="status-select" style="color:${statusColor(s.status)};background:${statusBg(s.status)}" onchange="updateStatus('${d.id}',this)">
+            <option value="healthy" ${s.status==='healthy'?'selected':''}>정상</option><option value="watch" ${s.status==='watch'?'selected':''}>관찰</option><option value="risk" ${s.status==='risk'?'selected':''}>위험</option>
+          </select>
+        </div>
+        <div class="audit-evidence"><b>관찰 근거</b><br>${d.evidence}</div>
+        <div class="checklist">${d.checks.map((q,i)=>`<label class="check-row"><input type="checkbox" ${s.checks[i]?'checked':''} onchange="toggleCheck('${d.id}',${i},this.checked)"><span>${q}</span></label>`).join('')}</div>
+        <div class="audit-fields">
+          <div class="field"><label>실행 오너</label><input value="${escapeHtml(s.owner)}" placeholder="담당자" oninput="updateField('${d.id}','owner',this.value)"></div>
+          <div class="field"><label>기한</label><input type="date" value="${escapeHtml(s.due)}" oninput="updateField('${d.id}','due',this.value)"></div>
+          <div class="field full"><label>다음 액션</label><textarea oninput="updateField('${d.id}','action',this.value)">${escapeHtml(s.action)}</textarea></div>
+        </div>
+        <div class="completion"><div class="completion-top"><span>점검 완료</span><span>${done}/${d.checks.length} · ${pct}%</span></div><div class="bar"><i style="width:${pct}%"></i></div></div>
+      </article>`;
+    }).join('');
+    updateSummaryStats(filtered);
+  }
+
+  function escapeHtml(v){ return String(v??'').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function updateStatus(id,el){ auditState[id].status=el.value; el.style.color=statusColor(el.value); el.style.background=statusBg(el.value); saveAudit(false); renderAudit(); }
+  function toggleCheck(id,i,val){ auditState[id].checks[i]=val; saveAudit(false); renderAudit(); }
+  function updateField(id,key,val){ auditState[id][key]=val; saveAudit(false); }
+  function updateSummaryStats(filtered=auditDomains){
+    const current = auditDomains.filter(d=>filtered.some(f=>f.id===d.id));
+    document.getElementById('domainCount').textContent=current.length;
+    document.getElementById('healthyCount').textContent=current.filter(d=>auditState[d.id].status==='healthy').length;
+    document.getElementById('watchCount').textContent=current.filter(d=>auditState[d.id].status==='watch').length;
+    document.getElementById('riskCount').textContent=current.filter(d=>auditState[d.id].status==='risk').length;
+    const total = current.reduce((a,d)=>a+d.checks.length,0); const checked=current.reduce((a,d)=>a+auditState[d.id].checks.filter(Boolean).length,0);
+    document.getElementById('completionCount').textContent= total?Math.round(checked/total*100)+'%':'0%';
+  }
+
+  function renderGates(){
+    document.getElementById('gateLine').innerHTML=gates.map(g=>`<article class="gate"><span class="gate-code">${g.code}</span><h3>${g.title}</h3><p class="muted">${g.desc}</p><ul>${g.items.map(x=>`<li>${x}</li>`).join('')}</ul><div class="go">${g.go}</div></article>`).join('');
+  }
+  function renderSources(){
+    document.getElementById('sourceList').innerHTML=sources.map(s=>`<article class="source-item"><div class="source-date">${s.date}</div><div><h4>${s.title}</h4><div class="small muted">${s.desc}</div></div><a class="source-link" target="_blank" rel="noopener" href="${s.url}">Slack 열기 ↗</a></article>`).join('');
+  }
+
+  function generateMeetingSummary(){
+    const risks=auditDomains.filter(d=>auditState[d.id].status==='risk');
+    const watches=auditDomains.filter(d=>auditState[d.id].status==='watch');
+    const incomplete=auditDomains.map(d=>({d,missing:d.checks.filter((_,i)=>!auditState[d.id].checks[i])})).filter(x=>x.missing.length);
+    let text='[Pizza Ready 작업 프로세스 점검 요약]\n\n';
+    text+=`• 위험 ${risks.length}개 / 관찰 ${watches.length}개 / 정상 ${auditDomains.length-risks.length-watches.length}개\n`;
+    text+=`• 전체 체크 완료율 ${document.getElementById('completionCount').textContent}\n\n`;
+    if(risks.length){ text+='[우선 해결 필요]\n'; risks.forEach(d=>{const s=auditState[d.id]; text+=`• ${d.id}. ${d.title}${s.owner?' — '+s.owner:''}${s.due?' / '+s.due:''}\n  다음 액션: ${s.action||d.action}\n`;}); text+='\n'; }
+    if(watches.length){ text+='[관찰 및 보완]\n'; watches.forEach(d=>text+=`• ${d.id}. ${d.title}\n`); text+='\n'; }
+    text+='[이번 회의에서 결정할 것]\n';
+    const top=incomplete.slice(0,5); if(top.length){ top.forEach(x=>text+=`• ${x.d.title}: ${x.missing.slice(0,2).join(' / ')}\n`); } else { text+='• 모든 체크 완료 — 상태와 다음 액션 최종 승인\n'; }
+    text+='\n[운영 원칙]\n• 다음 단계 착수 전 최소 승인 조건을 확인한다.\n• Slack은 토론/알림, 기준 문서는 결정/현재상태/최종 산출물로 사용한다.\n• 피드백 수가 아니라 재작업량과 QA 발견 시점을 개선 KPI로 본다.';
+    document.getElementById('meetingSummary').textContent=text;
+    return text;
+  }
+
+  async function copyMeetingSummary(){
+    const text=generateMeetingSummary();
+    try { await navigator.clipboard.writeText(text); alert('회의 요약을 복사했습니다.'); }
+    catch(e){ alert('복사 권한이 없어 요약 박스에서 직접 복사해 주세요.'); }
+  }
+
+  function exportAudit(){
+    const payload={exportedAt:new Date().toISOString(),project:'Pizza Ready',state:auditState,summary:generateMeetingSummary()};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='pizza_ready_process_audit.json'; a.click(); URL.revokeObjectURL(a.href);
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:document.querySelector('.tabs').offsetTop-8,behavior:'smooth'});
+  }));
+  document.getElementById('phaseFilter').addEventListener('change',renderAudit);
+  document.getElementById('statusFilter').addEventListener('change',renderAudit);
+
+  renderProcess(); loadState(); renderAudit(); renderGates(); renderSources();
+</script>
+</body>
+</html>
