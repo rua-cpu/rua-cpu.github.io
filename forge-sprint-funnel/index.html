@@ -17,6 +17,23 @@ h2{font-size:19px;margin:4px 0 5px} h3{font-size:15px;margin:0 0 7px} .note{colo
 .sources{columns:2;column-gap:28px;margin-top:8px} .source{break-inside:avoid;font-size:11.5px;color:var(--muted);margin:3px 0} footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)}
 @media(max-width:900px){.grid4{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.detailGrid{grid-template-columns:repeat(2,1fr)}.sources{columns:1}} @media(max-width:520px){.wrap{padding:18px 12px 48px}h1{font-size:23px}.grid4{grid-template-columns:1fr}.detailGrid{grid-template-columns:1fr}input[type=search]{min-width:0;width:100%}}
 @media print{.tabs,.controls{display:none!important}.pane{display:block!important;page-break-before:always}.pane:first-of-type{page-break-before:auto}.tablebox{max-height:none;overflow:visible}body{background:#fff}.box,.metric{box-shadow:none}}
+
+/* summary v2: evidence-led executive view */
+.summaryVerdict{border:1px solid #b9cfe3;background:#edf5fb;border-radius:12px;padding:15px 17px;margin:14px 0 16px;display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:start}
+.summaryVerdict .flag{background:#245d94;color:#fff;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;white-space:nowrap}
+.summaryVerdict .title{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
+.summaryVerdict .desc{font-size:12.5px;color:#53616e}
+.sectionHead{display:flex;justify-content:space-between;gap:12px;align-items:end;margin:22px 0 9px}.sectionHead h3{margin:0}.sectionHead .note{max-width:760px;text-align:right}
+.consensus{display:grid;grid-template-columns:minmax(170px,1.2fr) repeat(3,minmax(125px,.8fr)) minmax(160px,.9fr);gap:7px;align-items:stretch}
+.consensus .c{border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:#fff;min-width:0}.consensus .head{font-size:10.5px;color:var(--muted);font-weight:800;background:#f7f9fb}.consensus .issue b{display:block;margin-bottom:3px}.consensus .issue span,.consensus .c small{font-size:11px;color:var(--muted);display:block}.consensus .val{font-weight:800;font-size:17px;letter-spacing:-.02em}.consensus .hot1{background:#fbf4d9;border-color:#e8dca9}.consensus .hot2{background:#fae9e7;border-color:#eac2bd}.consensus .cold{background:#eaf5f1;border-color:#c7e3d9}.consensus .na{background:#f6f7f9;color:var(--muted);border-style:dashed}.consensus .evidence{display:flex;flex-direction:column;justify-content:center}.consensus .evidence b{font-size:12px}.consensus .evidence span{font-size:11px;color:var(--muted)}
+.visualGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}.vizBox{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}.vizBox h3{margin-bottom:3px}.vizCaption{font-size:11.5px;color:var(--muted);margin-bottom:11px}
+.barRows{display:flex;flex-direction:column;gap:10px}.barRow{display:grid;grid-template-columns:minmax(120px,1fr) minmax(160px,2fr) 58px;gap:9px;align-items:center}.barLabel{font-size:11.5px}.track{height:10px;border-radius:999px;background:#edf0f2;overflow:hidden}.fill{height:100%;border-radius:999px;background:var(--blue)}.fill.orange{background:var(--orange)}.fill.red{background:var(--red)}.barVal{text-align:right;font-size:11.5px;font-weight:800}.barSub{grid-column:2/4;font-size:10.5px;color:var(--muted);margin-top:-6px}
+.tierGroup{padding:9px 0;border-bottom:1px solid #eef1f3}.tierGroup:last-child{border-bottom:0}.tierTitle{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;margin-bottom:6px}.tierTitle b{font-size:12px}.spark{display:flex;gap:5px;align-items:end;height:54px}.sparkItem{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:3px}.sparkBar{width:100%;max-width:46px;min-height:3px;border-radius:4px 4px 2px 2px;background:var(--blue)}.sparkItem.hot .sparkBar{background:var(--red)}.sparkItem span{font-size:9.5px;color:var(--muted);white-space:nowrap}.sparkItem b{font-size:10px}
+.actionGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:10px}.actionCard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}.actionCard.p0{border-top:3px solid var(--red)}.actionCard.p1{border-top:3px solid var(--orange)}.actionCard .prio{font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--red)}.actionCard.p1 .prio{color:var(--orange)}.actionCard h3{margin:0}.actionCard .evidenceLine{background:#f7f9fb;border-radius:7px;padding:8px 9px;font-size:11px;color:#52606d}.actionCard ul{padding-left:18px;margin:0;display:flex;flex-direction:column;gap:5px}.actionCard li{font-size:12px}.actionCard .target{border-top:1px solid #edf0f2;padding-top:7px;font-size:11px;color:var(--muted)}
+.doNot{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.doNot>div{border:1px solid var(--line);border-radius:9px;padding:11px 12px;background:#fff}.doNot b{display:block;margin-bottom:3px}.doNot span{font-size:11.5px;color:var(--muted)}
+@media(max-width:980px){.consensus{grid-template-columns:1fr 1fr}.consensus .head{display:none}.consensus .issue{grid-column:1/-1;background:#f7f9fb}.visualGrid,.actionGrid{grid-template-columns:1fr}.sectionHead{align-items:start;flex-direction:column}.sectionHead .note{text-align:left}.doNot{grid-template-columns:1fr}}
+@media(max-width:560px){.summaryVerdict{grid-template-columns:1fr}.barRow{grid-template-columns:110px 1fr 46px}.consensus{grid-template-columns:1fr}.consensus .issue{grid-column:auto}}
+
 </style>
 </head>
 <body>
@@ -37,18 +54,100 @@ h2{font-size:19px;margin:4px 0 5px} h3{font-size:15px;margin:0 0 7px} .note{colo
 </nav>
 
 <section id="summary" class="pane active">
-  <h2>핵심 요약</h2>
-  <p class="note">최신 3.4.0의 ByteBrew 5일 통합 완료 퍼널과 과거 GA 원본 퍼널을 함께 읽은 결과입니다.</p>
-  <div class="grid4">
-    <div class="metric"><div class="k">3.4.0 BB · Step001 → 106</div><div class="v">9.2%</div><div class="h">131 → 12명</div></div>
-    <div class="metric"><div class="k">3.4.0 GA · Step001 → 106</div><div class="v">10.1%</div><div class="h">139 → 14명</div></div>
-    <div class="metric"><div class="k">BB · 마지막 25% 구간 이탈 비중</div><div class="v">51.3%</div><div class="h">전체 감소의 절반 이상이 후반 20스텝에 집중</div></div>
-    <div class="metric"><div class="k">GA↔BB 정규화 곡선 상관</div><div class="v">0.998</div><div class="h">평균 누적률 차이 2.0%p</div></div>
+  <h2>핵심 진단</h2>
+  <p class="note">“어디서 빠졌나”뿐 아니라 <b>동일 행동이 반복될수록 이탈이 커지는지</b>, 그리고 <b>Start 이후 완료 전에 빠지는지</b>를 함께 봅니다.</p>
+
+  <div class="summaryVerdict">
+    <span class="flag">데이터 결론</span>
+    <div>
+      <div class="title">3개 테스트에서 완전히 동일한 ‘한 스텝’이 공통 이탈한 것은 확인할 수 없습니다.</div>
+      <div class="desc">이유는 최신 3.4.0 온보딩 퍼널에 과거의 <code>BronzeMineLift / BronzeMine2 / Room Clear</code> 후반 확장 이벤트가 포함되지 않기 때문입니다. 다만 데이터가 공통으로 가리키는 구조는 명확합니다. <b>첫 메커닉 학습보다 이미 배운 행동을 다시 요구하는 티어 전환·확장 게이트에서 이탈이 커집니다.</b></div>
+    </div>
   </div>
-  <div class="callout"><b>공통 구조 문제:</b> 6/29와 7/22에서 <b>광산의 다음 구역/룸으로 넘어가는 확장 게이트</b>가 반복적으로 큰 이탈을 만들었습니다. 최신 3.4.0에서는 초반 광산 튜토리얼보다 <b>후반의 반복 고용·허수아비·진열/제작 확장</b>에서 이탈이 커집니다.</div>
-  <div class="two">
-    <div class="box"><h3>과거 테스트에서 반복된 구간</h3><div id="summaryRepeat" class="list"></div></div>
-    <div class="box"><h3>3.4.0에서 큰 Start → Complete 마찰</h3><div id="summaryRecent" class="list"></div></div>
+
+  <div class="grid4">
+    <div class="metric"><div class="k">3.4.0 · 초기 광산 학습</div><div class="v">3.9%</div><div class="h">Step020 127 → Step026 122 · 해금/진입/채굴/줍기/나가기 전체</div></div>
+    <div class="metric"><div class="k">3.4.0 · 초기 허수아비 학습</div><div class="v">0.9%</div><div class="h">Step040 116 → Step047 115 · 해금/건설/수리 완료</div></div>
+    <div class="metric"><div class="k">후반 망치→허수아비8 체인</div><div class="v">67.5%</div><div class="h">Step096 40 → Step105 13 · 8개 요구 행동 중 6개가 10%+ 이탈</div></div>
+    <div class="metric"><div class="k">BB · 마지막 20스텝 이탈 비중</div><div class="v">51.3%</div><div class="h">전체 감소의 절반 이상이 마지막 25% 구간에 집중</div></div>
+  </div>
+
+  <div class="sectionHead"><h3>테스트 간 공통 신호 맵</h3><p class="note">정확히 같은 이벤트인지와 행동군 수준의 유사성을 분리했습니다. ‘미계측’은 문제가 없다는 뜻이 아니라 최신 데이터로 직접 비교할 수 없다는 뜻입니다.</p></div>
+  <div class="consensus" aria-label="테스트 간 공통 이탈 신호">
+    <div class="c head">문제 행동</div><div class="c head">6/29</div><div class="c head">7/22</div><div class="c head">3.4.0 · 8/05–09</div><div class="c head">근거 수준</div>
+
+    <div class="c issue"><b>허수아비 / 훈련 진행</b><span>동일 행동군이지만 최신 빌드에서는 이탈 위치가 ‘초기 설명’에서 ‘후반 반복’으로 이동</span></div>
+    <div class="c hot1"><span class="val">14.9%</span><small>FixTrainingDummy step001 · 174→148</small></div>
+    <div class="c hot1"><span class="val">7.4%</span><small>FixTrainingDummy step001 Start · 136→126</small></div>
+    <div class="c hot2"><span class="val">7.9→23.5%</span><small>허수아비 4→8 · 후반으로 갈수록 급증</small></div>
+    <div class="c evidence"><b>3/3 행동군 신호</b><span>완전 동일 이벤트 비교는 아님</span></div>
+
+    <div class="c issue"><b>광산 다음 구역 / 티어 확장</b><span>동광산 진입 자체가 아니라 Lift와 다음 광산 구역으로 넘어가는 구간</span></div>
+    <div class="c hot2"><span class="val">27.0% → 22.5%</span><small>BronzeMine → Lift → BronzeMine2</small></div>
+    <div class="c hot2"><span class="val">28.0% → 26.3%</span><small>동일 이벤트 · 거의 같은 이탈</small></div>
+    <div class="c na"><span class="val">미계측</span><small>3.4.0 온보딩에는 후반 Lift/Room 확장 이벤트 없음</small></div>
+    <div class="c evidence"><b>과거 2/2 정확 재현</b><span>현재 빌드 재검증 필요</span></div>
+
+    <div class="c issue"><b>첫 메커닉 사용</b><span>문제의 반대 증거: 초기 조작/설명 자체는 최신 빌드에서 안정적</span></div>
+    <div class="c na"><span class="val">—</span><small>동일 정의로 직접 비교 불가</small></div>
+    <div class="c na"><span class="val">—</span><small>동일 정의로 직접 비교 불가</small></div>
+    <div class="c cold"><span class="val">광산 3.9% · 허수아비 0.9%</span><small>초기 온보딩 구간 전체 손실</small></div>
+    <div class="c evidence"><b>수정 우선순위 낮음</b><span>안내보다 반복 게이트 우선</span></div>
+  </div>
+
+  <div class="visualGrid">
+    <div class="vizBox">
+      <h3>과거 두 테스트에서 정확히 반복된 광산 확장 이탈</h3>
+      <div class="vizCaption">같은 이벤트 정의에서 6/29와 7/22가 거의 같은 비율로 빠집니다. 초기 채굴 조작보다 <b>다음 지역으로 넘어가는 비용/진행 게이트</b>를 우선 의심해야 합니다.</div>
+      <div id="mineRepeatBars" class="barRows"></div>
+    </div>
+    <div class="vizBox">
+      <h3>3.4.0 · 같은 행동도 티어가 올라갈수록 이탈 증가</h3>
+      <div class="vizCaption">이탈이 ‘새 기능 이해’가 아니라 <b>반복 횟수와 후반 진행 부담</b>에 붙어 있다는 강한 신호입니다.</div>
+      <div id="tierEscalation"></div>
+    </div>
+  </div>
+
+  <div class="sectionHead"><h3>그래서 무엇을 수정해야 하나</h3><p class="note">원인(재화 부족·대기시간·요구 횟수)은 현재 이벤트만으로 하나로 확정할 수 없습니다. 아래는 <b>Start→Complete와 반복 티어 패턴으로 우선순위를 좁힌 실험안</b>입니다.</p></div>
+  <div class="actionGrid">
+    <div class="actionCard p0">
+      <div class="prio">P0 · 바로 실험</div>
+      <h3>후반 반복 게이트를 압축</h3>
+      <div class="evidenceLine">Step096 40명 → Step105 13명. 097~105의 8개 요구 행동 중 6개가 로컬 이탈 10% 이상.</div>
+      <ul>
+        <li>망치 티어에서 <b>진열대 → 제작기구 → 직원 → 수리직원 → 허수아비 반복</b> 중 1~2개를 자동 해금/선택 과제로 전환합니다.</li>
+        <li>이미 한 번 학습한 건설·고용 행동은 다음 티어에서 튜토리얼 필수 행동으로 다시 강제하지 않습니다.</li>
+        <li>각 티어의 필수 목표를 “새로운 경험 1개 + 기존 행동 1개” 정도로 줄이는 A/B를 우선합니다.</li>
+      </ul>
+      <div class="target">검증: 097·098·102·103·104·105의 로컬 이탈이 먼저 내려가는지 확인.</div>
+    </div>
+    <div class="actionCard p0">
+      <div class="prio">P0 · 원인 우선순위</div>
+      <h3>UI 안내보다 비용·요구량·대기 조건부터 낮춰 테스트</h3>
+      <div class="evidenceLine">Start→Complete: 수리직원3 19.2%, 허수아비7 19.0%, 허수아비6 18.2%, 허수아비8 17.6%.</div>
+      <ul>
+        <li>유저가 행동을 <b>시작한 뒤</b> 완료하지 못하므로 “다음에 뭘 해야 하는지 모름”만으로 설명하기 어렵습니다.</li>
+        <li>각 고이탈 스텝에서 재화 비용, 요구 생산 횟수, 대기 시간을 <b>한 변수씩</b> 낮춘 실험을 합니다.</li>
+        <li>첫 완료에 필요한 재화를 직전 보상으로 보장하는 버전도 별도 비교합니다.</li>
+      </ul>
+      <div class="target">검증: 후반 Start→Complete를 먼저 10% 이하 구간으로 이동시키고, 같은 날 전체 퍼널 변화 확인.</div>
+    </div>
+    <div class="actionCard p1">
+      <div class="prio">P1 · 재계측 후 수정</div>
+      <h3>광산 확장은 ‘조작’이 아니라 ‘다음 구역 진입 조건’을 수정</h3>
+      <div class="evidenceLine">BronzeMineLift 27.0% ↔ 28.0%, BronzeMine2 22.5% ↔ 26.3%. 두 과거 테스트에서 정확히 재현.</div>
+      <ul>
+        <li>첫 Lift/다음 Room 진입 시 필요한 비용·채굴량·대기 구간을 완화하는 안을 테스트합니다.</li>
+        <li>다음 구역에서 얻는 신규 광물/보상을 해금 전에 명확히 보여주고, 긴 Room Clear에는 중간 보상을 둡니다.</li>
+        <li>3.4.0에는 동일 후반 이벤트가 없으므로 ByteBrew에 <b>MineUnlock Start/Complete + Room Clear Start/Complete + 당시 재화</b>를 먼저 추가합니다.</li>
+      </ul>
+      <div class="target">검증: 과거 22~28% 이탈 밴드가 현재 빌드에서도 재현되는지부터 확인 후 밸런스 변경.</div>
+    </div>
+  </div>
+
+  <div class="doNot">
+    <div><b>우선 하지 않을 것 · 튜토리얼 UI 추가</b><span>초기 광산/허수아비는 이미 안정적이고, 고이탈 스텝은 Start 이후에도 빠집니다. 화살표·팝업 추가는 1차 처방으로 두지 않습니다.</span></div>
+    <div><b>반드시 추가할 계측 · 비용 상태</b><span>고이탈 행동 Start 시점에 골드/광물 보유량, 요구 비용, 대기/생산 목표량을 함께 남겨야 “돈 부족 vs 반복 피로 vs 시간”을 다음 테스트에서 분리할 수 있습니다.</span></div>
   </div>
 </section>
 
@@ -113,9 +212,22 @@ $$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.cl
 
 // summary
 function renderSummary(){
-  $('#summaryRepeat').innerHTML=DATA.recurring.slice().sort((a,b)=>Math.max(b.jun,b.jul)-Math.max(a.jun,a.jul)).map(x=>`<div class="li"><div><b>${x.label}</b><div class="small">6/29 ${x.jun}% · 7/22 ${x.jul}%</div></div><span class="pill ${Math.max(x.jun,x.jul)>=50?'bad':'warn'}">반복</span></div>`).join('');
-  const top=DATA.latest.filter(x=>x.startCompletePct!=null).sort((a,b)=>b.startCompletePct-a.startCompletePct).slice(0,7);
-  $('#summaryRecent').innerHTML=top.map(x=>`<div class="li"><div><b>${x.step} · ${x.name}</b><div class="small">Start ${x.startSum} → Complete ${x.completeSum}</div></div><span class="pill ${x.startCompletePct>=15?'bad':'warn'}">${pct(x.startCompletePct)}</span></div>`).join('');
+  const mineRows=[
+    {label:'BronzeMine → Lift',jun:27.0,jul:28.0,sub:'6/29 152→111 · 7/22 132→95'},
+    {label:'Lift → BronzeMine2',jun:22.5,jul:26.3,sub:'6/29 111→86 · 7/22 95→70'}
+  ];
+  $('#mineRepeatBars').innerHTML=mineRows.map(x=>`<div class="barRow"><div class="barLabel"><b>${x.label}</b></div><div><div class="track"><div class="fill" style="width:${Math.min(100,x.jun/35*100)}%"></div></div><div class="track" style="margin-top:4px"><div class="fill orange" style="width:${Math.min(100,x.jul/35*100)}%"></div></div></div><div class="barVal">${x.jun.toFixed(1)}%<br>${x.jul.toFixed(1)}%</div><div class="barSub">파랑 6/29 · 주황 7/22 · ${x.sub}</div></div>`).join('');
+
+  const tierSets=[
+    {title:'수리 직원',items:[['1',61],['2',92],['3',103]]},
+    {title:'진열대 2',items:[['검',76],['도끼',82],['망치',97]]},
+    {title:'허수아비 반복',items:[['4',77],['5',83],['6',94],['7',104],['8',105]]}
+  ];
+  $('#tierEscalation').innerHTML=tierSets.map(g=>{
+    const vals=g.items.map(([lab,step])=>{const x=DATA.latest.find(r=>r.idx===step);return {lab,v:x?x.bbDropPct:0};});
+    const max=Math.max(25,...vals.map(x=>x.v));
+    return `<div class="tierGroup"><div class="tierTitle"><b>${g.title}</b><span class="muted">${vals.map(x=>x.v.toFixed(1)+'%').join(' → ')}</span></div><div class="spark">${vals.map(x=>`<div class="sparkItem ${x.v>=10?'hot':''}"><div class="sparkBar" style="height:${Math.max(4,x.v/max*48)}px"></div><b>${x.v.toFixed(1)}%</b><span>${x.lab}</span></div>`).join('')}</div></div>`;
+  }).join('');
 }
 
 // recurring table
