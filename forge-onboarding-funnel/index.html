@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>포지 앤 포춘 · 스프린트별 온보딩 이탈 비교 (6월 · 7월 · 8월)</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f7f5f1; --panel:#fffefb; --panel-2:#faf8f3;
+  --ink:#1a1d21; --ink-2:#55606a; --ink-3:#8a949c;
+  --line:#e4e0d8; --line-2:#efece5; --zebra:#faf8f3;
+  --jun:#2f6fb2; --jun-soft:#e8eff7;
+  --jul:#c0602c; --jul-soft:#f8ebe1;
+  --aug:#7d57b5; --aug-soft:#efe9f6;
+  --good:#1c7a5b; --good-soft:#e4f0ea;
+  --warn:#9a6b00; --warn-soft:#f6eed8;
+  --bad:#ad3a2a; --bad-soft:#f6e2dd;
+  --bronze:#b07a3f; --silver:#8f9aa3; --gold:#c69a24;
+  --bronze-bg:rgba(176,122,63,.07); --silver-bg:rgba(143,154,163,.09); --gold-bg:rgba(198,154,36,.09);
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  --sans:"Apple SD Gothic Neo","Pretendard",-apple-system,system-ui,"Segoe UI",sans-serif;
+  --grid:#eae6de;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:1000px;margin:0 auto;padding:44px 22px 96px}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* header */
+header{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:30px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+h1{margin:.35em 0 .15em;font-size:clamp(26px,4.6vw,38px);font-weight:800;letter-spacing:-.025em;line-height:1.12;text-wrap:balance}
+.lede{color:var(--ink-2);max-width:64ch;font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chip{font-family:var(--mono);font-size:11.5px;padding:4px 9px;border:1px solid var(--line);border-radius:100px;background:var(--panel);color:var(--ink-2)}
+.chip b{color:var(--ink);font-weight:600}
+.chip.jun{border-color:var(--jun);color:var(--jun);background:var(--jun-soft)}
+.chip.jul{border-color:var(--jul);color:var(--jul);background:var(--jul-soft)}
+.chip.aug{border-color:var(--aug);color:var(--aug);background:var(--aug-soft)}
+
+section{margin-top:52px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--ink-3);display:inline-block}
+h2{margin:.5em 0 .2em;font-size:23px;font-weight:750;letter-spacing:-.02em;text-wrap:balance}
+h2 .accent{color:var(--jul)}
+.say{color:var(--ink-2);max-width:70ch;margin:.2em 0 0}
+.say strong{color:var(--ink);font-weight:650}
+
+/* TL;DR callout */
+.tldr{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--jul);border-radius:8px;padding:20px 22px;margin-top:26px}
+.tldr h3{margin:0 0 12px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.tldr ul{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+.tldr li{display:flex;gap:12px;align-items:flex-start}
+.tldr li .n{flex:none;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;margin-top:1px}
+.tldr li p{margin:0;color:var(--ink-2)}
+.tldr li p b{color:var(--ink);font-weight:650}
+
+/* stat cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 16px 18px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.card.jun::before{background:var(--jun)} .card.jul::before{background:var(--jul)} .card.aug::before{background:var(--aug)}
+.card .tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.03em}
+.card.jun .tag{color:var(--jun)} .card.jul .tag{color:var(--jul)} .card.aug .tag{color:var(--aug)}
+.card .sub{font-size:11.5px;color:var(--ink-3);margin-top:1px}
+.card .rows{margin-top:13px;display:flex;flex-direction:column;gap:8px}
+.card .r{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--line-2);padding-top:7px}
+.card .r:first-child{border-top:0;padding-top:0}
+.card .r .lab{font-size:12.5px;color:var(--ink-2)}
+.card .r .val{font-family:var(--mono);font-weight:700;font-size:15px}
+.card .r .val.big{font-size:20px;letter-spacing:-.02em}
+.val.g{color:var(--good)} .val.w{color:var(--warn)} .val.b{color:var(--bad)}
+
+/* chart shell */
+figure{margin:24px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 14px}
+.figtop{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.figtitle{font-size:14px;font-weight:700}
+.figtitle .q{color:var(--ink-3);font-weight:500;font-size:12.5px}
+.legend{display:flex;gap:14px;flex-wrap:wrap}
+.legend .li{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);font-weight:600}
+.legend .sw{width:14px;height:3px;border-radius:2px}
+.legend .sw.dot{width:9px;height:9px;border-radius:50%}
+.chart{width:100%;position:relative}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+figcaption{font-size:12px;color:var(--ink-3);margin-top:10px;line-height:1.5}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:11.5px;
+  padding:7px 9px;border-radius:6px;opacity:0;transition:opacity .1s;white-space:nowrap;z-index:5;box-shadow:0 4px 16px rgba(0,0,0,.22);line-height:1.5}
+.tip b{color:var(--bg)}
+
+/* matrix */
+.mwrap{overflow-x:auto;margin-top:24px;border:1px solid var(--line);border-radius:10px}
+table.matrix{border-collapse:collapse;width:100%;min-width:640px;background:var(--panel);font-size:13.5px}
+table.matrix th,table.matrix td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--line-2);white-space:nowrap}
+table.matrix thead th{background:var(--panel-2);font-size:12px;font-weight:700;color:var(--ink-2);position:sticky;top:0}
+table.matrix thead th.jun{color:var(--jun)} table.matrix thead th.jul{color:var(--jul)} table.matrix thead th.aug{color:var(--aug)}
+table.matrix td.rowlab{text-align:left;font-weight:600;color:var(--ink);white-space:normal;min-width:210px}
+table.matrix td.rowlab small{display:block;font-weight:400;color:var(--ink-3);font-size:11.5px;font-family:var(--mono)}
+table.matrix td .cell{font-family:var(--mono);font-weight:700;font-size:14px;padding:3px 8px;border-radius:5px;display:inline-block;min-width:52px}
+.cell.g{background:var(--good-soft);color:var(--good)}
+.cell.w{background:var(--warn-soft);color:var(--warn)}
+.cell.b{background:var(--bad-soft);color:var(--bad)}
+.cell.n{background:var(--line-2);color:var(--ink-3);font-weight:600}
+table.matrix tr.hi td{background:var(--jul-soft)}
+table.matrix tr.hi td.rowlab{box-shadow:inset 3px 0 0 var(--jul)}
+.verdict{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.verdict.same{background:var(--bad-soft);color:var(--bad)}
+.verdict.all{background:var(--warn-soft);color:var(--warn)}
+.verdict.ok{background:var(--good-soft);color:var(--good)}
+.verdict.fix{background:var(--jun-soft);color:var(--jun)}
+
+/* two-col note grid */
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:15px 16px}
+.note h4{margin:0 0 6px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+.note h4 .d{width:8px;height:8px;border-radius:2px;flex:none}
+.note p{margin:0;font-size:13px;color:var(--ink-2);line-height:1.55}
+.note code{font-family:var(--mono);font-size:12px;background:var(--panel-2);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+/* aug bars */
+.barlist{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.barrow{display:grid;grid-template-columns:180px 1fr 34px;align-items:center;gap:10px;font-size:12.5px}
+.barrow .bl{color:var(--ink-2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barrow .bl b{color:var(--ink);font-weight:650}
+.bartrack{background:var(--line-2);border-radius:4px;height:16px;overflow:hidden}
+.barfill{height:100%;border-radius:4px}
+.barrow .bv{font-family:var(--mono);font-weight:700;text-align:left;color:var(--ink)}
+.dummy{background:var(--jul)} .hire{background:var(--aug)} .disp{background:var(--jun)} .etc{background:var(--ink-3)}
+.blegend{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0 2px}
+.blegend .li{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);font-weight:600}
+.blegend .sw{width:11px;height:11px;border-radius:3px}
+
+.foot{margin-top:56px;border-top:1px solid var(--line);padding-top:18px;font-size:12px;color:var(--ink-3);line-height:1.6}
+.foot b{color:var(--ink-2)}
+details.data{margin-top:14px;font-size:12.5px}
+details.data summary{cursor:pointer;color:var(--ink-2);font-weight:600;font-family:var(--mono);font-size:12px}
+details.data table{border-collapse:collapse;margin-top:10px;font-size:12px;font-family:var(--mono)}
+details.data td,details.data th{border:1px solid var(--line-2);padding:3px 8px;text-align:right}
+details.data th{color:var(--ink-3);font-weight:600}
+
+@media (max-width:720px){
+  .cards{grid-template-columns:1fr}
+  .notes{grid-template-columns:1fr}
+  .barrow{grid-template-columns:130px 1fr 30px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">포지 앤 포춘 · 온보딩 퍼널 비교 분석</div>
+  <h1>스프린트마다 어디서 빠지나 — 그리고 <em>같은 곳</em>에서 빠지나</h1>
+  <p class="lede">6월·7월 테스트(GameAnalytics)와 8월 테스트(ByteBrew 커스텀 이벤트)의 온보딩 이탈을 스텝 번호가 아닌 <b>게임플레이 마일스톤</b> 기준으로 맞춰 비교했습니다. 빌드마다 온보딩 구조가 달라 절대 완주율은 참고용이고, 핵심은 <b>이탈이 생기는 위치(구간)의 모양</b>입니다.</p>
+  <div class="chips">
+    <span class="chip jun"><b>6월</b> GA · game 339351 · n=172</span>
+    <span class="chip jul"><b>7월</b> GA · game 345068 · n=136</span>
+    <span class="chip aug"><b>8월</b> ByteBrew · 3.4.0 · US · n=132</span>
+    <span class="chip">관측창: 8월 5–9 (5일)</span>
+  </div>
+</header>
+
+<!-- ============ TL;DR ============ -->
+<section style="margin-top:34px">
+  <div class="tldr">
+    <h3>세 줄 요약</h3>
+    <ul>
+      <li><span class="n" style="background:var(--bad)">1</span><p><b>6월·7월의 진짜 킬러는 "광산 그라인드"였습니다.</b> 첫 광산 진입 → 첫 리프트에서 두 스프린트 모두 <b>−27% / −28%</b> (거의 판박이), 첫 방을 클리어한 <b>직후</b> 절반 이상(−58% / −55%)이 사라집니다. 이게 두 스프린트가 <b>동일하게 빠진 구간</b>입니다.</p></li>
+      <li><span class="n" style="background:var(--aug)">2</span><p><b>8월(3.4.0)은 이 광산 강제 구간을 온보딩에서 들어냈습니다.</b> 그 결과 6·7월의 광산 절벽이 <b>사라졌습니다.</b> 대신 이탈이 후반 <b>"허수아비 수리 · 직원 고용 · 진열대 증설" 반복 루프</b>로 옮겨갔어요.</p></li>
+      <li><span class="n" style="background:var(--warn)">3</span><p><b>세 스프린트 전부 공통점은 "후반 반복 그라인드"입니다.</b> 온보딩 후반부(65%~) 이탈이 6월 54% · 7월 56% · 8월 64%로 항상 폭발합니다. 절벽의 <b>내용</b>은 바뀌어도(광산 → 허수아비/직원 루프) <b>상대적 위치</b>는 그대로입니다.</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 1. 스냅샷 ============ -->
+<section>
+  <div class="kicker">한눈에</div>
+  <h2>세 스프린트 스냅샷</h2>
+  <p class="say">진입 모수는 다르지만(도구·기간 차이) 이탈의 <strong>모양</strong>은 비교됩니다. "후반 이탈"이 세 곳 모두 지배적입니다.</p>
+  <div class="cards" id="cards"></div>
+</section>
+
+<!-- ============ 2. 리텐션 곡선 ============ -->
+<section>
+  <div class="kicker">이탈 곡선</div>
+  <h2>메인 온보딩 — 진행률 대비 잔존</h2>
+  <p class="say">각 빌드의 온보딩 스텝을 <strong>0–100%로 정규화</strong>했습니다(6월 84스텝 · 7월 84스텝 · 8월 106스텝 → 절대 스텝번호 비교는 무의미). 세로축은 진입 대비 남은 유저 비율. 배경 3구간은 아래 분해와 연결됩니다.</p>
+  <figure>
+    <div class="figtop">
+      <div class="figtitle">진입 대비 잔존율 <span class="q">(온보딩 진행 0→100%)</span></div>
+      <div class="legend">
+        <span class="li"><span class="sw" style="background:var(--jun)"></span>6월</span>
+        <span class="li"><span class="sw" style="background:var(--jul)"></span>7월</span>
+        <span class="li"><span class="sw" style="background:var(--aug)"></span>8월</span>
+      </div>
+    </div>
+    <div class="chart" id="c-ret"><div class="tip" id="tip-ret"></div></div>
+    <figcaption>7월(주황)의 55% 지점 급락 = <code>main_step_067</code> 구간 −22% 절벽. 6월(파랑)은 초반부터 완만하게 새고, 8월(보라)은 초·중반이 가장 얕지만 후반에 가장 가파릅니다 — 단 8월은 5일 관측창이라 후반 유저가 아직 덜 성숙(뒤 주의사항 참고).</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 3. 3구간 분해 ============ -->
+<section>
+  <div class="kicker">어디서 무너지나</div>
+  <h2>초반 · 중반 · <span class="accent">후반</span> 이탈 분해</h2>
+  <p class="say">온보딩을 3등분해 각 구간에서 <strong>진입 대비 몇 %가 빠졌는지</strong> 나눴습니다. 결론은 하나 — 어느 스프린트든 <strong>후반부가 이탈의 절반 이상</strong>을 먹습니다.</p>
+  <figure>
+    <div class="figtop">
+      <div class="figtitle">구간별 이탈 (진입 100% 기준)</div>
+      <div class="legend">
+        <span class="li"><span class="sw" style="background:var(--good)"></span>초반 0–35%</span>
+        <span class="li"><span class="sw" style="background:var(--warn)"></span>중반 35–65%</span>
+        <span class="li"><span class="sw" style="background:var(--bad)"></span>후반 65–100%</span>
+      </div>
+    </div>
+    <div class="chart" id="c-band"><div class="tip" id="tip-band"></div></div>
+    <figcaption>막대 오른쪽 회색 = 온보딩 끝까지 살아남은 잔존율(6월 8% · 7월 12% · 8월 10%). 후반 이탈: 6월 54% · 7월 56% · 8월 64%.</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 4. 광산 퍼널 ============ -->
+<section>
+  <div class="kicker">6월 = 7월 (판박이)</div>
+  <h2>광산 퍼널 — 6·7월이 <span class="accent">똑같이</span> 무너진 곳</h2>
+  <p class="say">광산은 6·7월에 별도 퍼널로 측정됐고, 이름이 동일해 직접 비교됩니다. 두 곡선이 거의 겹칩니다 — <strong>첫 광산 진입 직후 첫 리프트</strong>에서 −27/−28%, 그 뒤 브론즈 반복에서 −40/−38%. 8월엔 이 구간이 강제 온보딩에서 <strong>제거</strong>됐습니다.</p>
+  <figure>
+    <div class="figtop">
+      <div class="figtitle">광산 진입(100%) 대비 잔존 <span class="q">(브론즈→은→금)</span></div>
+      <div class="legend">
+        <span class="li"><span class="sw" style="background:var(--jun)"></span>6월 (base 152)</span>
+        <span class="li"><span class="sw" style="background:var(--jul)"></span>7월 (base 132)</span>
+      </div>
+    </div>
+    <div class="chart" id="c-mine"><div class="tip" id="tip-mine"></div></div>
+    <figcaption>배경 띠 = 광석 등급(브론즈/은/금). <b>룸 단위</b>로 보면 더 극단적: 브론즈 첫 방을 클리어한 직후 6월 <b>−58%</b>, 7월 <b>−55%</b>가 이탈 — 온보딩 전체에서 가장 큰 단일 절벽입니다.</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 5. 공통 이탈 매트릭스 ============ -->
+<section>
+  <div class="kicker">핵심 답</div>
+  <h2>공통 이탈 매트릭스 — 같은 구간 vs 다른 구간</h2>
+  <p class="say">행 = 게임플레이 구간(행동), 열 = 스프린트. 붉을수록 큰 이탈. 마지막 열은 <strong>공통성 판정</strong>입니다. 굵은 행이 "동일하게 빠지는 구간".</p>
+  <div class="mwrap">
+    <table class="matrix">
+      <thead><tr>
+        <th class="rowlab" style="text-align:left">구간 (유저 행동)</th>
+        <th class="jun">6월</th><th class="jul">7월</th><th class="aug">8월</th>
+        <th>공통성</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="rowlab">상점 기본 조작<small>메인 초반 · 이동~계산~수금</small></td>
+          <td><span class="cell w">−15%</span></td><td><span class="cell g">−7%</span></td><td><span class="cell w">−11%</span></td>
+          <td><span class="verdict ok">공통 낮음 ✓</span></td>
+        </tr>
+        <tr>
+          <td class="rowlab">첫 허수아비(훈련장) 수리<small>sub_FixTrainingDummy_step_001</small></td>
+          <td><span class="cell w">−15%</span></td><td><span class="cell g">−7%</span></td><td><span class="cell g">~0%</span></td>
+          <td><span class="verdict fix">8월 개선</span></td>
+        </tr>
+        <tr class="hi">
+          <td class="rowlab">첫 광산 진입 → 첫 리프트<small>MineUnlockBeacon · BronzeMine→Lift</small></td>
+          <td><span class="cell b">−27%</span></td><td><span class="cell b">−28%</span></td><td><span class="cell n">제거</span></td>
+          <td><span class="verdict same">6·7월 동일 절벽</span></td>
+        </tr>
+        <tr class="hi">
+          <td class="rowlab">브론즈 광산 반복<small>2번방 · 리프트 · 탈출</small></td>
+          <td><span class="cell b">−40%</span></td><td><span class="cell b">−38%</span></td><td><span class="cell n">제거</span></td>
+          <td><span class="verdict same">6·7월 동일</span></td>
+        </tr>
+        <tr class="hi">
+          <td class="rowlab">첫 방 클리어 직후 (룸 단위)<small>MineRoomClear · Bronze_room_0→다음</small></td>
+          <td><span class="cell b">−58%</span></td><td><span class="cell b">−55%</span></td><td><span class="cell n">제거</span></td>
+          <td><span class="verdict same">최대 단일 절벽</span></td>
+        </tr>
+        <tr>
+          <td class="rowlab">은광·금광 그라인드<small>Silver→Gold 반복</small></td>
+          <td><span class="cell b">은−20%<br><small style="color:var(--ink-3)">금 잔존 3%</small></span></td>
+          <td><span class="cell w">은−16%<br><small style="color:var(--ink-3)">금 잔존 14%</small></span></td>
+          <td><span class="cell n">제거</span></td>
+          <td><span class="verdict same">6·7월 지속 출혈</span></td>
+        </tr>
+        <tr class="hi">
+          <td class="rowlab">후반 반복 루프<small>직원 고용 · 진열대 증설 · 허수아비 반복</small></td>
+          <td><span class="cell b">54%</span></td><td><span class="cell b">56%</span></td><td><span class="cell b">64%</span></td>
+          <td><span class="verdict all">세 스프린트 공통</span></td>
+        </tr>
+        <tr>
+          <td class="rowlab">온보딩 완주 (끝까지 잔존)<small>최종 스텝 도달</small></td>
+          <td><span class="cell w">8%</span></td><td><span class="cell w">12%</span></td><td><span class="cell w">10%</span></td>
+          <td><span class="verdict all">모두 낮음</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="notes">
+    <div class="note">
+      <h4><span class="d" style="background:var(--bad)"></span>동일하게 빠지는 구간 (答)</h4>
+      <p><b>① 첫 광산 진입 직후</b>(첫 리프트/첫 방 클리어)와 <b>② 브론즈 반복</b>은 6·7월에서 오차범위 수준으로 동일. <b>③ 후반 반복 그라인드</b>는 6·7·8월 <b>전부</b> 최대 이탈처.</p>
+    </div>
+    <div class="note">
+      <h4><span class="d" style="background:var(--aug)"></span>8월에서 사라진/개선된 구간</h4>
+      <p>광산 방-클리어 강제 구간을 온보딩에서 들어내며 6·7월의 광산 절벽이 <b>소멸</b>. 첫 허수아비 수리 마찰도 <b>−15% → ~0%</b>로 개선. 대신 이탈이 후반 루프로 <b>이동</b>했을 뿐 총량은 남아있음.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. 8월 후반 루프 ============ -->
+<section>
+  <div class="kicker">8월의 이탈은 어디로 갔나</div>
+  <h2>8월 후반 — "허수아비 · 직원 · 진열대" 반복 루프</h2>
+  <p class="say">8월엔 단일 절벽이 없습니다. 대신 후반부에서 <strong>같은 3종 행동이 반복</strong>되며 스텝마다 유저가 샙니다. 스텝별 이탈(ByteBrew 완료 기준)을 큰 순으로:</p>
+  <figure>
+    <div class="blegend">
+      <span class="li"><span class="sw dummy"></span>허수아비(훈련장)</span>
+      <span class="li"><span class="sw hire"></span>직원 고용</span>
+      <span class="li"><span class="sw disp"></span>진열대/제작 증설</span>
+      <span class="li"><span class="sw etc"></span>기타</span>
+    </div>
+    <div class="barlist" id="augbars"></div>
+    <figcaption>"허수아비 6"에서 −10명(최대), 그 앞뒤로 "직원 고용 -수리 2" −8, "진열대 도끼 2" −8. 첫 등장은 매끄럽지만 <b>N번째 반복</b>에서 무너지는 전형적인 반복-피로 패턴입니다.</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 주의 ============ -->
+<section>
+  <div class="kicker">해석 시 주의</div>
+  <h2>이 비교를 읽을 때</h2>
+  <div class="notes">
+    <div class="note">
+      <h4><span class="d" style="background:var(--warn)"></span>관측창 성숙도</h4>
+      <p>8월은 8/5–8/9 <b>5일 코호트</b>라 후반 유저는 아직 최대 4일치만 플레이. 8월 후반의 낮은 절대치는 "어려워서"가 아니라 "시간이 덜 지나서"가 섞여 있음 → <b>절대 완주율 대신 이탈 위치(모양)로 비교</b>.</p>
+    </div>
+    <div class="note">
+      <h4><span class="d" style="background:var(--jun)"></span>도구 차이 (GA ↔ ByteBrew)</h4>
+      <p>GA는 <b>순차 완료</b>라 꼬리에서 더 빨리 깎임(8월 마지막 스텝 GA 5 vs BB 13). 8월 심층 퍼널은 <b>BB 곡선</b>이 더 안정적. 진입 모수 차이는 이미 인지된 사항이라 % 모양만 비교.</p>
+    </div>
+    <div class="note">
+      <h4><span class="d" style="background:var(--silver)"></span>CSV 정렬 주의</h4>
+      <p>GA 퍼널 CSV는 <b>완료수 내림차순</b> 정렬 → 파일의 행 순서 ≠ 게임 진행 순서. 그래서 스텝 번호가 아니라 <code>Churn</code> 값과 이벤트 이름으로 구간을 잡았습니다.</p>
+    </div>
+    <div class="note">
+      <h4><span class="d" style="background:var(--aug)"></span>스텝 번호 ≠ 동일 내용</h4>
+      <p>빌드마다 온보딩이 재설계돼(6·7월 84스텝, 8월 106스텝) 같은 <code>main_step_067</code>이라도 내용이 다를 수 있음. 그래서 번호가 아닌 <b>마일스톤(광산/허수아비/직원 등)</b>으로 정렬해 비교했습니다.</p>
+    </div>
+  </div>
+</section>
+
+<div class="foot">
+  <b>데이터 출처</b> · 6월: GameAnalytics game 339351 (2026-06-29 export, 리텐션 06-20~06-24) · 7월: game 345068 (2026-07-22 export) · 8월: ByteBrew 커스텀 이벤트 (2026-08-05~09, US, build 3.4.0) ↔ GA 대조 리포트. 광산 지표는 6·7월 별도 퍼널(MineUnlockBeacon / MineRoomClear / sub_*Clear), 메인은 온보딩 main_step 퍼널.
+  <details class="data">
+    <summary>원본 수치 보기 (광산 퍼널 · 잔존율)</summary>
+    <table>
+      <tr><th>마일스톤</th><th>6월</th><th>6월 %</th><th>7월</th><th>7월 %</th></tr>
+      <tr><td style="text-align:left">광산 진입</td><td>152</td><td>100%</td><td>132</td><td>100%</td></tr>
+      <tr><td style="text-align:left">첫 리프트</td><td>111</td><td>73%</td><td>95</td><td>72%</td></tr>
+      <tr><td style="text-align:left">브론즈 2번방</td><td>86</td><td>57%</td><td>70</td><td>53%</td></tr>
+      <tr><td style="text-align:left">브론즈 탈출</td><td>50</td><td>33%</td><td>45</td><td>34%</td></tr>
+      <tr><td style="text-align:left">은광 진입</td><td>48</td><td>32%</td><td>39</td><td>30%</td></tr>
+      <tr><td style="text-align:left">은광 2번방</td><td>20</td><td>13%</td><td>24</td><td>18%</td></tr>
+      <tr><td style="text-align:left">금광 진입</td><td>5</td><td>3%</td><td>19</td><td>14%</td></tr>
+    </table>
+  </details>
+</div>
+</div>
+
+<script>
+const D = {
+  main:{
+    jun:{c:"var(--jun)",entry:172,comps:[172,171,166,165,164,163,162,161,161,159,158,156,156,156,155,154,154,154,154,153,152,152,152,152,150,150,150,148,148,147,141,140,140,140,138,138,137,136,135,132,129,128,128,126,123,120,118,115,114,113,110,110,110,109,107,106,103,99,97,95,90,87,83,82,80,75,72,68,65,60,58,54,52,49,48,39,34,32,30,29,21,21,17,14]},
+    jul:{c:"var(--jul)",entry:136,comps:[136,135,133,133,133,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,126,124,124,124,124,124,124,122,119,118,117,116,115,115,115,114,109,107,105,103,103,101,99,98,97,93,63,61,60,60,60,55,48,45,45,45,45,45,45,45,45,45,45,45,45,45,45,38,36,32,26,23,19,19,17]},
+    aug:{c:"var(--aug)",entry:132,comps:[132,131,131,130,130,130,130,130,130,130,130,128,129,129,128,128,128,126,126,125,124,123,121,119,118,118,119,119,117,117,117,117,117,117,116,116,116,112,109,109,109,109,109,104,103,102,102,102,100,101,97,97,96,95,94,89,82,81,81,73,69,67,65,67,67,66,58,55,45,42,40,36,31,31,29,26,21,17,14,13]}
+  },
+  bands:[
+    {k:"6월",c:"var(--jun)",v:[15,23,54],end:8},
+    {k:"7월",c:"var(--jul)",v:[7,24,56],end:12},
+    {k:"8월",c:"var(--aug)",v:[11,15,64],end:10}
+  ],
+  mine:{
+    labels:["광산\n진입","첫\n리프트","브론즈\n2번방","브론즈\n탈출","은광\n진입","은광\n2번방","금광\n진입"],
+    tiers:["bronze","bronze","bronze","bronze","silver","silver","gold"],
+    jun:{c:"var(--jun)",base:152,v:[152,111,86,50,48,20,5]},
+    jul:{c:"var(--jul)",base:132,v:[132,95,70,45,39,24,19]}
+  },
+  augback:[
+    {n:"허수아비 6",cat:"dummy",d:10},{n:"직원 고용 -수리 2",cat:"hire",d:8},
+    {n:"진열대 도끼 2",cat:"disp",d:8},{n:"허수아비 4",cat:"dummy",d:7},
+    {n:"제작기구 -망치",cat:"disp",d:5},{n:"직원 고용 -수리 3",cat:"hire",d:5},
+    {n:"직원 고용 -수리 1",cat:"hire",d:5},{n:"진열대 검 2",cat:"disp",d:5},
+    {n:"허수아비 5(확장)",cat:"dummy",d:4},{n:"허수아비 2",cat:"dummy",d:4},
+    {n:"진열대 망치 2",cat:"disp",d:4},{n:"허수아비 7",cat:"dummy",d:4}
+  ]
+};
+
+const SVGNS="http://www.w3.org/2000/svg";
+function el(t,a){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function cssv(v){if(typeof v==="string"&&v.startsWith("var("))return getComputedStyle(document.documentElement).getPropertyValue(v.slice(4,-1)).trim();return v;}
+
+/* ---------- STAT CARDS ---------- */
+function cards(){
+  const data=[
+    {cls:"jun",tag:"6월 · 339351",sub:"GameAnalytics · n=172",rows:[
+      ["온보딩 완주",".",8,"w","big","%"],["후반부 이탈","",54,"b","","%"],["광산 첫 리프트","",27,"b","","%↓"]]},
+    {cls:"jul",tag:"7월 · 345068",sub:"GameAnalytics · n=136",rows:[
+      ["온보딩 완주","",12,"w","big","%"],["후반부 이탈","",56,"b","","%"],["광산 첫 리프트","",28,"b","","%↓"]]},
+    {cls:"aug",tag:"8월 · 3.4.0",sub:"ByteBrew · n=132",rows:[
+      ["온보딩 완주(BB)","",10,"w","big","%"],["후반부 이탈","",64,"b","","%"],["광산 강제구간","제거","","g","","",true]]}
+  ];
+  const host=document.getElementById("cards");
+  data.forEach(d=>{
+    const c=document.createElement("div");c.className="card "+d.cls;
+    let h=`<div class="tag">${d.tag}</div><div class="sub">${d.sub}</div><div class="rows">`;
+    d.rows.forEach(r=>{
+      const val=r[6]?`<span class="val ${r[3]}">${r[1]}</span>`:`<span class="val ${r[3]} ${r[4]}">${r[2]}${r[5]}</span>`;
+      h+=`<div class="r"><span class="lab">${r[0]}</span>${val}</div>`;
+    });
+    h+="</div>";c.innerHTML=h;host.appendChild(c);
+  });
+}
+
+/* ---------- LINE CHART (retention + mine) ---------- */
+function lineChart(hostId,tipId,cfg){
+  const host=document.getElementById(hostId);
+  const W=760,H=360,m={t:18,r:52,b:cfg.rot?60:40,l:46};
+  const iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":cfg.aria});
+  const xN=cfg.xN;                      // number of x positions (continuous max)
+  const X=v=>m.l+(v/xN)*iw;
+  const Y=v=>m.t+ih-(v)*ih;            // v in 0..1
+  // background bands
+  (cfg.bands||[]).forEach(b=>{
+    svg.appendChild(el("rect",{x:X(b.x0),y:m.t,width:X(b.x1)-X(b.x0),height:ih,fill:cssv(b.fill)}));
+    if(b.label){const t=el("text",{x:(X(b.x0)+X(b.x1))/2,y:m.t+13,"text-anchor":"middle","font-family":"var(--mono)","font-size":11,fill:cssv("var(--ink-3)"),"font-weight":600});t.textContent=b.label;svg.appendChild(t);}
+  });
+  // y grid + labels
+  [0,.25,.5,.75,1].forEach(g=>{
+    svg.appendChild(el("line",{x1:m.l,y1:Y(g),x2:m.l+iw,y2:Y(g),stroke:cssv("var(--grid)"),"stroke-width":1}));
+    const t=el("text",{x:m.l-8,y:Y(g)+4,"text-anchor":"end","font-family":"var(--mono)","font-size":11,fill:cssv("var(--ink-3)")});t.textContent=Math.round(g*100)+"%";svg.appendChild(t);
+  });
+  // x ticks
+  cfg.xticks.forEach(t=>{
+    const tx=el("text",{x:X(t.x),y:H-m.b+ (cfg.rot?14:18),"text-anchor":cfg.rot?"end":"middle","font-family":"var(--mono)","font-size":11,fill:cssv("var(--ink-3)")});
+    if(cfg.rot){tx.setAttribute("transform",`rotate(-32 ${X(t.x)} ${H-m.b+14})`);}
+    if(t.label.includes("\n")){t.label.split("\n").forEach((ln,i)=>{const ts=el("tspan",{x:X(t.x),dy:i===0?0:12});ts.textContent=ln;tx.appendChild(ts);});}
+    else tx.textContent=t.label;
+    svg.appendChild(tx);
+  });
+  // series lines
+  const dm=!cfg.reduce;
+  cfg.series.forEach(s=>{
+    let dpath="";s.pts.forEach((p,i)=>{dpath+=(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(3)+" ";});
+    const path=el("path",{d:dpath,fill:"none",stroke:cssv(s.c),"stroke-width":2.6,"stroke-linejoin":"round","stroke-linecap":"round"});
+    svg.appendChild(path);
+    if(dm){const L=path.getTotalLength?0:0;path.style.strokeDasharray=1;} // no-op guard
+    // endpoint dot + label
+    const last=s.pts[s.pts.length-1];
+    svg.appendChild(el("circle",{cx:X(last.x),cy:Y(last.y),r:4,fill:cssv(s.c),stroke:cssv("var(--panel)"),"stroke-width":2}));
+    const lt=el("text",{x:X(last.x)+8,y:Y(last.y)+4+(s.labelDy||0),"font-family":"var(--mono)","font-size":11.5,"font-weight":700,fill:cssv(s.c)});
+    lt.textContent=s.endLabel;svg.appendChild(lt);
+  });
+  host.insertBefore(svg,host.firstChild);
+  // hover
+  const tip=document.getElementById(tipId);
+  const hov=el("rect",{x:m.l,y:m.t,width:iw,height:ih,fill:"transparent"});svg.appendChild(hov);
+  const marks=cfg.series.map(s=>{const c=el("circle",{r:5,fill:cssv(s.c),stroke:cssv("var(--panel)"),"stroke-width":2,opacity:0});svg.appendChild(c);return c;});
+  const vline=el("line",{y1:m.t,y2:m.t+ih,stroke:cssv("var(--ink-3)"),"stroke-width":1,"stroke-dasharray":"3 3",opacity:0});svg.appendChild(vline);
+  function move(ev){
+    const r=svg.getBoundingClientRect();const px=(ev.clientX-r.left)/r.width*W;
+    let xi=Math.round(((px-m.l)/iw)*xN);xi=Math.max(0,Math.min(xN,xi));
+    const sx=X(xi);vline.setAttribute("x1",sx);vline.setAttribute("x2",sx);vline.setAttribute("opacity",1);
+    let rows="";cfg.series.forEach((s,k)=>{
+      const p=s.at(xi);
+      if(p){marks[k].setAttribute("cx",X(p.x));marks[k].setAttribute("cy",Y(p.y));marks[k].setAttribute("opacity",1);
+        rows+=`<div><b style="color:${cssv(s.c)}">■</b> ${s.name} <b>${p.disp}</b></div>`;}
+      else marks[k].setAttribute("opacity",0);
+    });
+    tip.innerHTML=`<div style="color:var(--ink-3);margin-bottom:2px">${cfg.xlabel(xi)}</div>${rows}`;
+    tip.style.opacity=1;
+    const hr=host.getBoundingClientRect();let lx=(sx/W)*hr.width+12;if(lx>hr.width-140)lx=(sx/W)*hr.width-140;
+    tip.style.left=lx+"px";tip.style.top=((ev.clientY-hr.top))+"px";
+  }
+  function leave(){tip.style.opacity=0;vline.setAttribute("opacity",0);marks.forEach(mk=>mk.setAttribute("opacity",0));}
+  hov.addEventListener("pointermove",move);hov.addEventListener("pointerleave",leave);
+}
+
+/* ---------- retention ---------- */
+function retention(){
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const series=Object.entries(D.main).map(([k,s])=>{
+    const n=s.comps.length;
+    const pts=s.comps.map((c,i)=>({x:i/(n-1)*100,y:c/s.entry,disp:Math.round(c/s.entry*100)+"% ("+c+")"}));
+    const nm=k==="jun"?"6월":k==="jul"?"7월":"8월";
+    return {name:nm,c:s.c,pts,
+      endLabel:Math.round(s.comps[n-1]/s.entry*100)+"%",
+      labelDy:k==="jun"?12:(k==="jul"?-12:0),
+      at:(xi)=>{const idx=Math.round(xi/100*(n-1));const c=s.comps[idx];return {x:idx/(n-1)*100,y:c/s.entry,disp:Math.round(c/s.entry*100)+"% ("+c+")"};}};
+  });
+  lineChart("c-ret","tip-ret",{
+    aria:"세 스프린트 온보딩 잔존율 곡선",xN:100,reduce,
+    xticks:[{x:0,label:"0%"},{x:25,label:"25%"},{x:50,label:"50%"},{x:75,label:"75%"},{x:100,label:"100%"}],
+    bands:[{x0:0,x1:35,fill:"var(--good-soft)",label:"초반"},{x0:35,x1:65,fill:"var(--warn-soft)",label:"중반"},{x0:65,x1:100,fill:"var(--bad-soft)",label:"후반"}],
+    series,xlabel:(xi)=>"진행 "+xi+"%"
+  });
+}
+
+/* ---------- mine ---------- */
+function mine(){
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const L=D.mine.labels,n=L.length;
+  const mk=(s)=>({pts:s.v.map((c,i)=>({x:i,y:c/s.base,disp:Math.round(c/s.base*100)+"% ("+c+")"})),
+    at:(xi)=>{const i=Math.max(0,Math.min(n-1,xi));return {x:i,y:s.v[i]/s.base,disp:Math.round(s.v[i]/s.base*100)+"% ("+s.v[i]+")"};}});
+  const j=mk(D.mine.jun),t=mk(D.mine.jul);
+  // tier bands
+  const bands=[];let i=0;const tierColor={bronze:"var(--bronze-bg)",silver:"var(--silver-bg)",gold:"var(--gold-bg)"};const tierName={bronze:"브론즈",silver:"은",gold:"금"};
+  while(i<n){let j2=i;while(j2+1<n&&D.mine.tiers[j2+1]===D.mine.tiers[i])j2++;bands.push({x0:i-0.5<0?0:i-0.5,x1:j2+0.5>n-1?n-1:j2+0.5,fill:tierColor[D.mine.tiers[i]],label:tierName[D.mine.tiers[i]]});i=j2+1;}
+  bands[0].x0=0;bands[bands.length-1].x1=n-1;
+  lineChart("c-mine","tip-mine",{
+    aria:"6월 7월 광산 퍼널 잔존율",xN:n-1,rot:true,reduce,
+    xticks:L.map((l,i)=>({x:i,label:l})),bands,
+    series:[
+      {name:"6월",c:D.mine.jun.c,pts:j.pts,at:j.at,endLabel:Math.round(D.mine.jun.v[n-1]/D.mine.jun.base*100)+"%"},
+      {name:"7월",c:D.mine.jul.c,pts:t.pts,at:t.at,endLabel:Math.round(D.mine.jul.v[n-1]/D.mine.jul.base*100)+"%"}
+    ],
+    xlabel:(xi)=>L[Math.max(0,Math.min(n-1,xi))].replace("\n"," ")
+  });
+}
+
+/* ---------- band decomposition (stacked horizontal) ---------- */
+function bandChart(){
+  const host=document.getElementById("c-band");
+  const W=760,H=210,m={t:10,r:16,b:28,l:44};
+  const iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"초중후반 이탈 분해"});
+  const rows=D.bands,rh=ih/rows.length,bh=Math.min(34,rh*0.62);
+  const X=v=>m.l+(v/100)*iw;
+  [0,25,50,75,100].forEach(g=>{
+    svg.appendChild(el("line",{x1:X(g),y1:m.t,x2:X(g),y2:m.t+ih,stroke:cssv("var(--grid)"),"stroke-width":1}));
+    const t=el("text",{x:X(g),y:H-8,"text-anchor":"middle","font-family":"var(--mono)","font-size":11,fill:cssv("var(--ink-3)")});t.textContent=g+"%";svg.appendChild(t);
+  });
+  const segc=["var(--good)","var(--warn)","var(--bad)"];const segn=["초반","중반","후반"];
+  rows.forEach((r,ri)=>{
+    const cy=m.t+ri*rh+rh/2;
+    const lab=el("text",{x:m.l-10,y:cy+4,"text-anchor":"end","font-family":"var(--mono)","font-size":12,"font-weight":700,fill:cssv(r.c)});lab.textContent=r.k;svg.appendChild(lab);
+    let acc=0;
+    r.v.forEach((v,si)=>{
+      const x0=X(acc),w=(v/100)*iw;
+      const rect=el("rect",{x:x0+ (si?1:0),y:cy-bh/2,width:Math.max(0,w-1),height:bh,fill:cssv(segc[si]),rx:2});
+      rect.style.cursor="default";
+      const title=el("title");title.textContent=`${r.k} ${segn[si]}: −${v}%`;rect.appendChild(title);
+      svg.appendChild(rect);
+      if(w>34){const t=el("text",{x:x0+w/2,y:cy+4,"text-anchor":"middle","font-family":"var(--mono)","font-size":11.5,"font-weight":700,fill:"#fff"});t.textContent=v;svg.appendChild(t);}
+      acc+=v;
+    });
+    // survivor remainder (grey)
+    const x0=X(acc),w=(r.end/100)*iw;
+    svg.appendChild(el("rect",{x:x0+1,y:cy-bh/2,width:Math.max(0,w-1),height:bh,fill:cssv("var(--line-2)"),rx:2}));
+    const t=el("text",{x:Math.min(X(100)-4,x0+w+6),y:cy+4,"text-anchor":x0+w>iw*0.9?"end":"start","font-family":"var(--mono)","font-size":11,"font-weight":700,fill:cssv("var(--ink-3)")});t.textContent="잔존 "+r.end+"%";svg.appendChild(t);
+  });
+  host.insertBefore(svg,host.firstChild);
+}
+
+/* ---------- aug bars ---------- */
+function augbars(){
+  const host=document.getElementById("augbars");const max=Math.max(...D.augback.map(b=>b.d));
+  D.augback.forEach(b=>{
+    const row=document.createElement("div");row.className="barrow";
+    row.innerHTML=`<div class="bl">${b.n.replace(/(허수아비|직원 고용|진열대|제작기구)/,"<b>$1</b>")}</div>`+
+      `<div class="bartrack"><div class="barfill ${b.cat}" style="width:${b.d/max*100}%"></div></div>`+
+      `<div class="bv">−${b.d}</div>`;
+    host.appendChild(row);
+  });
+}
+
+cards();retention();bandChart();mine();augbars();
+</script>
+
+</body>
+</html>
