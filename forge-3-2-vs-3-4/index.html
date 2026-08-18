@@ -119,6 +119,15 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
 .kpitbl tr.delta td{background:var(--panel-2);font-weight:700;border-top:2px solid var(--line)}
 .kpitbl tr.delta td:first-child{color:var(--ink-2);text-align:left;font-size:12px}
 .kpitbl .updown{font-size:11px;margin-left:2px}
+.kpitbl td.mname{text-align:left;font-weight:650;font-family:var(--sans)}
+.kpitbl td.mname small{font-family:var(--mono);color:var(--ink-3);font-weight:400;margin-left:6px;font-size:10.5px}
+.kpitbl tr.sub td.mname{color:var(--ink-2);font-weight:500}
+.kpitbl tr.hl td{background:var(--v34-soft)}
+.hitbars{display:flex;align-items:flex-end;gap:10px;height:70px;margin-top:10px;max-width:280px}
+.hitbars .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.hitbars .bar{width:100%;max-width:40px;border-radius:4px 4px 0 0;min-height:2px}
+.hitbars .bv{font-family:var(--mono);font-size:11px;font-weight:700}
+.hitbars .bl{font-family:var(--mono);font-size:10px;color:var(--ink-3)}
 .d7wrap{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px 17px;margin-top:16px}
 .d7wrap h4{margin:0 0 2px;font-size:13px;font-weight:700}
 .d7wrap .cap{margin:0 0 12px;font-size:11.5px;color:var(--ink-3);font-family:var(--mono)}
@@ -151,6 +160,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
 <nav class="tabbar" role="tablist" aria-label="리포트 섹션">
   <button class="tabbtn" role="tab" data-target="verdict">판정</button>
   <button class="tabbtn" role="tab" data-target="compare">정규화 비교</button>
+  <button class="tabbtn" role="tab" data-target="session">세션 분석</button>
   <button class="tabbtn" role="tab" data-target="changes">변경점·광산</button>
   <button class="tabbtn" role="tab" data-target="retention">리텐션·주의</button>
 </nav>
@@ -161,7 +171,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
     <ul>
       <li><span class="n" style="background:var(--bad)">1</span><p><b>3.2 메인스텝을 그대로 되돌리는 건 부적절.</b> 같은 100명 기준, 3.4는 <b>모든 동일 액션에서</b> 3.2보다 유저를 더 오래 붙듭니다. 마지막 공통 액션(<code>더미까지 이동</code>)에서 3.2는 8명, 3.4는 <b>37명</b>(BB로는 51명) 잔존 — 4~6배 차이.</p></li>
       <li><span class="n" style="background:var(--good)">2</span><p><b>3.4가 잘한 것 = 중복 확인 스텝 22개 제거 + 광산 밸런스 롤백.</b> 3.2에서 조금씩 새던 "탭 활성화·업그레이드 진입/닫기·확인 버튼" 류 마찰을 0으로 만들었습니다. 이건 유지가 답.</p></li>
-      <li><span class="n" style="background:var(--warn)">3</span><p><b>하지만 D1 리텐션·플레이타임은 안 올랐습니다</b>(39.2%→36.2%, 3,644초→2,741초). 퍼널을 더 멀리 통과시켰을 뿐, <b>다음날 복귀는 그대로</b>. 남은 레버는 <b>순서 변경이 아니라</b> ① 후반 반복 허수아비/직원 루프 ② 3.4가 새로 붙인 확장 꼬리(85~106)입니다.</p></li>
+      <li><span class="n" style="background:var(--warn)">3</span><p><b>하지만 D0 플레이타임은 −24.8%(60.7→45.7분).</b> 팀 덱으로 분해하면 <b>3.4의 새 문제는 "세션 길이"(−15%)</b>이고(세션 수는 3.2 이후 미회복), 강한 원인 후보는 <b>채굴 그라인드(hits/ore 3.2의 2배)</b>와 <b>092–098 구간</b>입니다. 남은 레버는 순서가 아니라 <b>후반 목표 부담·채굴량</b>.</p></li>
     </ul>
   </div>
 </section>
@@ -189,6 +199,60 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
     <figcaption>회색 구간 = 3.4가 <b>새로 추가한 확장(85~106번, 도끼·망치·시설 업그레이드)</b> — 3.2엔 없던 콘텐츠라 여기 하락은 3.2 대비 악화가 아니라 신규 스코프. 공정 비교 종점은 <code>더미까지 이동</code>(84번): 3.2 <b>8/100</b> vs 3.4 <b>37/100</b>.</figcaption>
   </figure>
   <div class="cards" id="cards-cp"></div>
+</section>
+
+<section data-group="session">
+  <div class="kicker">세션 분석 · 팀 리뷰 덱(3.4 D0)</div>
+  <h2>D0 하락을 <span class="a34">세션 수 × 세션 길이</span>로 쪼개면</h2>
+  <p class="say">팀 덱은 D0 플레이타임 하락(−24.8%)을 <strong>세션 수(다시 들어오는 횟수)</strong>와 <strong>세션 길이(한 번의 플레이)</strong>로 분리합니다. 둘은 <strong>약해진 시점이 다릅니다</strong> — 그래서 3.4가 "새로" 건드린 게 뭔지 짚을 수 있습니다.</p>
+  <div class="split">
+    <div class="panelbox">
+      <h4><span class="d" style="background:var(--v33)"></span>3.2 → 3.3 · 세션 <b>수</b>가 먼저 빠짐</h4>
+      <p class="cap">세션 수 −12.8% &nbsp;·&nbsp; 세션 길이 +9.0%</p>
+      <p style="font-size:13px;color:var(--ink-2);line-height:1.6;margin:0">먼저 약해진 건 <b>"다시 들어오는 횟수"</b>. 세션 수는 3.2 이후 회복되지 않은 <b>묵은 문제</b>(3.4 추가 하락의 중심 원인으로 보긴 약함).</p>
+    </div>
+    <div class="panelbox">
+      <h4><span class="d" style="background:var(--v34)"></span>3.3 → 3.4 · 세션 <b>길이</b>가 새로 빠짐</h4>
+      <p class="cap">세션 수 −2.9% &nbsp;·&nbsp; 세션 길이 −15.0%</p>
+      <p style="font-size:13px;color:var(--ink-2);line-height:1.6;margin:0">3.4에서 <b>새로</b> 약해진 건 <b>"한 번의 플레이 길이"</b>. 8/6(이상치) 제외해도 −11.6% 남음 → <b>확정</b>. 원인 위치는 아래 구간·채굴로.</p>
+    </div>
+  </div>
+  <figure>
+    <div class="figtop">
+      <div class="figtitle">세션 지표 버전 비교 <span class="q">(팀 덱)</span></div>
+      <div class="legend">
+        <span class="li"><span class="sw" style="background:var(--v32)"></span>3.2</span>
+        <span class="li"><span class="sw" style="background:var(--v33)"></span>3.3</span>
+        <span class="li"><span class="sw" style="background:var(--v34)"></span>3.4</span>
+      </div>
+    </div>
+    <div class="chart" id="c-sess"></div>
+    <figcaption>Sessions/User는 3.2(3.21)에서 낮아진 뒤 3.4(2.72)까지 <b>미회복</b>. Playtime/Session은 3.3(18.9분)에서 정점 후 3.4(16.0분)로 <b>−15%</b> — 이게 3.4의 새 약점.</figcaption>
+  </figure>
+
+  <h2 style="margin-top:44px">세 신호가 겹치는 <span class="a34">092–098</span>이 최우선 조사 구간</h2>
+  <p class="say"><strong>진행시간 · Step별 이탈률 · 평균 앱 실행 순번</strong>이 가장 강하게 겹치는 곳. 원인 "확정"이 아니라 <strong>가장 먼저 조사할 마찰 구간</strong>입니다.</p>
+  <div class="tblwrap">
+    <table class="kpitbl">
+      <thead><tr>
+        <th style="text-align:left">Step 구간</th>
+        <th>진행시간</th><th>Step별 이탈률</th><th>평균 앱 실행 순번</th><th>판정</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="mname">060–075</td><td>짧음</td><td>낮음</td><td>1.10→1.23</td><td><span class="c g">안정</span></td></tr>
+        <tr><td class="mname">076–083</td><td>증가 시작<small>083 7.7분</small></td><td>5~10%</td><td>1.23→1.62</td><td><span class="c w">첫 경고</span></td></tr>
+        <tr class="hl"><td class="mname">092–098</td><td>6.7~13.0분</td><td>10~18%</td><td>1.90→2.45</td><td><span class="c b">세 신호 최강</span></td></tr>
+        <tr><td class="mname">102+</td><td>11.7~17.5분</td><td>10~19%</td><td>2.92→3.29</td><td><span class="c b">후반 누적</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="say" style="margin-top:11px;font-size:13px;color:var(--ink-3)">문제 스텝: <b style="color:var(--ink-2)">092 수리직원2</b>(10.5분·이탈 12.1%), <b style="color:var(--ink-2)">094 허수아비6</b>(13.0분·이탈 18.2%), <b style="color:var(--ink-2)">097→098 망치 순서</b>(전환 이탈 3.2 3.3% → 3.4 13.9%).</p>
+
+  <div class="callout badbox">
+    <p style="font-size:13.5px"><b>왜 세션이 짧아졌나 — 채굴 그라인드가 강한 후보.</b> 3.4는 광석 1개당 필요한 수동 채굴(hits/ore)이 <b>3.2의 약 2배</b>로 늘었고, 후반 일부 Step은 <b>진행시간의 59~69%가 광산 체류</b>. 오래·지루한 채굴이 한 번의 세션을 앞당겨 끝냈을 가능성.</p>
+    <div class="hitbars" id="hits"></div>
+    <p style="font-size:11.5px;color:var(--ink-3);margin:8px 0 0;font-family:var(--mono)">hits / ore (광석 1개당 채굴 타격 수) · 단, "채굴 많은 유저가 실제로 세션을 끝냈다"는 직접 연결은 아직 미측정</p>
+  </div>
 </section>
 
 <section data-group="changes">
@@ -250,12 +314,11 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
       <div id="mine-list"></div>
     </div>
     <div class="panelbox">
-      <h4><span class="d" style="background:var(--v34)"></span>3.4의 처방 (스펙리스트)</h4>
+      <h4><span class="d" style="background:var(--v34)"></span>3.4의 롤백 — 두 얼굴</h4>
       <p class="cap" style="color:var(--ink-2);font-family:var(--sans);line-height:1.6">
-      · 광산 밸런스 <b>Sprint 1 수준으로 롤백</b> — 동 채굴 5→10회, 드랍 6→3개, 타격 크기 롤백<br>
-      · <b>광차 온보딩 롤백</b> (강제 조작 축소)<br>
-      · 무기 업그레이드 SellPrice/비용 단계별 체감 강화<br>
-      · 결과: 강제 방-클리어 절벽이 메인 퍼널에서 사라짐</p>
+      <b style="color:var(--good)">좋은 쪽</b> · 강제 방-클리어 게이트를 메인 퍼널에서 분리 → 6·7월식 광산 절벽 사라짐<br>
+      <b style="color:var(--bad)">역효과</b> · 밸런스를 Sprint1로 되돌리며 <b>동 채굴 5→10회 · 드랍 6→3개</b> → 광석당 채굴량(hits/ore)이 <b>1.67 → 3.33(약 2배)</b><br>
+      → 후반 Step 시간의 <b>59~69%가 광산 체류</b>, 세션 길이 감소의 강한 후보 (<b style="color:var(--v34)">세션 분석</b> 탭)</p>
     </div>
   </div>
 </section>
@@ -267,21 +330,22 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   <div class="tblwrap">
     <table class="kpitbl">
       <thead><tr>
-        <th>버전</th>
-        <th>온보딩 완주<small>정규화 /100 · GA</small></th>
-        <th>D1 리텐션</th>
-        <th>D0 플레이타임</th>
-        <th>설치<small>n</small></th>
+        <th style="text-align:left">지표</th>
+        <th style="color:var(--v32)">3.2 · 6월</th>
+        <th style="color:var(--v33)">3.3 · 7월</th>
+        <th style="color:var(--v34)">3.4 · 8월</th>
+        <th>Δ 3.2→3.4</th>
       </tr></thead>
       <tbody>
-        <tr><td class="vname v32">3.2 · 6월</td><td><span class="c b">8</span></td><td><span class="c g">39.2%</span></td><td><span class="c g">61분</span></td><td>245</td></tr>
-        <tr><td class="vname v33">3.3 · 7월</td><td><span class="c mut">해당없음</span></td><td><span class="c b">29.8%</span></td><td><span class="c w">51분</span></td><td>161</td></tr>
-        <tr><td class="vname v34">3.4 · 8월</td><td><span class="c g">37</span></td><td><span class="c w">36.2%</span></td><td><span class="c b">46분</span></td><td>147</td></tr>
-        <tr class="delta"><td>Δ 3.2 → 3.4</td><td><span class="c g">+29<span class="updown">▲</span></span></td><td><span class="c b">−3.0%p<span class="updown">▼</span></span></td><td><span class="c b">−15분<span class="updown">▼</span></span></td><td>—</td></tr>
+        <tr><td class="mname">온보딩 완주<small>정규화 /100</small></td><td><span class="c b">8</span></td><td><span class="c mut">해당없음</span></td><td><span class="c g">37</span></td><td><span class="c g">+29<span class="updown">▲</span></span></td></tr>
+        <tr class="hl"><td class="mname">D0 플레이타임<small>세션수×길이</small></td><td><span class="c g">60.7분</span></td><td>51.1분</td><td><span class="c b">45.7분</span></td><td><span class="c b">−24.8%<span class="updown">▼</span></span></td></tr>
+        <tr class="sub"><td class="mname">├ Sessions / User<small>세션 수</small></td><td>3.21</td><td>2.80</td><td><span class="c b">2.72</span></td><td><span class="c b">−15.3%<span class="updown">▼</span></span></td></tr>
+        <tr class="sub"><td class="mname">└ Playtime / Session<small>세션 길이</small></td><td>17.3분</td><td><span class="c g">18.9분</span></td><td><span class="c b">16.0분</span></td><td><span class="c b">−7.3%<span class="updown">▼</span></span></td></tr>
+        <tr><td class="mname">D1 리텐션</td><td><span class="c g">39.2%</span></td><td><span class="c b">29.8%</span></td><td><span class="c w">36.2%</span></td><td><span class="c b">−3.0%p<span class="updown">▼</span></span></td></tr>
       </tbody>
     </table>
   </div>
-  <p class="say" style="margin-top:12px;font-size:13px;color:var(--ink-3)">※ D0 플레이타임 61/51/46분 = 3,644/3,067/2,741초. 표본이 작아(n=147~245) D1 리텐션은 노이즈가 크지만, 완주율 급등 대비 <b style="color:var(--ink-2)">개선 신호가 없다</b>는 점이 판정의 근거입니다.</p>
+  <p class="say" style="margin-top:12px;font-size:13px;color:var(--ink-3)">※ 3.4 D0 45.7분 = <b style="color:var(--ink-2)">세션 수 2.72회 × 세션 길이 16.0분</b>. 완주율은 4.6배 뛰었지만 <b style="color:var(--ink-2)">세션 수·길이·리텐션 전부 하락</b> — "더 통과"가 "더 오래·다시"로 이어지지 않았습니다. 세부는 <b style="color:var(--v34)">세션 분석</b> 탭 참고.</p>
 </section>
 
 <section data-group="verdict">
@@ -298,7 +362,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
     </div>
     <div class="dec">
       <span class="verd yes">부분 수정 ○</span>
-      <div><h4>3.4 유지 + 두 곳만 수술</h4><p><b>①</b> 후반 반복 허수아비/직원 고용 루프 <b>압축</b>(허수아비 2·3·4·5·6… 반복 횟수·비용·요구량 하향). <b>②</b> 신규 확장 꼬리(85~106)는 <b>강제 온보딩에서 분리</b>하거나 게이트 완화. <b>③</b> 온보딩 직후 <b>복귀 훅</b>(D1) 실험 — 퍼널 통과율은 이미 충분.</p></div>
+      <div><h4>3.4 유지 + 한 번에 한 변수만 검증 (팀 덱 우선순위)</h4><p><b>①</b> <b>092/094 목표 부담</b> 25~30% 완화(수리직원2 10.5분·허수아비6 13.0분 중 하나만). <b>②</b> <b>후반 채굴 행동량</b> 하향(hits/ore 3.33, 광산 체류 시간). <b>③</b> <b>097→098 순서</b>를 별도 빌드로 테스트. <b>+</b> Phase1 계측(어디서 세션 종료→다음 실행)으로 "행동→세션→리텐션" 순 검증.</p></div>
     </div>
   </div>
 </section>
@@ -315,7 +379,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
 </section>
 
 <div class="foot">
-  <b>데이터</b> · 3.2.0: GA game 339351 main-complete 퍼널(2026-06-29) + KPI(6/20–27) · 3.4.0: ByteBrew↔GA 온보딩 퍼널(8/5–9, build 3.4.0) + KPI · 3.3.0: KPI(7/28–8/1). 스펙 변경점은 3.4.0 스펙리스트(Sprint2.A1). 정규화=각 버전 진입수를 100으로 환산, 공정비교는 GA 완료수 기준.
+  <b>데이터</b> · 3.2.0: GA game 339351 main-complete 퍼널(2026-06-29) + KPI(6/20–27) · 3.4.0: ByteBrew↔GA 온보딩 퍼널(8/5–9, build 3.4.0) + KPI · 3.3.0: KPI(7/28–8/1). 스펙 변경점은 3.4.0 스펙리스트(Sprint2.A1). <b>세션 지표·hits/ore·092–098 마찰·수정안</b>은 팀 리뷰 덱 〈Forge_Fortune_3.4_D0_분석〉(MOLIP, 2026.08.12) 근거 — 덱은 "원인 확정"이 아니라 <b>조사 우선순위</b>까지를 목표로 함. 정규화=각 버전 진입수를 100으로 환산, 공정비교는 GA 완료수 기준.
 </div>
 </div>
 
@@ -437,6 +501,33 @@ function mineList(){
   const n=document.createElement("div");n.style.cssText="margin-top:9px;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)";n.textContent="※ 룸 단위(MineRoomClear): 첫 방 클리어 직후 최대 절벽";host.appendChild(n);
 }
 
+/* ---------- session metric bars ---------- */
+function sessBars(){
+  const host=document.getElementById("c-sess");if(!host)return;
+  const W=880,H=250,pad={t:24,b:34},colW=W/2;
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"세션 지표 버전 비교"});
+  const cols=[cv("var(--v32)"),cv("var(--v33)"),cv("var(--v34)")];const labs=["3.2","3.3","3.4"];
+  function group(cx0,title,vals,fmt,maxv){
+    const gw=colW-70,x0=cx0+50,ih=H-pad.t-pad.b,barW=44,gap=(gw-barW*3)/4;
+    const t=el("text",{x:cx0+colW/2,y:16,"text-anchor":"middle","font-family":"var(--sans)","font-size":12.5,"font-weight":700,fill:cv("var(--ink)")});t.textContent=title;svg.appendChild(t);
+    svg.appendChild(el("line",{x1:x0,y1:pad.t+ih,x2:x0+gw,y2:pad.t+ih,stroke:cv("var(--line)")}));
+    vals.forEach((v,i)=>{const h=v/maxv*ih,bx=x0+gap+(barW+gap)*i,by=pad.t+ih-h;
+      svg.appendChild(el("rect",{x:bx,y:by,width:barW,height:h,rx:4,fill:cols[i]}));
+      const vt=el("text",{x:bx+barW/2,y:by-6,"text-anchor":"middle","font-family":"var(--mono)","font-size":12,"font-weight":700,fill:cols[i]});vt.textContent=fmt(v);svg.appendChild(vt);
+      const lt=el("text",{x:bx+barW/2,y:pad.t+ih+16,"text-anchor":"middle","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--ink-3)")});lt.textContent=labs[i];svg.appendChild(lt);});
+  }
+  group(0,"Sessions / User  (세션 수)",[3.21,2.80,2.72],v=>v.toFixed(2),3.6);
+  group(colW,"Playtime / Session  (세션 길이)",[17.3,18.9,16.0],v=>v.toFixed(1)+"분",22);
+  host.insertBefore(svg,host.firstChild);
+}
+function hitBars(){
+  const host=document.getElementById("hits");if(!host)return;
+  const data=[["3.2",1.67,"var(--v32)"],["3.3",0.83,"var(--v33)"],["3.4",3.33,"var(--v34)"]];
+  data.forEach(([lab,v,c])=>{const col=document.createElement("div");col.className="col";
+    col.innerHTML=`<div class="bv" style="color:${cv(c)}">${v.toFixed(2)}</div><div class="bar" style="height:${v/3.33*100}%;background:${cv(c)}"></div><div class="bl">${lab}</div>`;
+    host.appendChild(col);});
+}
+
 /* ---------- D1-D7 retention decay (3.2 cohort avg) ---------- */
 function d7strip(){
   const host=document.getElementById("d7");if(!host)return;
@@ -469,7 +560,7 @@ function initTabs(){
   show('verdict');
 }
 
-overlay();cpCards();dropLists();kpi();mineList();d7strip();initTabs();
+overlay();cpCards();dropLists();kpi();mineList();sessBars();hitBars();d7strip();initTabs();
 </script>
 
 </body>
