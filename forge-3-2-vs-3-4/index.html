@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>포지 앤 포춘 · 3.2 vs 3.4 온보딩 재설계 판정</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f7f5f1; --panel:#fffefb; --panel-2:#faf8f3; --ink:#1a1d21; --ink-2:#55606a; --ink-3:#8a949c;
+  --line:#e4e0d8; --line-2:#efece5; --zebra:#faf8f3;
+  --v32:#2f6fb2; --v32-soft:#e8eff7;
+  --v34:#7d57b5; --v34-soft:#efe9f6;
+  --v33:#c0602c; --v33-soft:#f8ebe1;
+  --good:#1c7a5b; --good-soft:#e4f0ea; --warn:#9a6b00; --warn-soft:#f6eed8; --bad:#ad3a2a; --bad-soft:#f6e2dd;
+  --add:#2e8b8b; --add-soft:rgba(46,139,139,.08); --rm:#8a949c; --rm-soft:rgba(138,148,156,.10);
+  --grid:#eae6de;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  --sans:"Apple SD Gothic Neo","Pretendard",-apple-system,system-ui,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:1040px;margin:0 auto;padding:44px 22px 96px}
+.tnum{font-variant-numeric:tabular-nums}
+header{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:20px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+h1{margin:.35em 0 .18em;font-size:clamp(26px,4.4vw,37px);font-weight:800;letter-spacing:-.025em;line-height:1.13;text-wrap:balance}
+h1 em{font-style:italic;color:var(--v34)}
+.lede{color:var(--ink-2);max-width:66ch;font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chip{font-family:var(--mono);font-size:11.5px;padding:4px 9px;border:1px solid var(--line);border-radius:100px;background:var(--panel);color:var(--ink-2)}
+.chip b{color:var(--ink);font-weight:600}
+.chip.v32{border-color:var(--v32);color:var(--v32);background:var(--v32-soft)}
+.chip.v34{border-color:var(--v34);color:var(--v34);background:var(--v34-soft)}
+section{margin-top:50px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--ink-3);display:inline-block}
+h2{margin:.5em 0 .2em;font-size:23px;font-weight:750;letter-spacing:-.02em;text-wrap:balance}
+h2 .a34{color:var(--v34)} h2 .a32{color:var(--v32)}
+.say{color:var(--ink-2);max-width:72ch;margin:.2em 0 0}
+.say strong{color:var(--ink);font-weight:650}
+.tldr{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--v34);border-radius:8px;padding:20px 22px;margin-top:22px}
+.tldr h3{margin:0 0 12px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.tldr ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:13px}
+.tldr li{display:flex;gap:12px;align-items:flex-start}
+.tldr li .n{flex:none;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;margin-top:1px}
+.tldr li p{margin:0;color:var(--ink-2)}
+.tldr li p b{color:var(--ink);font-weight:650}
+figure{margin:22px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 14px}
+.figtop{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.figtitle{font-size:14px;font-weight:700}.figtitle .q{color:var(--ink-3);font-weight:500;font-size:12.5px}
+.legend{display:flex;gap:14px;flex-wrap:wrap}
+.legend .li{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);font-weight:600}
+.legend .sw{width:15px;height:3px;border-radius:2px}.legend .sw.dash{background:repeating-linear-gradient(90deg,var(--v34) 0 4px,transparent 4px 7px)}
+.chart{width:100%;position:relative}.chart svg{width:100%;height:auto;display:block;overflow:visible}
+figcaption{font-size:12px;color:var(--ink-3);margin-top:10px;line-height:1.5}
+figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;background:var(--panel-2);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:11.5px;padding:7px 9px;border-radius:6px;opacity:0;transition:opacity .1s;white-space:nowrap;z-index:5;box-shadow:0 4px 16px rgba(0,0,0,.22);line-height:1.55}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px 15px 17px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.card.v32::before{background:var(--v32)}.card.v33::before{background:var(--v33)}.card.v34::before{background:var(--v34)}
+.card .tag{font-family:var(--mono);font-size:11px;font-weight:600}
+.card.v32 .tag{color:var(--v32)}.card.v33 .tag{color:var(--v33)}.card.v34 .tag{color:var(--v34)}
+.card .sub{font-size:11px;color:var(--ink-3);margin-top:1px}
+.card .rows{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.card .r{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--line-2);padding-top:6px}
+.card .r:first-child{border-top:0;padding-top:0}
+.card .r .lab{font-size:12px;color:var(--ink-2)}
+.card .r .val{font-family:var(--mono);font-weight:700;font-size:14px}.card .r .val.big{font-size:19px;letter-spacing:-.02em}
+.val.g{color:var(--good)}.val.w{color:var(--warn)}.val.b{color:var(--bad)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.panelbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 17px}
+.panelbox h4{margin:0 0 4px;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+.panelbox h4 .d{width:9px;height:9px;border-radius:2px;flex:none}
+.panelbox .cap{font-size:11.5px;color:var(--ink-3);margin:0 0 12px;font-family:var(--mono)}
+.drow{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;font-size:12.5px;padding:6px 0;border-top:1px solid var(--line-2)}
+.drow:first-of-type{border-top:0}
+.drow .nm{color:var(--ink);font-weight:600}.drow .nm small{color:var(--ink-3);font-family:var(--mono);font-weight:400;margin-left:5px}
+.dbars{display:flex;align-items:center;gap:8px;grid-column:1/-1}
+.dbar{height:14px;border-radius:3px;position:relative;min-width:2px}
+.dbar.b32{background:var(--v32)}.dbar.b34{background:var(--v34)}
+.dbars .t{font-family:var(--mono);font-size:11px;font-weight:700;white-space:nowrap}
+.chipset{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.nchip{font-family:var(--mono);font-size:11px;padding:3px 7px;border-radius:5px;background:var(--panel-2);color:var(--ink-3);border:1px solid var(--line-2)}
+.callout{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-top:20px}
+.callout.warnbox{border-left:3px solid var(--warn)}
+.callout.badbox{border-left:3px solid var(--bad)}
+.callout p{margin:0}.callout p+p{margin-top:8px}
+.decis{display:grid;grid-template-columns:1fr;gap:11px;margin-top:20px}
+.dec{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px 17px}
+.dec .verd{font-family:var(--mono);font-size:11px;font-weight:700;padding:5px 10px;border-radius:100px;white-space:nowrap;height:fit-content;margin-top:2px}
+.verd.no{background:var(--bad-soft);color:var(--bad)}.verd.part{background:var(--warn-soft);color:var(--warn)}.verd.yes{background:var(--good-soft);color:var(--good)}
+.dec h4{margin:0 0 3px;font-size:14.5px;font-weight:700}
+.dec p{margin:0;font-size:13px;color:var(--ink-2)}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:20px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 15px}
+.note h4{margin:0 0 5px;font-size:12.5px;font-weight:700;display:flex;gap:7px;align-items:center}.note h4 .d{width:8px;height:8px;border-radius:2px}
+.note p{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.55}
+.foot{margin-top:52px;border-top:1px solid var(--line);padding-top:18px;font-size:12px;color:var(--ink-3);line-height:1.6}
+.foot b{color:var(--ink-2)}
+@media (max-width:760px){.cards{grid-template-columns:1fr}.split{grid-template-columns:1fr}.notes{grid-template-columns:1fr}.dec{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">포지 앤 포춘 · 온보딩 재설계 판정</div>
+  <h1>3.2를 되돌릴까, 고칠까, 순서만 바꿀까 — <em>같은 행동</em>으로 맞춰 본 답</h1>
+  <p class="lede">스텝 번호가 아니라 <b>같은 행동(액션)</b>으로 정렬하고, 진입 유저를 <b>100명으로 정규화</b>해 3.2와 3.4의 온보딩 이탈을 겹쳤습니다. 도구 편향을 없애려 <b>GA↔GA(완료 기준)</b>로 비교합니다. 스펙 변경점·KPI까지 교차검증해 "메인스텝을 어떻게 할지"를 판정합니다.</p>
+  <div class="chips">
+    <span class="chip v32"><b>3.2.0</b> 6월 · GA 339351 · n=172</span>
+    <span class="chip v34"><b>3.4.0</b> 8월 · GA/BB · n=138/132</span>
+    <span class="chip">정렬: <b>main_step 액션 ID</b></span>
+    <span class="chip">정규화: <b>진입=100</b></span>
+  </div>
+</header>
+
+<section style="margin-top:26px">
+  <div class="tldr">
+    <h3>판정 요약</h3>
+    <ul>
+      <li><span class="n" style="background:var(--bad)">1</span><p><b>3.2 메인스텝을 그대로 되돌리는 건 부적절.</b> 같은 100명 기준, 3.4는 <b>모든 동일 액션에서</b> 3.2보다 유저를 더 오래 붙듭니다. 마지막 공통 액션(<code>더미까지 이동</code>)에서 3.2는 8명, 3.4는 <b>37명</b>(BB로는 51명) 잔존 — 4~6배 차이.</p></li>
+      <li><span class="n" style="background:var(--good)">2</span><p><b>3.4가 잘한 것 = 중복 확인 스텝 22개 제거 + 광산 밸런스 롤백.</b> 3.2에서 조금씩 새던 "탭 활성화·업그레이드 진입/닫기·확인 버튼" 류 마찰을 0으로 만들었습니다. 이건 유지가 답.</p></li>
+      <li><span class="n" style="background:var(--warn)">3</span><p><b>하지만 D1 리텐션·플레이타임은 안 올랐습니다</b>(39.2%→36.2%, 3,644초→2,741초). 퍼널을 더 멀리 통과시켰을 뿐, <b>다음날 복귀는 그대로</b>. 남은 레버는 <b>순서 변경이 아니라</b> ① 후반 반복 허수아비/직원 루프 ② 3.4가 새로 붙인 확장 꼬리(85~106)입니다.</p></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">왜 이렇게 비교하나</div>
+  <h2>스텝 번호 대신 <span class="a34">행동</span>, 절대수 대신 <span class="a32">정규화</span></h2>
+  <p class="say">3.2(84스텝)와 3.4(80스텝/최대 106번)는 온보딩이 재설계돼 같은 번호라도 내용이 다를 수 있습니다. 그래서 분석 이벤트 ID <code>main_step_NNN</code>을 <b>행동 앵커</b>로 삼아 정렬했습니다 — 데이터가 이 가정을 뒷받침합니다(초반 액션은 두 버전이 거의 일치, 격차가 매끄럽게 벌어짐). 유저 수(172 vs 138)는 <b>각 진입을 100으로 정규화</b>해 제거하고, GA(3.2)↔BB(3.4) 도구 편향을 없애려 <b>3.4도 GA 완료수</b>로 맞췄습니다.</p>
+</section>
+
+<section>
+  <div class="kicker">핵심 오버레이</div>
+  <h2>같은 액션 · 100명 기준 — 3.4가 어디서나 위에 있다</h2>
+  <p class="say">가로축은 <b>행동 순서(main_step)</b>, 세로축은 진입 100명 중 잔존. 두 선의 간격이 곧 "같은 행동에서 3.4가 더 붙든 유저 수"입니다.</p>
+  <figure>
+    <div class="figtop">
+      <div class="figtitle">진입=100 정규화 잔존 <span class="q">(행동 순서별)</span></div>
+      <div class="legend">
+        <span class="li"><span class="sw" style="background:var(--v32)"></span>3.2 (GA)</span>
+        <span class="li"><span class="sw" style="background:var(--v34)"></span>3.4 (GA·공정비교)</span>
+        <span class="li"><span class="sw dash"></span>3.4 (BB·상한)</span>
+      </div>
+    </div>
+    <div class="chart" id="c-overlay"><div class="tip" id="tip-o"></div></div>
+    <figcaption>회색 구간 = 3.4가 <b>새로 추가한 확장(85~106번, 도끼·망치·시설 업그레이드)</b> — 3.2엔 없던 콘텐츠라 여기 하락은 3.2 대비 악화가 아니라 신규 스코프. 공정 비교 종점은 <code>더미까지 이동</code>(84번): 3.2 <b>8/100</b> vs 3.4 <b>37/100</b>.</figcaption>
+  </figure>
+  <div class="cards" id="cards-cp"></div>
+</section>
+
+<section>
+  <div class="kicker">3.4가 바꾼 것 → 데이터</div>
+  <h2>제거로 없앤 마찰 <span class="a32">vs</span> 반복으로 생긴 마찰</h2>
+  <p class="say">3.4는 스텝 <b>22개를 제거</b>하고 <b>18개를 추가</b>했으며, 허수아비2·수리직원 순서 변경, 캐셔·진열직원 원웨이화, 광산 밸런스 롤백을 했습니다(스펙리스트). 액션별 이탈(정규화 /100)로 보면 효과가 갈립니다.</p>
+  <div class="split">
+    <div class="panelbox">
+      <h4><span class="d" style="background:var(--good)"></span>3.4가 없앤 마찰 (유지 권장)</h4>
+      <p class="cap">3.2에서 새던 확인·전환 스텝 → 3.4에서 제거/0</p>
+      <div id="fixed-list"></div>
+    </div>
+    <div class="panelbox">
+      <h4><span class="d" style="background:var(--bad)"></span>3.4가 만든 마찰 (수정 타깃)</h4>
+      <p class="cap">반복되는 허수아비·직원 고용 → 3.4에서 이탈 증가</p>
+      <div id="reg-list"></div>
+    </div>
+  </div>
+  <div class="callout">
+    <p style="font-size:13px;color:var(--ink-2)"><b style="color:var(--ink)">제거된 22스텝</b> — 대부분 "버튼 인지 / 팝업 닫기 / 진입 확인" 류 중복 마이크로 스텝. 각각은 −1.7~3.5/100로 작지만 누적이 컸습니다.</p>
+    <div class="chipset" id="removed-chips"></div>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">리얼리티 체크</div>
+  <h2>퍼널은 좋아졌는데 — <span class="a34">리텐션은?</span></h2>
+  <p class="say">여기가 핵심 반전입니다. 온보딩 스텝은 3.4가 훨씬 멀리 통과시키지만, <strong>D1 리텐션과 D0 플레이타임은 오르지 않았습니다.</strong> 온보딩이 짧고 쉬워져 빨리 통과할 뿐, <strong>다음날 복귀·체류로 이어지지 않았다</strong>는 신호입니다.</p>
+  <figure>
+    <div class="figtop">
+      <div class="figtitle">버전별 KPI <span class="q">(GameAnalytics Daily Report)</span></div>
+      <div class="legend">
+        <span class="li"><span class="sw" style="background:var(--v32)"></span>3.2</span>
+        <span class="li"><span class="sw" style="background:var(--v33)"></span>3.3</span>
+        <span class="li"><span class="sw" style="background:var(--v34)"></span>3.4</span>
+      </div>
+    </div>
+    <div class="chart" id="c-kpi"></div>
+    <figcaption>D1 리텐션 39.2% → 29.8% → 36.2%(노이즈 범위 내 사실상 횡보), D0 플레이타임 3,644 → 3,067 → <b>2,741초</b>(뚜렷한 하락). 표본이 작아(n=147~245) D1은 신뢰구간이 넓지만, 플레이타임 하락은 "온보딩을 더 빨리 끝낸다"와 일치.</figcaption>
+  </figure>
+  <div class="callout warnbox">
+    <p style="font-size:13.5px"><b>해석</b> — 3.4의 매끄러운 퍼널은 <b>마찰 제거의 성과</b>가 맞지만, 그 자체가 리텐션을 올리진 않았습니다. "스텝을 더 통과시키는 것"이 목표가 아니라 <b>습관 형성(복귀)</b>이 목표라면, 다음 실험은 온보딩 <b>순서</b>가 아니라 <b>후반 반복 밀도와 온보딩 직후 훅</b>에 있어야 합니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">과거 분석 재조명</div>
+  <h2>광산 그라인드 — 3.2의 킬러, 3.4가 손 본 곳</h2>
+  <p class="say">이전 분석의 최대 이탈처였던 <strong>광산 확장 그라인드</strong>(3.2에서 첫 광산 진입→첫 리프트 −27%, 첫 방 클리어 직후 −58%)는 3.4에서 두 갈래로 완화됐습니다.</p>
+  <div class="split">
+    <div class="panelbox">
+      <h4><span class="d" style="background:var(--v32)"></span>3.2 광산 퍼널 (별도 측정)</h4>
+      <p class="cap">광산 진입=100 기준 잔존</p>
+      <div id="mine-list"></div>
+    </div>
+    <div class="panelbox">
+      <h4><span class="d" style="background:var(--v34)"></span>3.4의 처방 (스펙리스트)</h4>
+      <p class="cap" style="color:var(--ink-2);font-family:var(--sans);line-height:1.6">
+      · 광산 밸런스 <b>Sprint 1 수준으로 롤백</b> — 동 채굴 5→10회, 드랍 6→3개, 타격 크기 롤백<br>
+      · <b>광차 온보딩 롤백</b> (강제 조작 축소)<br>
+      · 무기 업그레이드 SellPrice/비용 단계별 체감 강화<br>
+      · 결과: 강제 방-클리어 절벽이 메인 퍼널에서 사라짐</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">그래서 무엇을 할까</div>
+  <h2>판정: 되돌리기 ✕ · 순서만 ✕ · 부분 수정 ○</h2>
+  <div class="decis">
+    <div class="dec">
+      <span class="verd no">되돌리기 ✕</span>
+      <div><h4>3.2 메인스텝으로 롤백</h4><p>정규화 기준 3.2가 모든 액션에서 열위(종점 8 vs 37/100). 3.2의 유일한 우위인 D1·플레이타임도 노이즈 범위이거나 "그라인드로 인한 체류"라 건강한 지표로 보기 어려움. <b>근거 없음.</b></p></div>
+    </div>
+    <div class="dec">
+      <span class="verd no">순서만 ✕</span>
+      <div><h4>스텝 순서만 재배치</h4><p>3.2는 특정 한 스텝이 아니라 <b>30번 이후 전 구간에서 조금씩</b> 새는 "천 개의 상처"형. 순서를 바꿔도 분산된 누수는 회복 안 됨. 3.4가 이미 순서 변경(허수아비·직원)을 했지만 반복 구간은 오히려 악화.</p></div>
+    </div>
+    <div class="dec">
+      <span class="verd yes">부분 수정 ○</span>
+      <div><h4>3.4 유지 + 두 곳만 수술</h4><p><b>①</b> 후반 반복 허수아비/직원 고용 루프 <b>압축</b>(허수아비 2·3·4·5·6… 반복 횟수·비용·요구량 하향). <b>②</b> 신규 확장 꼬리(85~106)는 <b>강제 온보딩에서 분리</b>하거나 게이트 완화. <b>③</b> 온보딩 직후 <b>복귀 훅</b>(D1) 실험 — 퍼널 통과율은 이미 충분.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">해석 시 주의</div>
+  <h2>이 판정을 읽을 때</h2>
+  <div class="notes">
+    <div class="note"><h4><span class="d" style="background:var(--v34)"></span>행동 앵커 가정</h4><p><code>main_step_NNN</code>을 버전 간 동일 액션 ID로 가정. 초반 액션 일치와 격차의 매끄러운 증가가 이를 지지하나, 3.4가 제거/추가한 스텝(±40개)은 1:1 대응이 없어 <b>공통 스텝</b>만 직접 비교.</p></div>
+    <div class="note"><h4><span class="d" style="background:var(--warn)"></span>관측창 성숙도</h4><p>3.4는 5일 코호트(8/5–9)라 후반·확장 스텝은 아직 덜 성숙 → 3.4 후반 잔존은 <b>과소평가</b>. 즉 "3.4 우위"는 보수적 추정.</p></div>
+    <div class="note"><h4><span class="d" style="background:var(--v32)"></span>도구 차이</h4><p>공정성 위해 3.4를 <b>GA 완료수</b>로 비교(BB는 상한선으로만 표시). GA는 순차·엄격이라 꼬리에서 더 깎임.</p></div>
+    <div class="note"><h4><span class="d" style="background:var(--rm)"></span>3.3 매핑 제외</h4><p>3.3.0 KPI 창(7/28–8/1)과 345068 퍼널(7/22 export)이 어긋나 <b>3.3은 KPI에만</b> 사용, 스텝 퍼널 비교에서는 제외.</p></div>
+  </div>
+</section>
+
+<div class="foot">
+  <b>데이터</b> · 3.2.0: GA game 339351 main-complete 퍼널(2026-06-29) + KPI(6/20–27) · 3.4.0: ByteBrew↔GA 온보딩 퍼널(8/5–9, build 3.4.0) + KPI · 3.3.0: KPI(7/28–8/1). 스펙 변경점은 3.4.0 스펙리스트(Sprint2.A1). 정규화=각 버전 진입수를 100으로 환산, 공정비교는 GA 완료수 기준.
+</div>
+</div>
+
+<script>
+const D = /*DATA*/{"e":{"v32":172,"v34ga":138,"v34bb":132},"names":{"1":"이동하기","2":"건설 제작기구","4":"장비 검 제작 알림","5":"광석 집기","6":"재료책상에 재료 내려놓기","7":"장비 제작 시작하기","8":"장비 제작 하기","9":"장비 집기","10":"건설 진열대","11":"진열 해보기","12":"휴지통 생성","15":"손님 알려주기","16":"손님이 상품을 집기","17":"건설 계산대","18":"계산 시작하기","19":"계산 완료하기","20":"수금하기","22":"진열대 포커스 & 광산 해금하기","23":"광산 들어가보기","24":"광맥 캐보기","25":"광석 줏어보기","26":"광산 나가기","29":"무기 제작하러가기","30":"무기 3개 제작하기","31":"하단탭 활성화","32":"장비 집기","33":"진열 3개 해보기","34":"계산하러가기","35":"계산 2번하기","37":"훈련장 만석 확인","40":"할것 확인 버튼 인지하기","41":"훈련장 해금하기","42":"건설 허수아비","43":"허수아비 수리 필요","45":"훈련장 확인 버튼 인지하기","46":"허수아비 수리 시작하기","47":"허수아비 수리 완료하기","51":"직원 고용 - 검 제작","53":"직원 고용- 광석 1","56":"진열대까지 이동","58":"시설(진열대) 업그레이드 진입해보기","59":"시설(진열대) 업그레이드 해보기","60":"시설(진열대) 업그레이드 닫기","61":"직원 고용 - 수리 1","62":"캐셔 고용하기","63":"직원 고용 - 진열 1","64":"장비 업그레이드 가능 알림","66":"장비 업그레이드 진입해보기","67":"장비 검 강화해보기","68":"장비 업그레이드 닫기","69":"허수아비 2","71":"직원 업그레이드 팝업 열기","72":"직원 업그레이드 해보기","73":"직원 업그레이드 팝업 닫기","75":"허수아비 3","76":"건설 - 진열대 검 2","77":"허수아비 4","78":"제작기구 - 도끼","80":"장비 도끼 제작 알림","82":"건설 - 진열대 도끼 2","83":"허수아비 5(훈련장 확장)","84":"더미까지 이동","87":"시설(더미) 업그레이드 진입해보기","88":"시설(더미) 업그레이드 해보기","89":"시설(더미) 업그레이드 닫기","91":"직원 고용 - 도끼 제작","92":"직원 고용 - 수리 2","93":"직원 고용 - 광석 2","94":"허수아비 6","95":"진열대 설치 - 도끼 1","96":"직원 고용 - 진열 2","97":"건설 - 진열대 망치 2","98":"제작기구 - 망치","100":"장비 망치 제작 알림","101":"직원 고용 - 망치 제작","102":"진열대 설치 - 망치 1","103":"직원 고용 - 수리 3","104":"허수아비 7","105":"허수아비 8","106":"직원 고용 - 광석 3"},"v32":[[1,172],[2,171],[3,166],[4,165],[5,164],[6,163],[7,162],[8,161],[9,161],[10,159],[11,158],[12,156],[13,156],[14,156],[15,155],[16,154],[17,154],[18,154],[19,154],[20,153],[21,152],[22,152],[23,152],[24,152],[25,150],[26,150],[27,150],[28,148],[29,148],[30,147],[31,141],[32,140],[33,140],[34,140],[35,138],[36,138],[37,137],[38,136],[39,135],[40,132],[41,129],[42,128],[43,128],[44,126],[45,123],[46,120],[47,118],[48,115],[49,114],[50,113],[51,110],[52,110],[53,110],[54,109],[55,107],[56,106],[57,103],[58,99],[59,97],[60,95],[61,90],[62,87],[63,83],[64,82],[65,80],[66,75],[67,72],[68,68],[69,65],[70,60],[71,58],[72,54],[73,52],[74,49],[75,48],[76,39],[77,34],[78,32],[79,30],[80,29],[81,21],[82,21],[83,17],[84,14]],"v34":[[1,138,132],[2,135,131],[4,135,131],[5,134,130],[6,132,130],[7,132,130],[8,132,130],[9,132,130],[10,132,130],[11,132,130],[12,132,130],[15,131,128],[16,130,129],[17,130,129],[18,129,128],[19,129,128],[20,129,128],[22,127,126],[23,127,126],[24,127,125],[25,126,124],[26,124,123],[29,122,121],[30,121,119],[31,121,118],[32,121,118],[33,121,119],[34,120,119],[35,118,117],[37,118,117],[40,118,117],[41,118,117],[42,118,117],[43,118,117],[45,116,116],[46,116,116],[47,116,116],[51,113,112],[53,109,109],[56,109,109],[58,109,109],[59,109,109],[60,109,109],[61,104,104],[62,103,103],[63,102,102],[64,102,102],[66,102,102],[67,99,100],[68,99,101],[69,94,97],[71,94,97],[72,94,96],[73,93,95],[75,89,94],[76,82,89],[77,71,82],[78,70,81],[80,70,81],[82,61,73],[83,53,69],[84,51,67],[87,48,65],[88,48,67],[89,48,67],[91,47,66],[92,41,58],[93,37,55],[94,31,45],[95,30,42],[96,27,40],[97,22,36],[98,18,31],[100,18,31],[101,18,29],[102,12,26],[103,11,21],[104,7,17],[105,6,14],[106,5,13]],"removed":[3,13,14,21,27,28,36,38,39,44,48,49,50,52,54,55,57,65,70,74,79,81],"added":[87,88,89,91,92,93,94,95,96,97,98,100,101,102,103,104,105,106],"fixed":[[31,3.5,0.0],[66,2.9,0.0],[58,2.3,0.0],[68,2.3,0.0],[72,2.3,0.0],[40,1.7,0.0],[41,1.7,0.0],[46,1.7,0.0],[63,2.3,0.7],[62,1.7,0.7]],"regressed":[[77,2.9,8.0],[82,0.0,6.5],[83,2.3,5.8],[69,1.7,3.6],[75,0.6,2.9],[53,0.0,2.9]],"kpi":[{"v":"3.2.0","tag":"6월","win":"06/20–27","inst":245,"cpi":1.68,"d1":39.2,"pt":3644},{"v":"3.3.0","tag":"7월","win":"07/28–08/01","inst":161,"cpi":1.31,"d1":29.8,"pt":3067},{"v":"3.4.0","tag":"8월","win":"08/05–09","inst":147,"cpi":1.81,"d1":36.2,"pt":2741}],"checkpoints":[[1,"이동하기",100.0,100.0],[10,"건설 진열대",92.4,95.7],[20,"수금하기",89.0,93.5],[26,"광산 나가기",87.2,89.9],[30,"무기 3개 제작하기",85.5,87.7],[40,"할것 확인 버튼 인지하기",76.7,85.5],[47,"허수아비 수리 완료하기",68.6,84.1],[51,"직원 고용 - 검 제작",64.0,81.9],[60,"시설(진열대) 업그레이드 닫기",55.2,79.0],[67,"장비 검 강화해보기",41.9,71.7],[75,"허수아비 3",27.9,64.5],[84,"더미까지 이동",8.1,37.0]]};
+
+const NS="http://www.w3.org/2000/svg";
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function cv(v){return (typeof v==="string"&&v.startsWith("var("))?getComputedStyle(document.documentElement).getPropertyValue(v.slice(4,-1)).trim():v;}
+
+/* ---------- overlay ---------- */
+function overlay(){
+  const host=document.getElementById("c-overlay"),tip=document.getElementById("tip-o");
+  const W=880,H=420,m={t:34,r:20,b:52,l:44},iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const XN=106, X=v=>m.l+(v/XN)*iw, Y=v=>m.t+ih-(v/100)*ih;
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"3.2 대 3.4 정규화 잔존 곡선"});
+  const e32=D.e.v32,ega=D.e.v34ga,ebb=D.e.v34bb;
+  // phase bands
+  const phases=[[1,20,"상점 기본"],[20,36,"광산·무기"],[36,50,"훈련장·허수아비"],[50,74,"직원·업그레이드"],[74,85,"후반 반복"]];
+  phases.forEach((p,i)=>{ if(i%2) svg.appendChild(el("rect",{x:X(p[0]),y:m.t,width:X(p[1])-X(p[0]),height:ih,fill:cv("var(--line-2)"),opacity:.32})); });
+  // added region
+  svg.appendChild(el("rect",{x:X(85),y:m.t,width:X(106)-X(85),height:ih,fill:cv("var(--add-soft)")}));
+  const at=el("text",{x:(X(85)+X(106))/2,y:m.t-10,"text-anchor":"middle","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--add)"),"font-weight":700});at.textContent="3.4 신규 확장";svg.appendChild(at);
+  phases.forEach(p=>{const t=el("text",{x:(X(p[0])+X(p[1]))/2,y:m.t-10,"text-anchor":"middle","font-family":"var(--mono)","font-size":10,fill:cv("var(--ink-3)")});t.textContent=p[2];svg.appendChild(t);});
+  // divider at 84.5
+  svg.appendChild(el("line",{x1:X(84.5),y1:m.t,x2:X(84.5),y2:m.t+ih,stroke:cv("var(--add)"),"stroke-width":1,"stroke-dasharray":"2 3",opacity:.6}));
+  // grid + y labels
+  [0,25,50,75,100].forEach(g=>{svg.appendChild(el("line",{x1:m.l,y1:Y(g),x2:m.l+iw,y2:Y(g),stroke:cv("var(--grid)")}));
+    const t=el("text",{x:m.l-8,y:Y(g)+4,"text-anchor":"end","font-family":"var(--mono)","font-size":11,fill:cv("var(--ink-3)")});t.textContent=g;svg.appendChild(t);});
+  // x ticks
+  [1,20,40,60,84,106].forEach(n=>{const t=el("text",{x:X(n),y:H-m.b+18,"text-anchor":"middle","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--ink-3)")});t.textContent=n;svg.appendChild(t);});
+  const xl=el("text",{x:m.l+iw/2,y:H-8,"text-anchor":"middle","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--ink-3)")});xl.textContent="main_step 행동 순서 →";svg.appendChild(xl);
+  function line(pts,color,w,dash){let d="";pts.forEach((p,i)=>{d+=(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(2)+" ";});
+    const pa=el("path",{d,fill:"none",stroke:cv(color),"stroke-width":w,"stroke-linejoin":"round","stroke-linecap":"round"});if(dash)pa.setAttribute("stroke-dasharray","5 4");if(dash)pa.setAttribute("opacity",.55);svg.appendChild(pa);}
+  const p32=D.v32.map(r=>[r[0],100*r[1]/e32]);
+  const p34ga=D.v34.map(r=>[r[0],100*r[1]/ega]);
+  const p34bb=D.v34.map(r=>[r[0],100*r[2]/ebb]);
+  line(p34bb,"var(--v34)",1.8,true);
+  line(p32,"var(--v32)",2.6,false);
+  line(p34ga,"var(--v34)",2.6,false);
+  // key markers at step84
+  function mark(x,y,color,label,dy){svg.appendChild(el("circle",{cx:X(x),cy:Y(y),r:4.5,fill:cv(color),stroke:cv("var(--panel)"),"stroke-width":2}));
+    const t=el("text",{x:X(x)-8,y:Y(y)+(dy||0),"text-anchor":"end","font-family":"var(--mono)","font-size":12,"font-weight":700,fill:cv(color)});t.textContent=label;svg.appendChild(t);}
+  mark(84,37.0,"var(--v34)","3.4 · 37",-6);
+  mark(84,8.1,"var(--v32)","3.2 · 8",14);
+  host.insertBefore(svg,host.firstChild);
+  // hover
+  const hov=el("rect",{x:m.l,y:m.t,width:iw,height:ih,fill:"transparent"});svg.appendChild(hov);
+  const vline=el("line",{y1:m.t,y2:m.t+ih,stroke:cv("var(--ink-3)"),"stroke-dasharray":"3 3",opacity:0});svg.appendChild(vline);
+  const dots=[el("circle",{r:4,fill:cv("var(--v32)"),opacity:0}),el("circle",{r:4,fill:cv("var(--v34)"),opacity:0})];dots.forEach(d=>svg.appendChild(d));
+  function near(pts,n){let best=null;pts.forEach(p=>{if(best===null||Math.abs(p[0]-n)<Math.abs(best[0]-n))best=p;});return best;}
+  hov.addEventListener("pointermove",ev=>{const r=svg.getBoundingClientRect();const n=Math.round(((ev.clientX-r.left)/r.width*W-m.l)/iw*XN);
+    const a=near(p32,n),b=near(p34ga,n);const sx=X(b?b[0]:n);vline.setAttribute("x1",sx);vline.setAttribute("x2",sx);vline.setAttribute("opacity",1);
+    let html=`<div style="color:var(--ink-3);margin-bottom:2px">${(b?b[0]:n)}. ${D.names[String(b?b[0]:n)]||"—"}</div>`;
+    if(a){dots[0].setAttribute("cx",X(a[0]));dots[0].setAttribute("cy",Y(a[1]));dots[0].setAttribute("opacity",1);html+=`<div><b style="color:${cv("var(--v32)")}">■</b> 3.2 <b>${a[1].toFixed(0)}</b>/100</div>`;}else dots[0].setAttribute("opacity",0);
+    if(b){dots[1].setAttribute("cx",X(b[0]));dots[1].setAttribute("cy",Y(b[1]));dots[1].setAttribute("opacity",1);html+=`<div><b style="color:${cv("var(--v34)")}">■</b> 3.4 <b>${b[1].toFixed(0)}</b>/100</div>`;}else dots[1].setAttribute("opacity",0);
+    tip.innerHTML=html;tip.style.opacity=1;const hr=host.getBoundingClientRect();let lx=sx/W*hr.width+12;if(lx>hr.width-150)lx=sx/W*hr.width-150;tip.style.left=lx+"px";tip.style.top=(ev.clientY-hr.top)+"px";});
+  hov.addEventListener("pointerleave",()=>{tip.style.opacity=0;vline.setAttribute("opacity",0);dots.forEach(d=>d.setAttribute("opacity",0));});
+}
+
+/* ---------- checkpoint cards ---------- */
+function cpCards(){
+  const host=document.getElementById("cards-cp");
+  const picks=[[47,"허수아비 수리 완료"],[60,"시설 업그레이드"],[84,"더미까지 이동(종점)"]];
+  const cpmap={};D.checkpoints.forEach(c=>cpmap[c[0]]=c);
+  const wrap=document.createElement("div");wrap.style.gridColumn="1/-1";wrap.style.cssText="grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:13px";
+  picks.forEach(([n,lab])=>{const c=cpmap[n];const gap=(c[3]-c[2]);
+    const card=document.createElement("div");card.className="card v34";
+    card.innerHTML=`<div class="tag">행동 #${n}</div><div class="sub">${lab}</div><div class="rows">
+      <div class="r"><span class="lab">3.2 잔존</span><span class="val b">${c[2]}<span style="font-size:11px">/100</span></span></div>
+      <div class="r"><span class="lab">3.4 잔존</span><span class="val g big">${c[3]}<span style="font-size:11px">/100</span></span></div>
+      <div class="r"><span class="lab">격차</span><span class="val" style="color:var(--v34)">+${gap.toFixed(0)}</span></div></div>`;
+    host.appendChild(card);});
+}
+
+/* ---------- fixed / regressed lists ---------- */
+function dropLists(){
+  const mkrow=(n,d32,d34,host)=>{const mx=Math.max(d32,d34,3.5);
+    const row=document.createElement("div");row.className="drow";
+    row.innerHTML=`<div class="nm">${D.names[String(n)]||("step "+n)}<small>#${n}</small></div><div></div>
+      <div class="dbars"><div class="dbar b32" style="width:${d32/mx*150}px"></div><span class="t" style="color:var(--v32)">${d32.toFixed(1)}</span>
+      <div class="dbar b34" style="width:${d34/mx*150}px"></div><span class="t" style="color:var(--v34)">${d34.toFixed(1)}</span></div>`;
+    host.appendChild(row);};
+  const f=document.getElementById("fixed-list");D.fixed.slice(0,7).forEach(r=>mkrow(r[0],r[1],r[2],f));
+  const g=document.getElementById("reg-list");D.regressed.forEach(r=>mkrow(r[0],r[1],r[2],g));
+  // legend note
+  [f,g].forEach(h=>{const n=document.createElement("div");n.style.cssText="margin-top:9px;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)";n.innerHTML=`<span style="color:var(--v32)">■</span> 3.2 이탈 &nbsp; <span style="color:var(--v34)">■</span> 3.4 이탈 (/100)`;h.appendChild(n);});
+  // removed chips
+  const rc=document.getElementById("removed-chips");D.removed.forEach(n=>{const s=document.createElement("span");s.className="nchip";s.textContent="#"+n;rc.appendChild(s);});
+}
+
+/* ---------- KPI bars ---------- */
+function kpi(){
+  const host=document.getElementById("c-kpi");
+  const W=880,H=250,pad={t:24,b:34},colW=W/2;
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"버전별 KPI"});
+  const cols=[cv("var(--v32)"),cv("var(--v33)"),cv("var(--v34)")];
+  function group(cx0,title,vals,fmt,maxv){
+    const gw=colW-70,x0=cx0+50,ih=H-pad.t-pad.b,barW=44,gap=(gw-barW*3)/4;
+    const t=el("text",{x:cx0+colW/2,y:16,"text-anchor":"middle","font-family":"var(--sans)","font-size":12.5,"font-weight":700,fill:cv("var(--ink)")});t.textContent=title;svg.appendChild(t);
+    svg.appendChild(el("line",{x1:x0,y1:pad.t+ih,x2:x0+gw,y2:pad.t+ih,stroke:cv("var(--line)")}));
+    vals.forEach((v,i)=>{const h=v/maxv*ih,bx=x0+gap+(barW+gap)*i,by=pad.t+ih-h;
+      svg.appendChild(el("rect",{x:bx,y:by,width:barW,height:h,rx:4,fill:cols[i]}));
+      const vt=el("text",{x:bx+barW/2,y:by-6,"text-anchor":"middle","font-family":"var(--mono)","font-size":12,"font-weight":700,fill:cols[i]});vt.textContent=fmt(v);svg.appendChild(vt);
+      const lt=el("text",{x:bx+barW/2,y:pad.t+ih+16,"text-anchor":"middle","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--ink-3)")});lt.textContent=D.kpi[i].v.slice(0,3);svg.appendChild(lt);});
+  }
+  group(0,"D1 리텐션",D.kpi.map(k=>k.d1),v=>v+"%",50);
+  group(colW,"D0 플레이타임",D.kpi.map(k=>k.pt),v=>(v/60).toFixed(0)+"분",4000);
+  host.insertBefore(svg,host.firstChild);
+}
+
+/* ---------- mine list (static from prior analysis) ---------- */
+function mineList(){
+  const rows=[["광산 진입","100",""],["첫 리프트","73","−27%"],["첫 방 클리어 직후","42","−58%※"],["은광 진입","32",""],["금광 진입","3",""]];
+  const host=document.getElementById("mine-list");
+  rows.forEach(r=>{const d=document.createElement("div");d.className="drow";
+    d.innerHTML=`<div class="nm">${r[0]}</div><div class="dbars" style="grid-column:auto"><div class="dbar b32" style="width:${parseFloat(r[1])/100*130}px"></div><span class="t" style="color:var(--v32)">${r[1]}</span> <span class="t" style="color:var(--bad)">${r[2]}</span></div>`;
+    host.appendChild(d);});
+  const n=document.createElement("div");n.style.cssText="margin-top:9px;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)";n.textContent="※ 룸 단위(MineRoomClear): 첫 방 클리어 직후 최대 절벽";host.appendChild(n);
+}
+
+overlay();cpCards();dropLists();kpi();mineList();
+</script>
+
+</body>
+</html>
