@@ -550,7 +550,7 @@ function initTabs(){
     secs.forEach(s=>s.classList.remove('gfirst'));
     const vis=secs.filter(s=>s.dataset.group===g);if(vis[0])vis[0].classList.add('gfirst');
     btns.forEach(b=>{const on=b.dataset.target===g;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;});
-    if(!first && bar){const y=Math.max(0,bar.offsetTop-6);window.scrollTo(0,y);}
+    if(!first){const hdr=document.querySelector('header');const y=hdr?hdr.getBoundingClientRect().bottom+window.scrollY-2:0;window.scrollTo(0,Math.max(0,y));}
     first=false;
   }
   btns.forEach((b,i)=>{
