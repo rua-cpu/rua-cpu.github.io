@@ -34,7 +34,14 @@ h1 em{font-style:italic;color:var(--v34)}
 .chip b{color:var(--ink);font-weight:600}
 .chip.v32{border-color:var(--v32);color:var(--v32);background:var(--v32-soft)}
 .chip.v34{border-color:var(--v34);color:var(--v34);background:var(--v34-soft)}
+.tabbar{position:sticky;top:0;z-index:20;display:flex;gap:5px;flex-wrap:wrap;background:var(--bg);padding:11px 0 10px;margin-top:4px;border-bottom:1px solid var(--line)}
+.tabbtn{font-family:var(--sans);font-size:13.5px;font-weight:650;color:var(--ink-3);background:transparent;border:1px solid var(--line);border-radius:100px;padding:7px 16px;cursor:pointer;transition:background .12s,color .12s,border-color .12s;white-space:nowrap}
+.tabbtn:hover{color:var(--ink);background:var(--panel-2)}
+.tabbtn.active{color:#fff;background:var(--v34);border-color:var(--v34)}
+.tabbtn:focus-visible{outline:2px solid var(--v34);outline-offset:2px}
 section{margin-top:50px}
+section.ghide{display:none}
+section.gfirst{margin-top:26px}
 .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600;display:flex;align-items:center;gap:10px}
 .kicker::before{content:"";width:22px;height:2px;background:var(--ink-3);display:inline-block}
 h2{margin:.5em 0 .2em;font-size:23px;font-weight:750;letter-spacing:-.02em;text-wrap:balance}
@@ -120,7 +127,14 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   </div>
 </header>
 
-<section style="margin-top:26px">
+<nav class="tabbar" role="tablist" aria-label="리포트 섹션">
+  <button class="tabbtn" role="tab" data-target="verdict">판정</button>
+  <button class="tabbtn" role="tab" data-target="compare">정규화 비교</button>
+  <button class="tabbtn" role="tab" data-target="changes">변경점·광산</button>
+  <button class="tabbtn" role="tab" data-target="retention">리텐션·주의</button>
+</nav>
+
+<section data-group="verdict" style="margin-top:26px">
   <div class="tldr">
     <h3>판정 요약</h3>
     <ul>
@@ -131,13 +145,13 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   </div>
 </section>
 
-<section>
+<section data-group="compare">
   <div class="kicker">왜 이렇게 비교하나</div>
   <h2>스텝 번호 대신 <span class="a34">행동</span>, 절대수 대신 <span class="a32">정규화</span></h2>
   <p class="say">3.2(84스텝)와 3.4(80스텝/최대 106번)는 온보딩이 재설계돼 같은 번호라도 내용이 다를 수 있습니다. 그래서 분석 이벤트 ID <code>main_step_NNN</code>을 <b>행동 앵커</b>로 삼아 정렬했습니다 — 데이터가 이 가정을 뒷받침합니다(초반 액션은 두 버전이 거의 일치, 격차가 매끄럽게 벌어짐). 유저 수(172 vs 138)는 <b>각 진입을 100으로 정규화</b>해 제거하고, GA(3.2)↔BB(3.4) 도구 편향을 없애려 <b>3.4도 GA 완료수</b>로 맞췄습니다.</p>
 </section>
 
-<section>
+<section data-group="compare">
   <div class="kicker">핵심 오버레이</div>
   <h2>같은 액션 · 100명 기준 — 3.4가 어디서나 위에 있다</h2>
   <p class="say">가로축은 <b>행동 순서(main_step)</b>, 세로축은 진입 100명 중 잔존. 두 선의 간격이 곧 "같은 행동에서 3.4가 더 붙든 유저 수"입니다.</p>
@@ -156,7 +170,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   <div class="cards" id="cards-cp"></div>
 </section>
 
-<section>
+<section data-group="changes">
   <div class="kicker">3.4가 바꾼 것 → 데이터</div>
   <h2>제거로 없앤 마찰 <span class="a32">vs</span> 반복으로 생긴 마찰</h2>
   <p class="say">3.4는 스텝 <b>22개를 제거</b>하고 <b>18개를 추가</b>했으며, 허수아비2·수리직원 순서 변경, 캐셔·진열직원 원웨이화, 광산 밸런스 롤백을 했습니다(스펙리스트). 액션별 이탈(정규화 /100)로 보면 효과가 갈립니다.</p>
@@ -178,7 +192,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   </div>
 </section>
 
-<section>
+<section data-group="retention">
   <div class="kicker">리얼리티 체크</div>
   <h2>퍼널은 좋아졌는데 — <span class="a34">리텐션은?</span></h2>
   <p class="say">여기가 핵심 반전입니다. 온보딩 스텝은 3.4가 훨씬 멀리 통과시키지만, <strong>D1 리텐션과 D0 플레이타임은 오르지 않았습니다.</strong> 온보딩이 짧고 쉬워져 빨리 통과할 뿐, <strong>다음날 복귀·체류로 이어지지 않았다</strong>는 신호입니다.</p>
@@ -199,7 +213,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   </div>
 </section>
 
-<section>
+<section data-group="changes">
   <div class="kicker">과거 분석 재조명</div>
   <h2>광산 그라인드 — 3.2의 킬러, 3.4가 손 본 곳</h2>
   <p class="say">이전 분석의 최대 이탈처였던 <strong>광산 확장 그라인드</strong>(3.2에서 첫 광산 진입→첫 리프트 −27%, 첫 방 클리어 직후 −58%)는 3.4에서 두 갈래로 완화됐습니다.</p>
@@ -220,7 +234,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   </div>
 </section>
 
-<section>
+<section data-group="verdict">
   <div class="kicker">그래서 무엇을 할까</div>
   <h2>판정: 되돌리기 ✕ · 순서만 ✕ · 부분 수정 ○</h2>
   <div class="decis">
@@ -239,7 +253,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   </div>
 </section>
 
-<section>
+<section data-group="retention">
   <div class="kicker">해석 시 주의</div>
   <h2>이 판정을 읽을 때</h2>
   <div class="notes">
@@ -373,7 +387,28 @@ function mineList(){
   const n=document.createElement("div");n.style.cssText="margin-top:9px;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)";n.textContent="※ 룸 단위(MineRoomClear): 첫 방 클리어 직후 최대 절벽";host.appendChild(n);
 }
 
-overlay();cpCards();dropLists();kpi();mineList();
+/* ---------- tabs ---------- */
+function initTabs(){
+  const btns=[...document.querySelectorAll('.tabbtn')];
+  const secs=[...document.querySelectorAll('section[data-group]')];
+  const bar=document.querySelector('.tabbar');
+  let first=true;
+  function show(g){
+    secs.forEach(s=>s.classList.toggle('ghide',s.dataset.group!==g));
+    secs.forEach(s=>s.classList.remove('gfirst'));
+    const vis=secs.filter(s=>s.dataset.group===g);if(vis[0])vis[0].classList.add('gfirst');
+    btns.forEach(b=>{const on=b.dataset.target===g;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;});
+    if(!first && bar){const y=Math.max(0,bar.offsetTop-6);window.scrollTo(0,y);}
+    first=false;
+  }
+  btns.forEach((b,i)=>{
+    b.addEventListener('click',()=>show(b.dataset.target));
+    b.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:btns.length-1))%btns.length;btns[n].focus();btns[n].click();}});
+  });
+  show('verdict');
+}
+
+overlay();cpCards();dropLists();kpi();mineList();initTabs();
 </script>
 
 </body>
