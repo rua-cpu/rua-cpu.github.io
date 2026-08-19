@@ -70,6 +70,10 @@ figure{margin:22px 0 0;background:var(--panel);border:1px solid var(--line);bord
 .legend{display:flex;gap:14px;flex-wrap:wrap}
 .legend .li{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);font-weight:600}
 .legend .sw{width:15px;height:3px;border-radius:2px}.legend .sw.dash{background:repeating-linear-gradient(90deg,var(--v34) 0 4px,transparent 4px 7px)}
+.segtoggle{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:100px;padding:2px}
+.segbtn{font-family:var(--sans);font-size:12px;font-weight:650;color:var(--ink-3);background:transparent;border:0;border-radius:100px;padding:5px 13px;cursor:pointer;white-space:nowrap;transition:background .12s,color .12s}
+.segbtn.active{background:var(--v34);color:#fff}
+.segbtn:focus-visible{outline:2px solid var(--v34);outline-offset:2px}
 .chart{width:100%;position:relative}.chart svg{width:100%;height:auto;display:block;overflow:visible}
 figcaption{font-size:12px;color:var(--ink-3);margin-top:10px;line-height:1.5}
 figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;background:var(--panel-2);padding:1px 5px;border-radius:4px;color:var(--ink)}
@@ -160,7 +164,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   <p class="lede">스텝 번호가 아니라 <b>같은 행동(액션)</b>으로 정렬하고, 진입 유저를 <b>100명으로 정규화</b>해 3.2와 3.4의 온보딩 이탈을 겹쳤습니다. 도구 편향을 없애려 <b>GA↔GA(완료 기준)</b>로 비교합니다. 스펙 변경점·KPI까지 교차검증해 "메인스텝을 어떻게 할지"를 판정합니다.</p>
   <div class="chips">
     <span class="chip v32"><b>3.2.0</b> 6월 · GA 339351 · n=172</span>
-    <span class="chip v34"><b>3.4.0</b> GA 5일(0805–09) n=138 · BB 8일(0805–12) n=195</span>
+    <span class="chip v34"><b>3.4.0</b> 8월 · GA·BB 8일(0805–12) · n=200/195</span>
     <span class="chip">정렬: <b>main_step 액션 ID</b></span>
     <span class="chip">정규화: <b>진입=100</b></span>
   </div>
@@ -182,7 +186,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
       <div class="act"><span class="anum">2</span><div class="atxt"><b>광석 드랍 3 → 6 복구</b><span>광맥 1회 채굴 산출 2배 → 후반 채굴 시간↓ = 세션 길이 회복 후보</span></div></div>
       <div class="act"><span class="anum">3</span><div class="atxt"><b>097 → 098 순서 테스트</b><span>제작기구↔진열대 순서를 별도 빌드로 (전환 이탈 3.3% → 13.9%)</span></div></div>
     </div>
-    <div class="anote"><b>✕ 3.2 롤백 · ✕ 순서만 변경</b> — 완주는 3.4가 4.6배지만 세션·리텐션은 하락. 한 번에 <b>한 변수만</b>, 행동지표 → 세션 → 리텐션 순으로 검증. <span>근거는 아래 요약·표·차트 ↓</span></div>
+    <div class="anote"><b>✕ 3.2 롤백 · ✕ 순서만 변경</b> — 완주는 3.4가 약 7배(8→56)지만 세션·리텐션은 하락. 한 번에 <b>한 변수만</b>, 행동지표 → 세션 → 리텐션 순으로 검증. <span>근거는 아래 요약·표·차트 ↓</span></div>
   </div>
 </section>
 
@@ -190,7 +194,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   <div class="tldr">
     <h3>판정 요약</h3>
     <ul>
-      <li><span class="n" style="background:var(--bad)">1</span><p><b>3.2 메인스텝을 그대로 되돌리는 건 부적절.</b> 같은 100명 기준, 3.4는 <b>모든 동일 액션에서</b> 3.2보다 유저를 더 오래 붙듭니다. 마지막 공통 액션(<code>더미까지 이동</code>)에서 3.2는 8명, 3.4는 <b>37명</b>(BB로는 51명) 잔존 — 4~6배 차이.</p></li>
+      <li><span class="n" style="background:var(--bad)">1</span><p><b>3.2 메인스텝을 그대로 되돌리는 건 부적절.</b> 같은 100명 기준, 3.4는 <b>모든 동일 액션에서</b> 3.2보다 유저를 더 오래 붙듭니다. 마지막 공통 액션(<code>더미까지 이동</code>)에서 3.2는 8, 3.4는 <b>56</b>(GA·BB 8일 일치) 잔존 — 약 <b>7배</b> 차이.</p></li>
       <li><span class="n" style="background:var(--good)">2</span><p><b>3.4가 잘한 것 = 중복 확인 스텝 22개 제거 + 광산 밸런스 롤백.</b> 3.2에서 조금씩 새던 "탭 활성화·업그레이드 진입/닫기·확인 버튼" 류 마찰을 0으로 만들었습니다. 이건 유지가 답.</p></li>
       <li><span class="n" style="background:var(--warn)">3</span><p><b>하지만 D0 플레이타임은 −24.8%(60.7→45.7분).</b> 팀 덱으로 분해하면 <b>3.4의 새 문제는 "세션 길이"(−15%)</b>이고(세션 수는 3.2 이후 미회복), 강한 원인 후보는 <b>광석 드랍 6→3(같은 광석에 채굴 2배)</b>과 <b>092–098 구간</b>입니다. 남은 레버는 순서가 아니라 <b>후반 목표 부담·광석 드랍</b>.</p></li>
     </ul>
@@ -200,7 +204,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
 <section data-group="compare">
   <div class="kicker">왜 이렇게 비교하나</div>
   <h2>스텝 번호 대신 <span class="a34">행동</span>, 절대수 대신 <span class="a32">정규화</span></h2>
-  <p class="say">3.2(84스텝)와 3.4(80스텝/최대 106번)는 온보딩이 재설계돼 같은 번호라도 내용이 다를 수 있습니다. 그래서 분석 이벤트 ID <code>main_step_NNN</code>을 <b>행동 앵커</b>로 삼아 정렬했습니다 — 데이터가 이 가정을 뒷받침합니다(초반 액션은 두 버전이 거의 일치, 격차가 매끄럽게 벌어짐). 유저 수(172 vs 138)는 <b>각 진입을 100으로 정규화</b>해 제거하고, GA(3.2)↔BB(3.4) 도구 편향을 없애려 <b>3.4도 GA 완료수</b>로 맞췄습니다.</p>
+  <p class="say">3.2(84스텝)와 3.4(80스텝/최대 106번)는 온보딩이 재설계돼 같은 번호라도 내용이 다를 수 있습니다. 그래서 분석 이벤트 ID <code>main_step_NNN</code>을 <b>행동 앵커</b>로 삼아 정렬했습니다 — 데이터가 이 가정을 뒷받침합니다(초반 액션은 두 버전이 거의 일치, 격차가 매끄럽게 벌어짐). 유저 수(172 vs 200)는 <b>각 진입을 100으로 정규화</b>해 제거하고, GA(3.2)↔BB(3.4) 도구 편향을 없애려 <b>3.4도 GA 완료수</b>로 맞췄습니다 — 8일치가 다 들어온 지금은 <b>GA·BB가 거의 일치</b>(종점 56/100)해 도구차가 사실상 사라졌습니다.</p>
 </section>
 
 <section data-group="compare">
@@ -209,15 +213,26 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   <p class="say">가로축은 <b>행동 순서(main_step)</b>, 세로축은 진입 100명 중 잔존. 두 선의 간격이 곧 "같은 행동에서 3.4가 더 붙든 유저 수"입니다.</p>
   <figure>
     <div class="figtop">
-      <div class="figtitle">진입=100 정규화 잔존 <span class="q">(행동 순서별)</span></div>
-      <div class="legend">
-        <span class="li"><span class="sw" style="background:var(--v32)"></span>3.2 (GA)</span>
-        <span class="li"><span class="sw" style="background:var(--v34)"></span>3.4 (GA·공정비교)</span>
-        <span class="li"><span class="sw dash"></span>3.4 BB · 8일(0805–12)</span>
+      <div class="figtitle">3.2 vs 3.4 · 행동 순서별 <span class="q" id="chartsub">(진입=100 정규화 잔존)</span></div>
+      <div class="segtoggle">
+        <button class="segbtn active" data-mode="ret">잔존 /100</button>
+        <button class="segbtn" data-mode="churn">스텝별 이탈률 %</button>
       </div>
     </div>
+    <div class="legend" id="leg-ret">
+      <span class="li"><span class="sw" style="background:var(--v32)"></span>3.2 (GA)</span>
+      <span class="li"><span class="sw" style="background:var(--v34)"></span>3.4 GA · 8일</span>
+      <span class="li"><span class="sw dash"></span>3.4 BB · 8일</span>
+    </div>
+    <div class="legend" id="leg-churn" style="display:none">
+      <span class="li"><span class="sw" style="background:var(--v34)"></span>3.4 이탈률(%)</span>
+      <span class="li"><span class="sw" style="background:var(--bad)"></span>높은 마찰 ≥12%</span>
+      <span class="li"><span class="sw dash" style="background:repeating-linear-gradient(90deg,var(--v32) 0 4px,transparent 4px 7px)"></span>3.2 이탈률</span>
+    </div>
     <div class="chart" id="c-overlay"><div class="tip" id="tip-o"></div></div>
-    <figcaption>회색 구간 = 3.4가 <b>새로 추가한 확장(85~106번, 도끼·망치·시설 업그레이드)</b> — 3.2엔 없던 콘텐츠라 여기 하락은 3.2 대비 악화가 아니라 신규 스코프. 공정 비교 종점 <code>더미까지 이동</code>(84번): 3.2 <b>8/100</b> vs 3.4 GA <b>37/100</b>. 점선 <b>3.4 BB는 8일(0805–12)로 확장</b> — 더 성숙한 창에서 완주가 더 올라(84번 <b>56/100</b>) "완주 vs 리텐션 간극"을 재확인.</figcaption>
+    <div class="chart" id="c-churn" style="display:none"><div class="tip" id="tip-c"></div></div>
+    <figcaption id="fig-ret">회색 구간 = 3.4 신규 확장(85~106번). 공정 비교 종점 <code>더미까지 이동</code>(84번): 3.2 <b>8/100</b> vs 3.4 <b>56/100</b> — <b>GA·BB 8일이 일치</b>(성숙하면 도구차 소멸, GA 5일 때의 37은 미성숙 과소평가였음). ⚠️ 이 뷰는 <b>절대 잔존</b>이라 선 기울기 = 빠진 <b>인원 수</b>(이탈률 아님).</figcaption>
+    <figcaption id="fig-churn" style="display:none"><b>이 뷰 = 스텝별 이탈률(%)</b>(도달자 중 다음 스텝까지 못 간 비율). 잔존 뷰에서 커 보이던 <b>75–77은 이탈률론 중간(3~5%)</b> — 사람이 많이 남아 인원이 컸을 뿐. 실제 이탈률 최고는 <b>093·102–104(11~19%)</b>로 팀 덱 092–098 마찰 구간과 일치. 즉 "많이 빠지는 곳(절대)"과 "통과 어려운 곳(이탈률)"은 다릅니다.</figcaption>
   </figure>
   <div class="cards" id="cards-cp"></div>
 </section>
@@ -347,7 +362,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
 <section data-group="verdict">
   <div class="kicker">판정 근거 — 한 표로</div>
   <h2>퍼널 완주 <span class="a34">↑</span> 인데 리텐션·플레이타임은 <span class="a32">제자리·↓</span></h2>
-  <p class="say">판정의 핵심은 이 대비입니다. 같은 100명 기준 <strong>온보딩 완주는 3.4가 4.6배</strong>(8→37)인데, <strong>D1 리텐션은 오히려 낮고 플레이타임은 15분 줄었습니다.</strong> "퍼널을 더 통과시킨다"가 "더 오래·다시 논다"로 이어지지 않았다는 뜻.</p>
+  <p class="say">판정의 핵심은 이 대비입니다. 같은 100명 기준 <strong>온보딩 완주는 3.4가 약 7배</strong>(8→56, GA·BB 8일 일치)인데, <strong>D1 리텐션은 오히려 낮고 플레이타임은 15분 줄었습니다.</strong> "퍼널을 더 통과시킨다"가 "더 오래·다시 논다"로 이어지지 않았다는 뜻.</p>
   <div class="tblwrap">
     <table class="kpitbl">
       <thead><tr>
@@ -358,7 +373,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
         <th>Δ 3.2→3.4</th>
       </tr></thead>
       <tbody>
-        <tr><td class="mname">온보딩 완주<small>정규화 /100</small></td><td><span class="c b">8</span></td><td><span class="c mut">해당없음</span></td><td><span class="c g">37</span></td><td><span class="c g">+29<span class="updown">▲</span></span></td></tr>
+        <tr><td class="mname">온보딩 완주<small>정규화 /100 · 8일</small></td><td><span class="c b">8</span></td><td><span class="c mut">해당없음</span></td><td><span class="c g">56</span></td><td><span class="c g">+48<span class="updown">▲</span></span></td></tr>
         <tr class="hl"><td class="mname">D0 플레이타임<small>세션수×길이</small></td><td><span class="c g">60.7분</span></td><td>51.1분</td><td><span class="c b">45.7분</span></td><td><span class="c b">−24.8%<span class="updown">▼</span></span></td></tr>
         <tr class="sub"><td class="mname">├ Sessions / User<small>세션 수</small></td><td>3.21</td><td>2.80</td><td><span class="c b">2.72</span></td><td><span class="c b">−15.3%<span class="updown">▼</span></span></td></tr>
         <tr class="sub"><td class="mname">└ Playtime / Session<small>세션 길이</small></td><td>17.3분</td><td><span class="c g">18.9분</span></td><td><span class="c b">16.0분</span></td><td><span class="c b">−7.3%<span class="updown">▼</span></span></td></tr>
@@ -366,7 +381,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
       </tbody>
     </table>
   </div>
-  <p class="say" style="margin-top:12px;font-size:13px;color:var(--ink-3)">※ 3.4 D0 45.7분 = <b style="color:var(--ink-2)">세션 수 2.72회 × 세션 길이 16.0분</b>. 완주율은 4.6배 뛰었지만 <b style="color:var(--ink-2)">세션 수·길이·리텐션 전부 하락</b> — "더 통과"가 "더 오래·다시"로 이어지지 않았습니다. 세부는 <b style="color:var(--v34)">세션 분석</b> 탭 참고.</p>
+  <p class="say" style="margin-top:12px;font-size:13px;color:var(--ink-3)">※ 3.4 D0 45.7분 = <b style="color:var(--ink-2)">세션 수 2.72회 × 세션 길이 16.0분</b>. 완주율은 약 7배(8→56) 뛰었지만 <b style="color:var(--ink-2)">세션 수·길이·리텐션 전부 하락</b> — "더 통과"가 "더 오래·다시"로 이어지지 않았습니다. 세부는 <b style="color:var(--v34)">세션 분석</b> 탭 참고.</p>
 </section>
 
 <section data-group="verdict">
@@ -375,7 +390,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   <div class="decis">
     <div class="dec">
       <span class="verd no">되돌리기 ✕</span>
-      <div><h4>3.2 메인스텝으로 롤백</h4><p>정규화 기준 3.2가 모든 액션에서 열위(종점 8 vs 37/100). 3.2의 유일한 우위인 D1·플레이타임도 노이즈 범위이거나 "그라인드로 인한 체류"라 건강한 지표로 보기 어려움. <b>근거 없음.</b></p></div>
+      <div><h4>3.2 메인스텝으로 롤백</h4><p>정규화 기준 3.2가 모든 액션에서 열위(종점 8 vs 56/100). 3.2의 유일한 우위인 D1·플레이타임도 노이즈 범위이거나 "그라인드로 인한 체류"라 건강한 지표로 보기 어려움. <b>근거 없음.</b></p></div>
     </div>
     <div class="dec">
       <span class="verd no">순서만 ✕</span>
@@ -393,19 +408,19 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   <h2>이 판정을 읽을 때</h2>
   <div class="notes">
     <div class="note"><h4><span class="d" style="background:var(--v34)"></span>행동 앵커 가정</h4><p><code>main_step_NNN</code>을 버전 간 동일 액션 ID로 가정. 초반 액션 일치와 격차의 매끄러운 증가가 이를 지지하나, 3.4가 제거/추가한 스텝(±40개)은 1:1 대응이 없어 <b>공통 스텝</b>만 직접 비교.</p></div>
-    <div class="note"><h4><span class="d" style="background:var(--warn)"></span>관측창 (GA 5일 · BB 8일)</h4><p>GA는 5일(0805–09), <b>BB는 8일(0805–12)로 확장</b>. 8일 BB에서도 완주는 더 높지만(84번 56/100) 세션·리텐션 개선은 없음 → 공정 비교(GA)는 여전히 <b>보수적</b>.</p></div>
-    <div class="note"><h4><span class="d" style="background:var(--v32)"></span>도구 차이</h4><p>공정성 위해 3.4를 <b>GA 완료수</b>로 비교(BB는 상한선으로만 표시). GA는 순차·엄격이라 꼬리에서 더 깎임.</p></div>
+    <div class="note"><h4><span class="d" style="background:var(--warn)"></span>관측창 (GA·BB 8일)</h4><p>이제 <b>GA·BB 모두 8일(0805–12)</b>. GA 5일 때의 완주 37/100은 <b>미성숙 과소평가</b>였고, 8일 GA는 <b>56/100</b>으로 BB와 일치. 3.2(6월, ~10일)와 성숙도도 비슷해져 비교가 더 공정해짐.</p></div>
+    <div class="note"><h4><span class="d" style="background:var(--v32)"></span>도구 차이 (소멸)</h4><p>GA(순차·엄격) vs BB(이벤트) 편향은 <b>5일 미성숙 때만 크게 벌어졌고</b>, 8일 성숙 시 <b>GA 56 ≈ BB 56</b>으로 수렴. 도구 선택이 결론을 바꾸지 않음.</p></div>
     <div class="note"><h4><span class="d" style="background:var(--rm)"></span>3.3 매핑 제외</h4><p>3.3.0 KPI 창(7/28–8/1)과 345068 퍼널(7/22 export)이 어긋나 <b>3.3은 KPI에만</b> 사용, 스텝 퍼널 비교에서는 제외.</p></div>
   </div>
 </section>
 
 <div class="foot">
-  <b>데이터</b> · 3.2.0: GA game 339351 main-complete 퍼널(2026-06-29) + KPI(6/20–27) · 3.4.0: ByteBrew↔GA 온보딩 퍼널(GA 8/5–9, BB 8/5–12, build 3.4.0) + KPI · 3.3.0: KPI(7/28–8/1). 스펙 변경점은 3.4.0 스펙리스트(Sprint2.A1). <b>세션 지표·hits/ore·092–098 마찰·수정안</b>은 팀 리뷰 덱 〈Forge_Fortune_3.4_D0_분석〉(MOLIP, 2026.08.12) 근거 — 덱은 "원인 확정"이 아니라 <b>조사 우선순위</b>까지를 목표로 함. 정규화=각 버전 진입수를 100으로 환산, 공정비교는 GA 완료수 기준.
+  <b>데이터</b> · 3.2.0: GA game 339351 main-complete 퍼널(2026-06-29) + KPI(6/20–27) · 3.4.0: ByteBrew↔GA 온보딩 퍼널(GA·BB 8/5–12, build 3.4.0) + KPI · 3.3.0: KPI(7/28–8/1). 스펙 변경점은 3.4.0 스펙리스트(Sprint2.A1). <b>세션 지표·hits/ore·092–098 마찰·수정안</b>은 팀 리뷰 덱 〈Forge_Fortune_3.4_D0_분석〉(MOLIP, 2026.08.12) 근거 — 덱은 "원인 확정"이 아니라 <b>조사 우선순위</b>까지를 목표로 함. 정규화=각 버전 진입수를 100으로 환산, 공정비교는 GA 완료수 기준.
 </div>
 </div>
 
 <script>
-const D = /*DATA*/{"e":{"v32":172,"v34ga":138,"v34bb":132},"e_bb8":195,"bb8":[195,192,192,192,192,190,190,191,191,191,192,190,191,190,190,189,189,186,186,185,183,182,181,179,178,178,179,179,177,177,177,177,177,176,174,174,174,169,165,166,166,166,166,161,159,159,159,158,157,158,152,153,152,151,146,139,133,129,129,121,110,109,107,109,109,108,93,87,74,70,68,61,56,56,52,44,36,30,27,26],"names":{"1":"이동하기","2":"건설 제작기구","4":"장비 검 제작 알림","5":"광석 집기","6":"재료책상에 재료 내려놓기","7":"장비 제작 시작하기","8":"장비 제작 하기","9":"장비 집기","10":"건설 진열대","11":"진열 해보기","12":"휴지통 생성","15":"손님 알려주기","16":"손님이 상품을 집기","17":"건설 계산대","18":"계산 시작하기","19":"계산 완료하기","20":"수금하기","22":"진열대 포커스 & 광산 해금하기","23":"광산 들어가보기","24":"광맥 캐보기","25":"광석 줏어보기","26":"광산 나가기","29":"무기 제작하러가기","30":"무기 3개 제작하기","31":"하단탭 활성화","32":"장비 집기","33":"진열 3개 해보기","34":"계산하러가기","35":"계산 2번하기","37":"훈련장 만석 확인","40":"할것 확인 버튼 인지하기","41":"훈련장 해금하기","42":"건설 허수아비","43":"허수아비 수리 필요","45":"훈련장 확인 버튼 인지하기","46":"허수아비 수리 시작하기","47":"허수아비 수리 완료하기","51":"직원 고용 - 검 제작","53":"직원 고용- 광석 1","56":"진열대까지 이동","58":"시설(진열대) 업그레이드 진입해보기","59":"시설(진열대) 업그레이드 해보기","60":"시설(진열대) 업그레이드 닫기","61":"직원 고용 - 수리 1","62":"캐셔 고용하기","63":"직원 고용 - 진열 1","64":"장비 업그레이드 가능 알림","66":"장비 업그레이드 진입해보기","67":"장비 검 강화해보기","68":"장비 업그레이드 닫기","69":"허수아비 2","71":"직원 업그레이드 팝업 열기","72":"직원 업그레이드 해보기","73":"직원 업그레이드 팝업 닫기","75":"허수아비 3","76":"건설 - 진열대 검 2","77":"허수아비 4","78":"제작기구 - 도끼","80":"장비 도끼 제작 알림","82":"건설 - 진열대 도끼 2","83":"허수아비 5(훈련장 확장)","84":"더미까지 이동","87":"시설(더미) 업그레이드 진입해보기","88":"시설(더미) 업그레이드 해보기","89":"시설(더미) 업그레이드 닫기","91":"직원 고용 - 도끼 제작","92":"직원 고용 - 수리 2","93":"직원 고용 - 광석 2","94":"허수아비 6","95":"진열대 설치 - 도끼 1","96":"직원 고용 - 진열 2","97":"건설 - 진열대 망치 2","98":"제작기구 - 망치","100":"장비 망치 제작 알림","101":"직원 고용 - 망치 제작","102":"진열대 설치 - 망치 1","103":"직원 고용 - 수리 3","104":"허수아비 7","105":"허수아비 8","106":"직원 고용 - 광석 3"},"v32":[[1,172],[2,171],[3,166],[4,165],[5,164],[6,163],[7,162],[8,161],[9,161],[10,159],[11,158],[12,156],[13,156],[14,156],[15,155],[16,154],[17,154],[18,154],[19,154],[20,153],[21,152],[22,152],[23,152],[24,152],[25,150],[26,150],[27,150],[28,148],[29,148],[30,147],[31,141],[32,140],[33,140],[34,140],[35,138],[36,138],[37,137],[38,136],[39,135],[40,132],[41,129],[42,128],[43,128],[44,126],[45,123],[46,120],[47,118],[48,115],[49,114],[50,113],[51,110],[52,110],[53,110],[54,109],[55,107],[56,106],[57,103],[58,99],[59,97],[60,95],[61,90],[62,87],[63,83],[64,82],[65,80],[66,75],[67,72],[68,68],[69,65],[70,60],[71,58],[72,54],[73,52],[74,49],[75,48],[76,39],[77,34],[78,32],[79,30],[80,29],[81,21],[82,21],[83,17],[84,14]],"v34":[[1,138,132],[2,135,131],[4,135,131],[5,134,130],[6,132,130],[7,132,130],[8,132,130],[9,132,130],[10,132,130],[11,132,130],[12,132,130],[15,131,128],[16,130,129],[17,130,129],[18,129,128],[19,129,128],[20,129,128],[22,127,126],[23,127,126],[24,127,125],[25,126,124],[26,124,123],[29,122,121],[30,121,119],[31,121,118],[32,121,118],[33,121,119],[34,120,119],[35,118,117],[37,118,117],[40,118,117],[41,118,117],[42,118,117],[43,118,117],[45,116,116],[46,116,116],[47,116,116],[51,113,112],[53,109,109],[56,109,109],[58,109,109],[59,109,109],[60,109,109],[61,104,104],[62,103,103],[63,102,102],[64,102,102],[66,102,102],[67,99,100],[68,99,101],[69,94,97],[71,94,97],[72,94,96],[73,93,95],[75,89,94],[76,82,89],[77,71,82],[78,70,81],[80,70,81],[82,61,73],[83,53,69],[84,51,67],[87,48,65],[88,48,67],[89,48,67],[91,47,66],[92,41,58],[93,37,55],[94,31,45],[95,30,42],[96,27,40],[97,22,36],[98,18,31],[100,18,31],[101,18,29],[102,12,26],[103,11,21],[104,7,17],[105,6,14],[106,5,13]],"removed":[3,13,14,21,27,28,36,38,39,44,48,49,50,52,54,55,57,65,70,74,79,81],"added":[87,88,89,91,92,93,94,95,96,97,98,100,101,102,103,104,105,106],"fixed":[[31,3.5,0.0],[66,2.9,0.0],[58,2.3,0.0],[68,2.3,0.0],[72,2.3,0.0],[40,1.7,0.0],[41,1.7,0.0],[46,1.7,0.0],[63,2.3,0.7],[62,1.7,0.7]],"regressed":[[77,2.9,8.0],[82,0.0,6.5],[83,2.3,5.8],[69,1.7,3.6],[75,0.6,2.9],[53,0.0,2.9]],"kpi":[{"v":"3.2.0","tag":"6월","win":"06/20–27","inst":245,"cpi":1.68,"d1":39.2,"pt":3644},{"v":"3.3.0","tag":"7월","win":"07/28–08/01","inst":161,"cpi":1.31,"d1":29.8,"pt":3067},{"v":"3.4.0","tag":"8월","win":"08/05–09","inst":147,"cpi":1.81,"d1":36.2,"pt":2741}],"checkpoints":[[1,"이동하기",100.0,100.0],[10,"건설 진열대",92.4,95.7],[20,"수금하기",89.0,93.5],[26,"광산 나가기",87.2,89.9],[30,"무기 3개 제작하기",85.5,87.7],[40,"할것 확인 버튼 인지하기",76.7,85.5],[47,"허수아비 수리 완료하기",68.6,84.1],[51,"직원 고용 - 검 제작",64.0,81.9],[60,"시설(진열대) 업그레이드 닫기",55.2,79.0],[67,"장비 검 강화해보기",41.9,71.7],[75,"허수아비 3",27.9,64.5],[84,"더미까지 이동",8.1,37.0]]};
+const D = /*DATA*/{"e":{"v32":172,"v34ga":200,"v34bb":195},"e_ga8":200,"ga8":[200,197,197,196,194,194,194,194,194,194,194,193,193,193,192,192,191,189,189,189,187,186,184,183,183,183,183,182,180,180,180,180,180,178,177,177,177,173,169,169,169,169,169,164,161,161,161,160,158,158,154,154,154,153,149,142,135,131,131,122,112,111,107,107,107,105,90,84,72,68,65,57,53,53,50,41,36,32,26,25],"e_bb8":195,"bb8":[195,192,192,192,192,190,190,191,191,191,192,190,191,190,190,189,189,186,186,185,183,182,181,179,178,178,179,179,177,177,177,177,177,176,174,174,174,169,165,166,166,166,166,161,159,159,159,158,157,158,152,153,152,151,146,139,133,129,129,121,110,109,107,109,109,108,93,87,74,70,68,61,56,56,52,44,36,30,27,26],"names":{"1":"이동하기","2":"건설 제작기구","4":"장비 검 제작 알림","5":"광석 집기","6":"재료책상에 재료 내려놓기","7":"장비 제작 시작하기","8":"장비 제작 하기","9":"장비 집기","10":"건설 진열대","11":"진열 해보기","12":"휴지통 생성","15":"손님 알려주기","16":"손님이 상품을 집기","17":"건설 계산대","18":"계산 시작하기","19":"계산 완료하기","20":"수금하기","22":"진열대 포커스 & 광산 해금하기","23":"광산 들어가보기","24":"광맥 캐보기","25":"광석 줏어보기","26":"광산 나가기","29":"무기 제작하러가기","30":"무기 3개 제작하기","31":"하단탭 활성화","32":"장비 집기","33":"진열 3개 해보기","34":"계산하러가기","35":"계산 2번하기","37":"훈련장 만석 확인","40":"할것 확인 버튼 인지하기","41":"훈련장 해금하기","42":"건설 허수아비","43":"허수아비 수리 필요","45":"훈련장 확인 버튼 인지하기","46":"허수아비 수리 시작하기","47":"허수아비 수리 완료하기","51":"직원 고용 - 검 제작","53":"직원 고용- 광석 1","56":"진열대까지 이동","58":"시설(진열대) 업그레이드 진입해보기","59":"시설(진열대) 업그레이드 해보기","60":"시설(진열대) 업그레이드 닫기","61":"직원 고용 - 수리 1","62":"캐셔 고용하기","63":"직원 고용 - 진열 1","64":"장비 업그레이드 가능 알림","66":"장비 업그레이드 진입해보기","67":"장비 검 강화해보기","68":"장비 업그레이드 닫기","69":"허수아비 2","71":"직원 업그레이드 팝업 열기","72":"직원 업그레이드 해보기","73":"직원 업그레이드 팝업 닫기","75":"허수아비 3","76":"건설 - 진열대 검 2","77":"허수아비 4","78":"제작기구 - 도끼","80":"장비 도끼 제작 알림","82":"건설 - 진열대 도끼 2","83":"허수아비 5(훈련장 확장)","84":"더미까지 이동","87":"시설(더미) 업그레이드 진입해보기","88":"시설(더미) 업그레이드 해보기","89":"시설(더미) 업그레이드 닫기","91":"직원 고용 - 도끼 제작","92":"직원 고용 - 수리 2","93":"직원 고용 - 광석 2","94":"허수아비 6","95":"진열대 설치 - 도끼 1","96":"직원 고용 - 진열 2","97":"건설 - 진열대 망치 2","98":"제작기구 - 망치","100":"장비 망치 제작 알림","101":"직원 고용 - 망치 제작","102":"진열대 설치 - 망치 1","103":"직원 고용 - 수리 3","104":"허수아비 7","105":"허수아비 8","106":"직원 고용 - 광석 3"},"v32":[[1,172],[2,171],[3,166],[4,165],[5,164],[6,163],[7,162],[8,161],[9,161],[10,159],[11,158],[12,156],[13,156],[14,156],[15,155],[16,154],[17,154],[18,154],[19,154],[20,153],[21,152],[22,152],[23,152],[24,152],[25,150],[26,150],[27,150],[28,148],[29,148],[30,147],[31,141],[32,140],[33,140],[34,140],[35,138],[36,138],[37,137],[38,136],[39,135],[40,132],[41,129],[42,128],[43,128],[44,126],[45,123],[46,120],[47,118],[48,115],[49,114],[50,113],[51,110],[52,110],[53,110],[54,109],[55,107],[56,106],[57,103],[58,99],[59,97],[60,95],[61,90],[62,87],[63,83],[64,82],[65,80],[66,75],[67,72],[68,68],[69,65],[70,60],[71,58],[72,54],[73,52],[74,49],[75,48],[76,39],[77,34],[78,32],[79,30],[80,29],[81,21],[82,21],[83,17],[84,14]],"v34":[[1,200,195],[2,197,192],[4,197,192],[5,196,192],[6,194,192],[7,194,190],[8,194,190],[9,194,191],[10,194,191],[11,194,191],[12,194,192],[15,193,190],[16,193,191],[17,193,190],[18,192,190],[19,192,189],[20,191,189],[22,189,186],[23,189,186],[24,189,185],[25,187,183],[26,186,182],[29,184,181],[30,183,179],[31,183,178],[32,183,178],[33,183,179],[34,182,179],[35,180,177],[37,180,177],[40,180,177],[41,180,177],[42,180,177],[43,178,176],[45,177,174],[46,177,174],[47,177,174],[51,173,169],[53,169,165],[56,169,166],[58,169,166],[59,169,166],[60,169,166],[61,164,161],[62,161,159],[63,161,159],[64,161,159],[66,160,158],[67,158,157],[68,158,158],[69,154,152],[71,154,153],[72,154,152],[73,153,151],[75,149,146],[76,142,139],[77,135,133],[78,131,129],[80,131,129],[82,122,121],[83,112,110],[84,111,109],[87,107,107],[88,107,109],[89,107,109],[91,105,108],[92,90,93],[93,84,87],[94,72,74],[95,68,70],[96,65,68],[97,57,61],[98,53,56],[100,53,56],[101,50,52],[102,41,44],[103,36,36],[104,32,30],[105,26,27],[106,25,26]],"removed":[3,13,14,21,27,28,36,38,39,44,48,49,50,52,54,55,57,65,70,74,79,81],"added":[87,88,89,91,92,93,94,95,96,97,98,100,101,102,103,104,105,106],"fixed":[[31,3.5,0.0],[66,2.9,0.5],[58,2.3,0.0],[68,2.3,0.0],[72,2.3,0.0],[40,1.7,0.0],[41,1.7,0.0],[46,1.7,0.0],[63,2.3,0.0],[62,1.7,1.5]],"regressed":[[77,2.9,3.5],[82,0.0,4.5],[83,2.3,5.0],[69,1.7,2.0],[75,0.6,2.0],[53,0.0,2.0]],"kpi":[{"v":"3.2.0","tag":"6월","win":"06/20–27","inst":245,"cpi":1.68,"d1":39.2,"pt":3644},{"v":"3.3.0","tag":"7월","win":"07/28–08/01","inst":161,"cpi":1.31,"d1":29.8,"pt":3067},{"v":"3.4.0","tag":"8월","win":"08/05–12","inst":147,"cpi":1.81,"d1":36.2,"pt":2741}],"checkpoints":[[1,"이동하기",100.0,100.0],[10,"건설 진열대",92.4,97.0],[20,"수금하기",89.0,95.5],[26,"광산 나가기",87.2,93.0],[30,"무기 3개 제작하기",85.5,91.5],[40,"할것 확인 버튼 인지하기",76.7,90.0],[47,"허수아비 수리 완료하기",68.6,88.5],[51,"직원 고용 - 검 제작",64.0,86.5],[60,"시설(진열대) 업그레이드 닫기",55.2,84.5],[67,"장비 검 강화해보기",41.9,79.0],[75,"허수아비 3",27.9,74.5],[84,"더미까지 이동",8.1,55.5]]};
 
 const NS="http://www.w3.org/2000/svg";
 function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
@@ -444,7 +459,7 @@ function overlay(){
   // key markers at step84
   function mark(x,y,color,label,dy){svg.appendChild(el("circle",{cx:X(x),cy:Y(y),r:4.5,fill:cv(color),stroke:cv("var(--panel)"),"stroke-width":2}));
     const t=el("text",{x:X(x)-8,y:Y(y)+(dy||0),"text-anchor":"end","font-family":"var(--mono)","font-size":12,"font-weight":700,fill:cv(color)});t.textContent=label;svg.appendChild(t);}
-  mark(84,37.0,"var(--v34)","3.4 · 37",-6);
+  mark(84,55.5,"var(--v34)","3.4 · 56",-6);
   mark(84,8.1,"var(--v32)","3.2 · 8",14);
   host.insertBefore(svg,host.firstChild);
   // hover
@@ -560,6 +575,47 @@ function d7strip(){
   });
 }
 
+/* ---------- churn-rate view (toggle) ---------- */
+function churnChart(){
+  const host=document.getElementById("c-churn"),tip=document.getElementById("tip-c");if(!host)return;
+  const W=880,H=380,m={t:22,r:20,b:46,l:40},iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const XN=106,X=v=>m.l+(v/XN)*iw,ymax=25,Y=v=>m.t+ih-(Math.min(v,ymax)/ymax)*ih;
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"3.4 스텝별 이탈률"});
+  const phases=[[1,20],[20,36],[36,50],[50,74],[74,85]];
+  phases.forEach((p,i)=>{if(i%2)svg.appendChild(el("rect",{x:X(p[0]),y:m.t,width:X(p[1])-X(p[0]),height:ih,fill:cv("var(--line-2)"),opacity:.32}));});
+  svg.appendChild(el("rect",{x:X(85),y:m.t,width:X(106)-X(85),height:ih,fill:cv("var(--add-soft)")}));
+  const at=el("text",{x:(X(85)+X(106))/2,y:m.t-8,"text-anchor":"middle","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--add)"),"font-weight":700});at.textContent="3.4 신규 확장";svg.appendChild(at);
+  [0,5,10,15,20,25].forEach(g=>{svg.appendChild(el("line",{x1:m.l,y1:Y(g),x2:m.l+iw,y2:Y(g),stroke:cv("var(--grid)")}));
+    const t=el("text",{x:m.l-6,y:Y(g)+4,"text-anchor":"end","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--ink-3)")});t.textContent=g+(g===25?"%+":"%");svg.appendChild(t);});
+  svg.appendChild(el("line",{x1:m.l,y1:Y(12),x2:m.l+iw,y2:Y(12),stroke:cv("var(--bad)"),"stroke-width":1,"stroke-dasharray":"4 3",opacity:.5}));
+  [1,20,40,60,84,106].forEach(n=>{const t=el("text",{x:X(n),y:H-m.b+16,"text-anchor":"middle","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--ink-3)")});t.textContent=n;svg.appendChild(t);});
+  const xl=el("text",{x:m.l+iw/2,y:H-6,"text-anchor":"middle","font-family":"var(--mono)","font-size":10.5,fill:cv("var(--ink-3)")});xl.textContent="main_step 행동 순서 →";svg.appendChild(xl);
+  function rates(arr){const r=[];for(let i=0;i<arr.length-1;i++){const c=arr[i][1],nx=arr[i+1][1];r.push([arr[i][0],c?(c-nx)/c*100:0]);}return r;}
+  const r34=rates(D.v34),r32=rates(D.v32),bw=Math.max(2,(iw/XN)*0.72),marks=[];
+  r34.forEach(([st,rate])=>{const h=(Math.min(rate,ymax)/ymax)*ih,x0=X(st)-bw/2;
+    svg.appendChild(el("rect",{x:x0,y:m.t+ih-h,width:bw,height:Math.max(0,h),rx:2,fill:cv(rate>=12?"var(--bad)":"var(--v34)"),opacity:rate>=7?1:.55}));
+    marks.push({st,rate,x:X(st)});});
+  let d="";r32.forEach((p,i)=>{d+=(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(1)+" ";});
+  svg.appendChild(el("path",{d,fill:"none",stroke:cv("var(--v32)"),"stroke-width":1.5,"stroke-dasharray":"4 3",opacity:.5}));
+  host.insertBefore(svg,host.firstChild);
+  const hov=el("rect",{x:m.l,y:m.t,width:iw,height:ih,fill:"transparent"});svg.appendChild(hov);
+  hov.addEventListener("pointermove",ev=>{const rct=svg.getBoundingClientRect();const px=(ev.clientX-rct.left)/rct.width*W;
+    let best=null;marks.forEach(mk=>{if(!best||Math.abs(mk.x-px)<Math.abs(best.x-px))best=mk;});
+    if(best){tip.innerHTML=`<div style="color:var(--ink-3)">${best.st}. ${D.names[String(best.st)]||''}</div><div><b style="color:${cv(best.rate>=12?'var(--bad)':'var(--v34)')}">이탈률 ${best.rate.toFixed(1)}%</b></div>`;
+      tip.style.opacity=1;const hr=host.getBoundingClientRect();let lx=best.x/W*hr.width+12;if(lx>hr.width-140)lx=best.x/W*hr.width-140;tip.style.left=lx+"px";tip.style.top=(ev.clientY-hr.top)+"px";}});
+  hov.addEventListener("pointerleave",()=>{tip.style.opacity=0;});
+}
+function initChartToggle(){
+  const btns=[...document.querySelectorAll('.segbtn')];
+  const map={ret:['c-overlay','leg-ret','fig-ret'],churn:['c-churn','leg-churn','fig-churn']};
+  const sub=document.getElementById('chartsub');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    const mode=b.dataset.mode;btns.forEach(x=>x.classList.toggle('active',x===b));
+    for(const k in map){const on=k===mode;map[k].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=on?'':'none';});}
+    if(sub)sub.textContent=mode==='churn'?'(스텝별 이탈률 %)':'(진입=100 정규화 잔존)';
+  }));
+}
+
 /* ---------- tabs ---------- */
 function initTabs(){
   const btns=[...document.querySelectorAll('.tabbtn')];
@@ -581,7 +637,7 @@ function initTabs(){
   show('verdict');
 }
 
-overlay();cpCards();dropLists();kpi();mineList();sessBars();hitBars();d7strip();initTabs();
+overlay();churnChart();initChartToggle();cpCards();dropLists();kpi();mineList();sessBars();hitBars();d7strip();initTabs();
 </script>
 
 </body>
