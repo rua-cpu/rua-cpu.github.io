@@ -182,7 +182,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
   <div class="actionbox">
     <div class="alab">▶ 지금 가장 먼저 고칠 것 — 부분 수정 (3.4 유지)</div>
     <div class="acts">
-      <div class="act"><span class="anum">1</span><div class="atxt"><b>092 / 094 목표 부담 25~30%↓</b><span>수리직원2(10.5분·이탈 12.1%)·허수아비6(13.0분·18.2%) 중 하나만</span></div></div>
+      <div class="act"><span class="anum">1</span><div class="atxt"><b>후반 고이탈 스텝 목표 부담 25~30%↓</b><span>8일 퍼널 이탈률 최고 <b>093·102·103·104(11~19%)</b> 중 하나부터 · 진행시간이 긴 092·094(10.5·13.0분)도 부담 대상</span></div></div>
       <div class="act"><span class="anum">2</span><div class="atxt"><b>광석 드랍 3 → 6 복구</b><span>광맥 1회 채굴 산출 2배 → 후반 채굴 시간↓ = 세션 길이 회복 후보</span></div></div>
       <div class="act"><span class="anum">3</span><div class="atxt"><b>097 → 098 순서 테스트</b><span>제작기구↔진열대 순서를 별도 빌드로 (전환 이탈 3.3% → 13.9%)</span></div></div>
     </div>
@@ -196,7 +196,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
     <ul>
       <li><span class="n" style="background:var(--bad)">1</span><p><b>3.2 메인스텝을 그대로 되돌리는 건 부적절.</b> 같은 100명 기준, 3.4는 <b>모든 동일 액션에서</b> 3.2보다 유저를 더 오래 붙듭니다. 마지막 공통 액션(<code>더미까지 이동</code>)에서 3.2는 8, 3.4는 <b>56</b>(GA·BB 8일 일치) 잔존 — 약 <b>7배</b> 차이.</p></li>
       <li><span class="n" style="background:var(--good)">2</span><p><b>3.4가 잘한 것 = 중복 확인 스텝 22개 제거 + 광산 밸런스 롤백.</b> 3.2에서 조금씩 새던 "탭 활성화·업그레이드 진입/닫기·확인 버튼" 류 마찰을 0으로 만들었습니다. 이건 유지가 답.</p></li>
-      <li><span class="n" style="background:var(--warn)">3</span><p><b>하지만 D0 플레이타임은 −24.8%(60.7→45.7분).</b> 팀 덱으로 분해하면 <b>3.4의 새 문제는 "세션 길이"(−15%)</b>이고(세션 수는 3.2 이후 미회복), 강한 원인 후보는 <b>광석 드랍 6→3(같은 광석에 채굴 2배)</b>과 <b>092–098 구간</b>입니다. 남은 레버는 순서가 아니라 <b>후반 목표 부담·광석 드랍</b>.</p></li>
+      <li><span class="n" style="background:var(--warn)">3</span><p><b>하지만 D0 플레이타임은 −24.8%(60.7→45.7분).</b> 팀 덱으로 분해하면 <b>3.4의 새 문제는 "세션 길이"(−15%)</b>이고(세션 수는 3.2 이후 미회복), 강한 원인 후보는 <b>광석 드랍 6→3(같은 광석에 채굴 2배)</b>과 <b>후반 고이탈 스텝(093·102–104)</b>입니다. 남은 레버는 순서가 아니라 <b>후반 목표 부담·광석 드랍</b>.</p></li>
     </ul>
   </div>
 </section>
@@ -282,7 +282,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
       </tbody>
     </table>
   </div>
-  <p class="say" style="margin-top:11px;font-size:13px;color:var(--ink-3)">문제 스텝: <b style="color:var(--ink-2)">092 수리직원2</b>(10.5분·이탈 12.1%), <b style="color:var(--ink-2)">094 허수아비6</b>(13.0분·이탈 18.2%), <b style="color:var(--ink-2)">097→098 망치 순서</b>(전환 이탈 3.2 3.3% → 3.4 13.9%).</p>
+  <p class="say" style="margin-top:11px;font-size:13px;color:var(--ink-3)">문제 스텝 — <b style="color:var(--ink-2)">8일 퍼널 이탈률 최고</b>: 093 광석2 <b>14%</b>, 102 망치1 <b>12~18%</b>, 103·104 <b>11~19%</b>. <b style="color:var(--ink-2)">092 수리직원2·094 허수아비6</b>는 이탈률은 낮아도(5~7%) <b>진행시간이 김</b>(10.5·13.0분). 097→098 망치 순서 전환 이탈 3.3%→13.9%(덱). <span style="color:var(--ink-3)">※ 덱 슬라이드의 092=12.1%·094=18.2%는 덜 성숙한 측정으로, 8일 퍼널과 불일치.</span></p>
 
   <div class="callout badbox">
     <p style="font-size:13.5px"><b>왜 세션이 짧아졌나 — 광석 드랍이 6→3으로 반감.</b> 3.4는 광맥을 한 번 캐면 광석 <b>3개(이전 6개)</b> → 같은 양을 모으려면 채굴 횟수가 약 2배(아래 hits/ore), 후반 일부 Step은 <b>진행시간의 59~69%가 광산 체류</b>. 늘어난 채굴이 한 번의 세션을 앞당겨 끝냈을 가능성.</p>
@@ -398,7 +398,7 @@ figcaption code,.say code,.note code{font-family:var(--mono);font-size:12px;back
     </div>
     <div class="dec">
       <span class="verd yes">부분 수정 ○</span>
-      <div><h4>3.4 유지 + 한 번에 한 변수만 검증 (팀 덱 우선순위)</h4><p><b>①</b> <b>092/094 목표 부담</b> 25~30% 완화(수리직원2 10.5분·허수아비6 13.0분 중 하나만). <b>②</b> <b>광석 드랍 3→6 복구</b>(채굴 1회 산출 2배 = 채굴 시간↓). <b>③</b> <b>097→098 순서</b>를 별도 빌드로 테스트. <b>+</b> Phase1 계측(어디서 세션 종료→다음 실행)으로 "행동→세션→리텐션" 순 검증.</p></div>
+      <div><h4>3.4 유지 + 한 번에 한 변수만 검증 (팀 덱 우선순위)</h4><p><b>①</b> <b>후반 고이탈 스텝 부담</b> 25~30%↓(8일 이탈률 최고 093·102–104 중 하나; 092·094는 진행시간 부담). <b>②</b> <b>광석 드랍 3→6 복구</b>(채굴 1회 산출 2배 = 채굴 시간↓). <b>③</b> <b>097→098 순서</b>를 별도 빌드로 테스트. <b>+</b> Phase1 계측(어디서 세션 종료→다음 실행)으로 "행동→세션→리텐션" 순 검증.</p></div>
     </div>
   </div>
 </section>
