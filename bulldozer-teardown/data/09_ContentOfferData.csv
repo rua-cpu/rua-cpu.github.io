@@ -1,2 +1,0 @@
-﻿ConditionGroupId,ContentOfferType,DisplayType,IconPrefabPath,IsActivate,IsTimeBased,Name,Param1,Priority,id
-701,1,1,UI/Prefabs/ContentOfferUI/FounderPackUI,TRUE,FALSE,CONTENT_OFFER_FOUNDERSPACK_TITLE,3001,1,1

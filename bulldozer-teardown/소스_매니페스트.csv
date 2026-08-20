@@ -1,8 +1,0 @@
-﻿구분,소스,URL,사용목적
-공식,Google Play,https://play.google.com/store/apps/details?id=io.supercent.bulldozermasters,Android 현재 공개 설명
-공식,Apple App Store,https://apps.apple.com/us/app/bulldozer-master-crush-mine/id6747710694,"버전 이력, Secretary, World Map, 이벤트, IAP"
-버전 아카이브,APKPure,https://apkpure.net/bulldozer-master-crush-mine/io.supercent.bulldozermasters/versions,Android 버전/용량/패치노트
-로컬 바이너리,Bulldozer Master 10.1.0 XAPK,,"Texture2D, 데이터 테이블, 조건, Remote Config"
-기술,Arm astc-encoder,https://github.com/ARM-software/astc-encoder,ASTC 규격/공식 디코딩 참고
-뷰어,KingofGames02 ASTC decoder,https://github.com/KingofGames02/astc_decoder_app,브라우저 ASTC 렌더링
-보조 정황,Supercent Bulldozer Master 시스템/콘텐츠 기획 채용,https://supercent.career.greetinghr.com/ko/o/200287,향후 RPG/시스템 확장의 보조 정황
