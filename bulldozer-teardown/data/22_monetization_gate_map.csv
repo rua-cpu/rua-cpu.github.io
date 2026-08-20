@@ -1,0 +1,10 @@
+﻿플레이 지점,발생하는 제안,근거 조건,목적
+Equipment 301 해금,"Speed/Damage/Magnet + Cash/Gear/Gem RV
+Founder’s Pack","ConditionGroup 101~103, 401~403, 701",Core 가치 학습 후 첫 Monetization Gate
+Base 제련량 부족,Furnace RV,Smelt shortage threshold + Base,처리량 병목 해결
+Base 판매량 부족,Truck/Sales RV,Sale shortage threshold + Base,물류/판매 병목 해결
+Shop 최초 학습,Daily Gem RV + Shop 상품,InAppShopOpened / DailyGemTarget onboarding strings,무료 보상으로 Shop 진입 습관 형성
+Research 진행,Research RV / RV Ticket,Research_RvWatch / RvTicket + ×2 config,시간 비용을 광고/티켓으로 치환
+Biz Point 최초 획득,Biz Point Gem exchange,CONDITION_FAIL_NEVER_OWNED item 10006,재화 가치를 먼저 학습한 뒤 판매
+Secretary onboarding 완료,SecretaryPack,$9.99 product ConditionGroup 20001 → onboarding 1406,새 캐릭터 메타의 첫 Pack
+World Map Event,Dynamite/Speed/Power RV 5회 → Gem → Special Kit,GameModeType 2 / event reset / escalating cost,시간 제한 세션에서 반복 구매 압력 생성

@@ -1,0 +1,7 @@
+﻿id,type,name,url,use,sha256,bytes
+S1,Store,Google Play - Bulldozer Master: Crush & Mine,https://play.google.com/store/apps/details?id=io.supercent.bulldozermasters,Android current update notes and listing,,
+S2,Store,Apple App Store - Bulldozer Master: Crush & Mine,https://apps.apple.com/us/app/bulldozer-master-crush-mine/id6747710694,"Version history, LiveOps/Secretary notes, visible IAPs",,
+S3,Version archive,APKPure version history,https://apkpure.net/bulldozer-master-crush-mine/io.supercent.bulldozermasters/versions,"Android version dates, sizes, change notes",,
+S4,Local binary,Bulldozer+Master_+Crush+&+Mine_10.1.0_APKPure.xapk,,Android XAPK 10.1.0 build 98 static analysis,e15e43a838b28e429488260aec63fac7ab733f49025d48f7a7cfb2ed09e5da88,223934446
+S5,Reference package,Wasteland_Life_3.1.2_Orientation_V3.zip,,Report package layout reference,e8c5d6d896ac1a292b13200e2cbd32710bdad65bf0c1cb043dba646fa35d6851,9382658
+S6,Derived data,bulldozer_tables.json,,Parsed game tables used in CSV/Excel,de1019131102ba2f5454a0868d3418e00eaaa1e26c70bc5ce85168cdd4719fa6,152906

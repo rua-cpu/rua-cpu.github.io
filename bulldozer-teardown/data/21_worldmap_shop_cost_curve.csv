@@ -1,0 +1,23 @@
+﻿item,purchase_index,gem_cost,group_id
+Dynamite,1,10,100002
+Dynamite,2,25,100002
+Dynamite,3,50,100002
+Dynamite,4,100,100002
+Dynamite,5,150,100002
+Dynamite,6,200,100002
+Dynamite,7,250,100002
+Speed Buff,1,10,100012
+Speed Buff,2,20,100012
+Speed Buff,3,30,100012
+Speed Buff,4,40,100012
+Speed Buff,5,50,100012
+Power Buff,1,10,100022
+Power Buff,2,20,100022
+Power Buff,3,30,100022
+Power Buff,4,40,100022
+Power Buff,5,50,100022
+Power Buff,6,60,100022
+Power Buff,7,70,100022
+Power Buff,8,80,100022
+Power Buff,9,90,100022
+Power Buff,10,100,100022
