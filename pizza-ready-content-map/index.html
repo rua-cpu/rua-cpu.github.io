@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pizza Ready · Content Layering & Content Map</title>
+<meta name="description" content="Pizza Ready 콘텐츠 레이어링 구조와 Content Map 제안">
+<style>
+:root{
+  --bg:#f5f4ef;--panel:#fff;--ink:#20242d;--muted:#6d7480;--line:#dedbd2;
+  --red:#e54b3f;--red2:#a72f2b;--yellow:#f3b73f;--green:#168a67;--blue:#3478d4;
+  --purple:#7656b6;--orange:#dd7a32;--soft-red:#fff0ec;--soft-yellow:#fff7df;
+  --soft-green:#eaf7f1;--soft-blue:#edf4ff;--soft-purple:#f1ebfb;--side:238px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Segoe UI",sans-serif}
+body{font-size:16px;line-height:1.55;word-break:keep-all}
+button{font:inherit}.shell{min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--side);padding:26px 18px 20px;background:#171a20;color:#fff;z-index:30;overflow:auto;box-shadow:8px 0 30px rgba(0,0,0,.08)}
+.brand{font-weight:950;font-size:21px;letter-spacing:-.04em;margin-bottom:5px}.brand b{color:#ff6b5f}
+.subbrand{font-size:11px;line-height:1.35;color:#aeb5c0;margin-bottom:24px}
+.nav{display:grid;gap:7px}
+.nav button{appearance:none;border:0;background:transparent;color:#b8bec8;text-align:left;padding:11px 12px;border-radius:12px;cursor:pointer;font-weight:800;font-size:13px;line-height:1.35}
+.nav button:hover{background:rgba(255,255,255,.06);color:#fff}.nav button.active{background:#fff;color:#181b20}
+.nav button .no{display:inline-block;width:29px;color:#7f8793}.nav button.active .no{color:var(--red)}
+.side-note{margin-top:22px;padding:12px;border-radius:12px;background:rgba(255,255,255,.06);color:#9ea6b2;font-size:11px}
+.main{margin-left:var(--side);padding:34px}.page{display:none;max-width:1280px;margin:0 auto}.page.active{display:block}
+.hero{background:linear-gradient(135deg,#fff 0%,#fff8e9 55%,#ffeae4 100%);border:1px solid var(--line);border-radius:28px;padding:48px;box-shadow:0 18px 60px rgba(38,34,27,.10);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:360px;height:360px;border-radius:50%;right:-130px;top:-150px;border:35px solid rgba(229,75,63,.08)}
+.eyebrow{font-size:12px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:var(--red);margin-bottom:11px}
+h1,h2,h3,h4,p{margin-top:0}h1,h2,h3,h4{letter-spacing:-.04em;line-height:1.18}
+h1{font-size:clamp(38px,5.2vw,70px);margin-bottom:18px;max-width:980px}h2{font-size:clamp(31px,4vw,50px);margin-bottom:18px}h3{font-size:22px;margin-bottom:10px}h4{font-size:17px;margin-bottom:7px}
+.lead{font-size:21px;line-height:1.48;color:#454b57;max-width:980px}.mini{font-size:13px;color:var(--muted)}
+.section{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:34px;box-shadow:0 10px 34px rgba(38,34,27,.06);margin-bottom:22px}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{border:1px solid var(--line);border-radius:18px;padding:20px;background:#fff;min-width:0}.card.soft{background:#faf9f6}.card.red{background:var(--soft-red);border-color:#f0cac1}.card.green{background:var(--soft-green);border-color:#bfdfd4}.card.blue{background:var(--soft-blue);border-color:#cbdcf3}.card.yellow{background:var(--soft-yellow);border-color:#ecdca8}.card.purple{background:var(--soft-purple);border-color:#d8cbed}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;background:#eeeae1;color:#58554e}.pill.red{background:var(--soft-red);color:var(--red2)}.pill.green{background:var(--soft-green);color:#117154}.pill.blue{background:var(--soft-blue);color:#2f66aa}.pill.purple{background:var(--soft-purple);color:#644696}
+.keyline{border-left:5px solid var(--red);padding:16px 19px;background:#fff7f4;border-radius:0 14px 14px 0;margin-top:18px}.keyline b{color:var(--red2)}
+.big-quote{background:#20242d;color:#fff;border-radius:20px;padding:24px 26px;font-size:24px;font-weight:900;line-height:1.45}.big-quote em{font-style:normal;color:var(--yellow)}
+.layer-stack{display:grid;gap:10px;margin-top:22px}.layer-row{display:grid;grid-template-columns:92px 1.15fr 1.2fr 1.15fr;align-items:center;gap:12px;border:1px solid var(--line);border-radius:16px;padding:13px 15px;background:#fff}
+.layer-tag{height:44px;border-radius:12px;display:grid;place-items:center;font-weight:950;color:#fff}
+.layer-row[data-l="5"] .layer-tag{background:var(--purple)}.layer-row[data-l="4"] .layer-tag{background:var(--blue)}.layer-row[data-l="3"] .layer-tag{background:var(--green)}.layer-row[data-l="2"] .layer-tag{background:var(--yellow);color:#5d4311}.layer-row[data-l="1"] .layer-tag{background:var(--orange)}.layer-row[data-l="0"] .layer-tag{background:var(--red)}
+.layer-name{font-weight:950}.layer-role{font-size:13px;color:var(--muted)}.layer-need{font-size:13px;font-weight:850}
+.cross{margin-top:12px;border:2px dashed #9ea4ae;border-radius:16px;padding:14px 16px;background:#fbfbfa;display:flex;justify-content:space-between;gap:18px;align-items:center}.cross strong{font-size:17px}
+.flowline{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;align-items:stretch;margin-top:22px}
+.flowitem{position:relative;border:1px solid var(--line);border-radius:16px;padding:17px 14px;background:#fff;min-height:136px}
+.flowitem:not(:last-child):after{content:"→";position:absolute;right:-16px;top:46%;z-index:3;color:var(--red);font-weight:950;font-size:22px}
+.flowitem .n{font-size:11px;font-weight:950;color:var(--muted);margin-bottom:7px}.flowitem h4{font-size:16px}.flowitem p{font-size:12px;color:var(--muted);margin-bottom:0}
+.checklist{display:grid;gap:9px}.check{display:flex;gap:10px;align-items:flex-start}.check i{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--soft-green);color:var(--green);font-style:normal;font-weight:950;font-size:12px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.table-wrap.compact{overflow:visible}.table-wrap.compact table{min-width:0;table-layout:fixed}table{width:100%;border-collapse:collapse;min-width:820px;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:13px}th{background:#20242d;color:#fff;font-size:12px;position:sticky;top:0}tr:last-child td{border-bottom:0}
+.role-diagram{display:grid;grid-template-columns:1fr 120px 1fr 120px 1fr;align-items:stretch;gap:10px;margin-top:20px}.rolebox{border:1px solid var(--line);border-radius:18px;padding:20px;background:#fff;text-align:center}.arrowbox{display:grid;place-items:center;color:var(--red);font-weight:950;font-size:28px}
+.step44{display:grid;grid-template-columns:1fr 80px 1fr;gap:14px;align-items:stretch;margin-top:18px}.step44 .side{border:1px solid var(--line);border-radius:18px;padding:20px;background:#fff}.step44 .middle{display:grid;place-items:center;font-weight:950;color:var(--red);font-size:28px}
+.content-map-wrap{display:grid;grid-template-columns:1.8fr .9fr;gap:18px;align-items:start}.map-canvas{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#fbfaf7,#f5f2ea);padding:22px;min-height:650px;overflow:hidden}.map-grid{display:grid;gap:10px}
+.map-layer{position:relative;border-radius:16px;padding:13px 16px 13px 126px;border:1px dashed #d5d0c6;background:rgba(255,255,255,.74)}.map-layer:before{content:attr(data-label);position:absolute;left:14px;top:12px;width:82px;height:34px;border-radius:10px;display:grid;place-items:center;padding:0 8px;text-align:center;white-space:nowrap;font-size:11px;font-weight:950;color:#fff}
+.map-layer[data-level="5"]:before{background:var(--purple)}.map-layer[data-level="4"]:before{background:var(--blue)}.map-layer[data-level="3"]:before{background:var(--green)}.map-layer[data-level="2"]:before{background:#d6a12e}.map-layer[data-level="1"]:before{background:var(--orange)}.map-layer[data-level="0"]:before{background:var(--red)}
+.node-row{display:flex;flex-wrap:wrap;gap:9px}.node{border:1px solid #d8d3c8;background:#fff;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:900;cursor:pointer;transition:.18s}.node:hover,.node.active{transform:translateY(-1px);border-color:var(--red);box-shadow:0 6px 14px rgba(229,75,63,.12)}
+.node[data-type="persistent"]{background:#f0f7ff}.node[data-type="daily"]{background:#eef9f4}.node[data-type="weekly"]{background:#fff7df}.node[data-type="seasonal"]{background:#f4edff}.node[data-type="core"]{background:#fff0ec}
+.map-arrow{font-size:11px;color:#8b857a;margin:0 0 0 110px}.map-detail{position:sticky;top:22px;border:1px solid var(--line);border-radius:20px;background:#fff;padding:22px;min-height:280px}.map-detail h3{font-size:24px}.map-detail .label{font-size:11px;font-weight:950;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:15px}.map-detail .value{font-size:14px;font-weight:800;margin-top:4px}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.legend span{font-size:11px;font-weight:850;padding:5px 8px;border-radius:999px;border:1px solid var(--line)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}.filters button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900;cursor:pointer}.filters button.on{background:#20242d;color:#fff;border-color:#20242d}.dim{opacity:.18}
+.timeline{display:grid;grid-template-columns:repeat(9,minmax(110px,1fr));gap:10px;overflow:auto;padding-bottom:4px}.timecol{min-width:110px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.timecol .t{font-size:11px;font-weight:950;color:var(--muted);margin-bottom:9px}.timechip{display:block;border-radius:10px;padding:8px;margin-bottom:7px;font-size:11px;font-weight:850}.src{margin-top:12px;font-size:11px;color:#8e887d}
+@media (max-width:1020px){:root{--side:210px}.main{padding:22px}.section,.hero{padding:28px}.g3{grid-template-columns:repeat(2,1fr)}.flowline{grid-template-columns:repeat(3,1fr)}.flowitem:nth-child(3):after{display:none}.content-map-wrap{grid-template-columns:1fr}.map-detail{position:static}.role-diagram{grid-template-columns:1fr}.arrowbox{transform:rotate(90deg);min-height:34px}.layer-row{grid-template-columns:76px 1fr 1fr}.layer-role{grid-column:2/4}}
+@media (max-width:720px){.sidebar{position:sticky;top:0;width:auto;height:auto;padding:10px;overflow:visible}.brand,.subbrand,.side-note{display:none}.nav{display:flex;overflow-x:auto;gap:6px}.nav button{white-space:nowrap;flex:0 0 auto;background:rgba(255,255,255,.06)}.nav button .no{width:auto;margin-right:5px}.main{margin-left:0;padding:12px}.hero,.section{padding:22px;border-radius:19px}h1{font-size:38px}h2{font-size:30px}.lead{font-size:18px}.g2,.g3,.flowline{grid-template-columns:1fr}.flowitem:after{display:none!important}.layer-row{grid-template-columns:64px 1fr}.layer-role,.layer-need{grid-column:2}.cross{display:block}.step44{grid-template-columns:1fr}.step44 .middle{transform:rotate(90deg)}.map-canvas{padding:14px}.map-layer{padding-left:104px}.map-layer:before{left:12px;width:68px;padding:0 5px;font-size:10px}}
+@media print{.sidebar{display:none}.main{margin:0;padding:0}.page{display:block!important;page-break-before:always}.page:first-child{page-break-before:auto}.section,.hero{box-shadow:none;border-radius:0;border:0}.filters{display:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar">
+  <div class="brand"><b>Pizza Ready</b><br>Content Layering</div>
+  <div class="subbrand">Core → Repeat → Meta → World → Franchise<br>Step44 이후 Need를 이어주는 구조</div>
+  <nav class="nav" aria-label="문서 목차">
+    <button class="active" data-tab="overview"><span class="no">00</span>Overview</button>
+    <button data-tab="layer-model"><span class="no">01</span>Layer Model</button>
+    <button data-tab="l0-core"><span class="no">02</span>L0 · Core</button>
+    <button data-tab="l1-short"><span class="no">03</span>L1 · Short Goal</button>
+    <button data-tab="l2-repeat"><span class="no">04</span>L2 · Repeat</button>
+    <button data-tab="l3-mid"><span class="no">05</span>L3 · Mid-term</button>
+    <button data-tab="l4-world"><span class="no">06</span>L4 · World Map</button>
+    <button data-tab="l5-hq"><span class="no">07</span>L5 · HQ</button>
+    <button data-tab="cross"><span class="no">08</span>RV / IAP</button>
+    <button data-tab="step44"><span class="no">09</span>Step44 Transfer</button>
+    <button data-tab="content-map"><span class="no">10</span>Content Map</button>
+    <button data-tab="timing"><span class="no">11</span>Open Timing</button>
+    <button data-tab="evidence"><span class="no">12</span>Evidence</button>
+  </nav>
+  <div class="side-note">단일 HTML · 좌측 탭 · iPad/브라우저 공유용<br>각 탭은 URL hash로 직접 공유 가능</div>
+</aside>
+
+<main class="main">
+
+<section class="page active" id="overview">
+  <div class="hero">
+    <div class="eyebrow">Pizza Ready · Content Layering Proposal</div>
+    <h1>콘텐츠를 추가하는 것이 아니라<br>플레이 이유를 층으로 쌓는다</h1>
+    <p class="lead">핵심은 <b>하나의 Core Action(핵심 행동)</b>이 Short Goal(단기 목표), Repeat Motivation(반복 동기), Mid-term Goal(중기 목표), World Progress(월드 성장), Long-term Franchise Progress(장기 프랜차이즈 성장)를 동시에 움직이게 만드는 것입니다.</p>
+  </div>
+  <div class="section">
+    <div class="grid g3">
+      <div class="card red"><span class="pill red">문제</span><h3 style="margin-top:12px">Step44 이후 Need 약화</h3><p class="mini">새 기능을 여는 기대가 약해지면서 Upgrade의 의미가 숫자 상승으로 축소됩니다.</p></div>
+      <div class="card green"><span class="pill green">전략</span><h3 style="margin-top:12px">Need Layering</h3><p class="mini">같은 Upgrade가 Contest, Factory, World, HQ까지 동시에 진전시키도록 만듭니다.</p></div>
+      <div class="card blue"><span class="pill blue">목표</span><h3 style="margin-top:12px">Retention + RV + LTV</h3><p class="mini">광고 수를 억지로 늘리기보다, 목표를 앞당길 때 RV가 자연스럽게 선택되게 합니다.</p></div>
+    </div>
+    <div class="big-quote" style="margin-top:18px">“무슨 콘텐츠를 더 넣을까?”가 아니라 <em>“하나의 Core Action이 몇 개의 Progress를 동시에 만들게 할까?”</em>가 기준입니다.</div>
+  </div>
+</section>
+
+<section class="page" id="layer-model">
+  <div class="section">
+    <div class="eyebrow">01 · Layer Model</div>
+    <h2>Pizza Ready 6-Layer 구조</h2>
+    <p class="lead">각 Layer는 서로 다른 User Need(유저 니즈)를 담당합니다. 아래로 갈수록 즉시성, 위로 갈수록 장기성이 커집니다.</p>
+    <div class="layer-stack">
+      <div class="layer-row" data-l="5"><div class="layer-tag">L5</div><div><div class="layer-name">HQ / Franchise</div><div class="layer-role">Long-term Purpose(장기 목적)</div></div><div class="layer-need">“왜 계속 해야 하지?”</div><div class="layer-role">전체 지점 성장을 하나의 장기 축으로 집계</div></div>
+      <div class="layer-row" data-l="4"><div class="layer-tag">L4</div><div><div class="layer-name">World Map / Branch Growth</div><div class="layer-role">Permanent Progress(영구 진행)</div></div><div class="layer-need">“내가 한 게 어디에 남지?”</div><div class="layer-role">Store 결과를 공간/외형 변화로 보존</div></div>
+      <div class="layer-row" data-l="3"><div class="layer-tag">L3</div><div><div class="layer-name">Factory / Live Event</div><div class="layer-role">Mid-term Goal(중기 목표)</div></div><div class="layer-need">“지금 더 해볼 이유는?”</div><div class="layer-role">Core 익숙함 이후 새로운 Progress 축 제공</div></div>
+      <div class="layer-row" data-l="2"><div class="layer-tag">L2</div><div><div class="layer-name">Contest / Attendance / Pass</div><div class="layer-role">Repeat Motivation(반복 동기)</div></div><div class="layer-need">“오늘 조금 더 하면?”</div><div class="layer-role">일일·주간 반복 행동을 보상으로 전환</div></div>
+      <div class="layer-row" data-l="1"><div class="layer-tag">L1</div><div><div class="layer-name">Guide / Star Level</div><div class="layer-role">Short Goal(단기 목표)</div></div><div class="layer-need">“다음에 뭘 하지?”</div><div class="layer-role">다음 행동과 다음 Unlock을 명확하게 제시</div></div>
+      <div class="layer-row" data-l="0"><div class="layer-tag">L0</div><div><div class="layer-name">Core One Flow</div><div class="layer-role">Core Action(핵심 행동)</div></div><div class="layer-need">“지금 무엇을 하면 되지?”</div><div class="layer-role">주문 → 조리 → 판매 → 설치 → Upgrade</div></div>
+    </div>
+    <div class="cross"><div><strong>Cross Layer · RV / IAP</strong><div class="mini">별도 콘텐츠가 아니라 모든 Layer를 가속하는 Utility(효용)입니다.</div></div><div class="mini"><b>RV</b> = 순간 Progress Acceleration(진행 가속)<br><b>IAP</b> = Persistent Efficiency(지속 효율)</div></div>
+  </div>
+</section>
+
+<section class="page" id="l0-core">
+  <div class="section">
+    <div class="eyebrow">02 · L0 Core One Flow</div><h2>Core는 바꾸지 않고<br>Core가 만드는 가치를 늘린다</h2>
+    <div class="role-diagram">
+      <div class="rolebox"><span class="pill red">현재</span><h3 style="margin-top:12px">Core Action</h3><p>돈 벌기 → 발판 설치 → 직원/시설 Upgrade → 다음 발판</p></div>
+      <div class="arrowbox">→</div>
+      <div class="rolebox"><span class="pill blue">Step44 이후 문제</span><h3 style="margin-top:12px">Reward Value 감소</h3><p>새 기능 Unlock이 줄고, 이미 본 것의 숫자 상승으로 체감 가치가 축소</p></div>
+      <div class="arrowbox">→</div>
+      <div class="rolebox"><span class="pill green">레이어링 목표</span><h3 style="margin-top:12px">One Action → Multi Progress</h3><p>한 번의 Upgrade가 Contest, Factory, World, HQ까지 함께 움직임</p></div>
+    </div>
+    <div class="keyline"><b>설계 원칙</b> · Core를 대체하는 콘텐츠를 만들지 않습니다. Core가 위 Layer에 계속 공급되는 구조를 만듭니다.</div>
+  </div>
+</section>
+
+<section class="page" id="l1-short">
+  <div class="section">
+    <div class="eyebrow">03 · L1 Short Goal</div><h2>Guide + Star Level<br>“지금/다음”을 담당하는 층</h2>
+    <div class="grid g2">
+      <div class="card green"><h3>해야 할 역할</h3><div class="checklist">
+        <div class="check"><i>✓</i><div><b>현재 행동 명확화</b><div class="mini">지금 무엇을 해야 하는지 한 번에 이해</div></div></div>
+        <div class="check"><i>✓</i><div><b>Progress 표시</b><div class="mini">얼마나 남았는지 즉시 확인</div></div></div>
+        <div class="check"><i>✓</i><div><b>Next Unlock Preview</b><div class="mini">다음에 무엇이 열리는지 기대 생성</div></div></div>
+      </div></div>
+      <div class="card red"><h3>이 Layer에서 피할 것</h3><div class="checklist">
+        <div class="check"><i>!</i><div><b>복수 Meta 동시 설명</b><div class="mini">학습 중 메뉴/규칙/재화를 겹치지 않음</div></div></div>
+        <div class="check"><i>!</i><div><b>초기 전용 재화</b><div class="mini">기존 재화 중심으로 규칙을 먼저 익히게 함</div></div></div>
+        <div class="check"><i>!</i><div><b>장기 시스템 상세</b><div class="mini">HQ/World는 Preview만 주고 설명은 늦춤</div></div></div>
+      </div></div>
+    </div>
+    <div class="big-quote" style="margin-top:18px">L1은 <em>“설명하는 층”</em>입니다. 기능을 많이 보여주는 층이 아닙니다.</div>
+  </div>
+</section>
+
+<section class="page" id="l2-repeat">
+  <div class="section">
+    <div class="eyebrow">04 · L2 Repeat Motivation</div><h2>Attendance + Contest + Pass<br>반복 행동에 두 번째 이유를 붙인다</h2>
+    <div class="grid g3">
+      <div class="card green"><span class="pill green">Daily</span><h3 style="margin-top:12px">Attendance</h3><p><b>Return Reason(복귀 이유)</b></p><p class="mini">접속 → 보상 → RV 2배. 짧고 확실한 일일 동기.</p></div>
+      <div class="card yellow"><span class="pill">Weekly</span><h3 style="margin-top:12px">Contest</h3><p><b>Repeat Action Value(반복 행동 가치화)</b></p><p class="mini">평소 플레이 → Point → Tier/Ranking → 다음 보상.</p></div>
+      <div class="card purple"><span class="pill purple">Seasonal</span><h3 style="margin-top:12px">Pass / Pizza Fund</h3><p><b>Accumulation(누적 동기)</b></p><p class="mini">짧은 플레이가 시즌 단위 Progress로 누적되도록 연결.</p></div>
+    </div>
+    <div class="keyline"><b>핵심</b> · L2는 Core를 끊지 않습니다. 평소 하던 행동이 “오늘/이번 주/이번 시즌” 목표로 동시에 환산되어야 합니다.</div>
+  </div>
+</section>
+
+<section class="page" id="l3-mid">
+  <div class="section">
+    <div class="eyebrow">05 · L3 Mid-term Goal</div><h2>Factory + Live Event<br>Step44 전후의 동기를 이어주는 층</h2>
+    <div class="grid g2">
+      <div class="card blue"><span class="pill blue">Permanent Mid-term</span><h3 style="margin-top:12px">Factory / Express</h3><p><b>익숙해진 Core 이후의 두 번째 Progress</b></p>
+        <div class="flowline" style="grid-template-columns:repeat(4,1fr)">
+          <div class="flowitem"><div class="n">01</div><h4>Dollar Only</h4><p>첫 경험은 단순하게</p></div>
+          <div class="flowitem"><div class="n">02</div><h4>EC Unlock</h4><p>규칙 이해 후 전용 재화</p></div>
+          <div class="flowitem"><div class="n">03</div><h4>Bottleneck</h4><p>의미 있는 Friction</p></div>
+          <div class="flowitem"><div class="n">04</div><h4>Automation</h4><p>보이는 효율 상승</p></div>
+        </div>
+      </div>
+      <div class="card green"><span class="pill green">Temporary Mid-term</span><h3 style="margin-top:12px">Live Event</h3><p><b>기간 한정의 “지금 더 할 이유”</b></p>
+        <div class="checklist"><div class="check"><i>✓</i><div>Core Action에서 Event Progress 생성</div></div><div class="check"><i>✓</i><div>Milestone / Event Reward로 단기 기대 생성</div></div><div class="check"><i>✓</i><div>Reward가 다시 Core/World 성장으로 환류</div></div></div>
+      </div>
+    </div>
+    <div class="big-quote" style="margin-top:18px">Factory는 <em>상시 중기 목표</em>, Live Event는 <em>기간 한정 중기 목표</em>. 서로 경쟁하는 별도 게임이 아니라 Core로 돌아오게 하는 두 개의 동기축입니다.</div>
+  </div>
+</section>
+
+<section class="page" id="l4-world">
+  <div class="section">
+    <div class="eyebrow">06 · L4 World Map</div><h2>World Map은 “콘텐츠”보다<br>성장 결과를 보존하는 공간</h2>
+    <div class="role-diagram"><div class="rolebox"><h3>Store</h3><p>지금 한 행동</p></div><div class="arrowbox">→</div><div class="rolebox"><h3>World Map</h3><p>내가 만든 결과</p></div><div class="arrowbox">→</div><div class="rolebox"><h3>HQ</h3><p>앞으로 해야 할 이유</p></div></div>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card"><h3>Branch Visual</h3><p class="mini">Store Grade/Level이 Branch 외형으로 누적</p></div>
+      <div class="card"><h3>Locked Branch</h3><p class="mini">다음 지점/지역의 기대를 보여주는 Future Goal</p></div>
+      <div class="card"><h3>Revisit</h3><p class="mini">완료 지점도 Promotion/Collection으로 다시 가치 생성</p></div>
+    </div>
+    <div class="keyline"><b>주의</b> · Branch 외형 변화만으로 끝나면 World Map은 “성장 기록 화면”에 머뭅니다. 장기 목표가 되려면 반드시 HQ와 인과 관계를 보여줘야 합니다.</div>
+  </div>
+</section>
+
+<section class="page" id="l5-hq">
+  <div class="section">
+    <div class="eyebrow">07 · L5 HQ / Franchise</div><h2>HQ는 “왜 계속 해야 하는가”를<br>담당하는 Long-term Progress</h2>
+    <div class="flowline" style="grid-template-columns:repeat(5,1fr)">
+      <div class="flowitem"><div class="n">01</div><h4>Store Growth</h4><p>현재 지점 성장</p></div>
+      <div class="flowitem"><div class="n">02</div><h4>Branch Grade</h4><p>World Map 외형 변화</p></div>
+      <div class="flowitem"><div class="n">03</div><h4>HQ Point</h4><p>Franchise Progress 누적</p></div>
+      <div class="flowitem"><div class="n">04</div><h4>HQ Level</h4><p>중기 목표 달성</p></div>
+      <div class="flowitem"><div class="n">05</div><h4>New Unlock</h4><p>Event/편의/다음 지역</p></div>
+    </div>
+    <div class="grid g2" style="margin-top:18px"><div class="card green"><h3>보여줘야 할 것</h3><p>Branch 성장 직후 빛/라인이 HQ로 이동 → HQ Progress가 즉시 증가.</p></div><div class="card yellow"><h3>MVP는 단순하게</h3><p>처음부터 방/직원/재화를 추가하지 말고, 큰 Progress + 다음 Benefit으로 시작.</p></div></div>
+  </div>
+</section>
+
+<section class="page" id="cross">
+  <div class="section">
+    <div class="eyebrow">08 · Cross Layer Monetization</div><h2>RV / IAP는 별도 Layer가 아니라<br>Progress를 앞당기는 Utility</h2>
+    <div class="grid g2">
+      <div class="card green"><h3>RV = 순간 Utility</h3><p class="mini">Goal → 부족 → RV → 즉시 Progress</p><div class="table-wrap compact"><table><thead><tr><th>Layer</th><th>RV 역할</th></tr></thead><tbody><tr><td>Core</td><td>돈/생산 가속</td></tr><tr><td>Contest</td><td>Point/Boost</td></tr><tr><td>Attendance</td><td>Reward ×2</td></tr><tr><td>Factory</td><td>EC / 생산 Boost / 병목 해소</td></tr><tr><td>Live Event</td><td>Event Currency / Retry / Progress 가속</td></tr></tbody></table></div></div>
+      <div class="card purple"><h3>IAP = 반복 Utility</h3><p class="mini">반복 Friction → 지속 효율 → Purchase</p><div class="table-wrap compact"><table><thead><tr><th>Layer</th><th>IAP 역할</th></tr></thead><tbody><tr><td>Core</td><td>No Ads / 이동 속도 / Hard Currency</td></tr><tr><td>Pass</td><td>Pizza Fund / 시즌 가치</td></tr><tr><td>Factory</td><td>Starter / Master / 효율 Pack</td></tr><tr><td>Live Event</td><td>Event Pack</td></tr><tr><td>World/HQ</td><td>장기 Convenience(편의) 중심</td></tr></tbody></table></div></div>
+    </div>
+    <div class="big-quote" style="margin-top:18px">“광고를 보여준다”가 아니라 <em>“목표를 얼마나 앞당겨 주는가”</em>가 CTA의 중심이어야 합니다.</div>
+  </div>
+</section>
+
+<section class="page" id="step44">
+  <div class="section">
+    <div class="eyebrow">09 · Step44 Motivation Transfer</div><h2>Step44는 콘텐츠 오픈 지점이 아니라<br>동기 전환 지점으로 본다</h2>
+    <div class="step44"><div class="side"><span class="pill red">Before Step44</span><h3 style="margin-top:12px">Novelty-driven</h3><p><b>“새로운 걸 열고 싶다”</b></p><p class="mini">새 발판, 새 기능, 새 공간이 즉시 보상 역할을 합니다.</p></div><div class="middle">→</div><div class="side"><span class="pill green">After Step44</span><h3 style="margin-top:12px">Goal-driven</h3><p><b>“다음 목표를 달성하고 싶다”</b></p><p class="mini">Contest, Factory, World, HQ가 Upgrade의 의미를 이어받습니다.</p></div></div>
+    <div class="grid g2" style="margin-top:18px"><div class="card red"><h3>레이어링 실패</h3><p>Upgrade → Upgrade → Upgrade → “왜 하지?”</p></div><div class="card green"><h3>레이어링 성공</h3><p>Upgrade → Store Growth → Contest → Factory → World → HQ → Next Unlock</p></div></div>
+  </div>
+</section>
+
+<section class="page" id="content-map">
+  <div class="section">
+    <div class="eyebrow">10 · Content Map</div><h2>콘텐츠를 “목록”이 아니라<br>의존 관계와 역할로 본다</h2>
+    <p class="lead">Content Map은 “어떤 콘텐츠가 존재하는가”보다 <b>무엇을 받아서, 무엇을 진전시키고, 어디로 되돌려 보내는가</b>를 한 화면에서 보는 맵입니다.</p>
+    <div class="filters"><button class="on" data-filter="all">전체</button><button data-filter="core">Core</button><button data-filter="daily">Daily</button><button data-filter="weekly">Weekly</button><button data-filter="seasonal">Seasonal</button><button data-filter="persistent">Persistent</button></div>
+    <div class="content-map-wrap">
+      <div class="map-canvas"><div class="map-grid">
+        <div class="map-layer" data-level="5" data-label="L5 · HQ"><div class="node-row"><button class="node" data-node="hq" data-type="persistent">HQ / Franchise</button><button class="node" data-node="benefit" data-type="persistent">HQ Benefit Unlock</button></div></div>
+        <div class="map-arrow">↑ Branch Grade와 Store 결과가 HQ Progress로 누적</div>
+        <div class="map-layer" data-level="4" data-label="L4 · World"><div class="node-row"><button class="node" data-node="world" data-type="persistent">World Map</button><button class="node" data-node="branch" data-type="persistent">Branch Growth</button><button class="node" data-node="revisit" data-type="persistent">Promotion / Revisit</button></div></div>
+        <div class="map-arrow">↑ Mid-term 성과와 Core 성장 결과를 영구 시각화</div>
+        <div class="map-layer" data-level="3" data-label="L3 · Mid"><div class="node-row"><button class="node" data-node="factory" data-type="persistent">Factory / Express</button><button class="node" data-node="event" data-type="seasonal">Live Event</button></div></div>
+        <div class="map-arrow">↑ Core 행동을 새로운 Goal/Friction으로 전환하고 보상을 다시 Core로 환류</div>
+        <div class="map-layer" data-level="2" data-label="L2 · Repeat"><div class="node-row"><button class="node" data-node="attendance" data-type="daily">Attendance</button><button class="node" data-node="contest" data-type="weekly">Weekly Contest</button><button class="node" data-node="pass" data-type="seasonal">Pass / Pizza Fund</button><button class="node" data-node="cheese" data-type="persistent">Cheese Road / Permanent Growth</button></div></div>
+        <div class="map-arrow">↑ 반복 행동을 Daily / Weekly / Seasonal 가치로 환산</div>
+        <div class="map-layer" data-level="1" data-label="L1 · Short"><div class="node-row"><button class="node" data-node="guide" data-type="core">Guide Quest</button><button class="node" data-node="star" data-type="core">Star Level</button><button class="node" data-node="preview" data-type="core">Next Unlock Preview</button></div></div>
+        <div class="map-arrow">↑ Core의 다음 행동과 다음 Unlock을 해석</div>
+        <div class="map-layer" data-level="0" data-label="L0 · Core"><div class="node-row"><button class="node active" data-node="core" data-type="core">Order / Cook / Serve</button><button class="node" data-node="upgrade" data-type="core">Install / Upgrade</button><button class="node" data-node="store" data-type="core">Store Growth</button></div></div>
+      </div></div>
+      <aside class="map-detail"><span class="pill red">Selected</span><h3 id="detailTitle" style="margin-top:12px">Order / Cook / Serve</h3><div class="label">Layer Role</div><div class="value" id="detailRole">Core Action(핵심 행동)</div><div class="label">Input</div><div class="value" id="detailInput">유저의 직접 플레이</div><div class="label">Output</div><div class="value" id="detailOutput">Dollar / Star / Upgrade 재료</div><div class="label">Feeds Into</div><div class="value" id="detailFeed">Guide · Contest · Factory · World Progress</div><div class="label">Monetization</div><div class="value" id="detailMonetize">RV 성장 가속 / No Ads</div></aside>
+    </div>
+    <div class="legend"><span style="background:#fff0ec">Core / Short Goal</span><span style="background:#eef9f4">Daily</span><span style="background:#fff7df">Weekly</span><span style="background:#f4edff">Seasonal</span><span style="background:#f0f7ff">Persistent</span></div>
+    <div class="keyline"><b>Content Map의 목적</b> · 신규 콘텐츠를 제안할 때 “새 재미가 있는가?”만 보지 않고, <b>어느 Layer를 채우는지 / 무엇과 연결되는지 / Core로 다시 돌아오는지 / RV·IAP Utility가 생기는지</b>까지 함께 판단합니다.</div>
+  </div>
+</section>
+
+<section class="page" id="timing">
+  <div class="section">
+    <div class="eyebrow">11 · Open Timing</div><h2>Step44 이후에 몰아넣지 않고<br>Step44 이전부터 기대를 심는다</h2>
+    <div class="timeline">
+      <div class="timecol"><div class="t">초반</div><span class="timechip" style="background:#fff0ec">Core</span><span class="timechip" style="background:#fff0ec">Guide</span></div>
+      <div class="timecol"><div class="t">초기</div><span class="timechip" style="background:#fff0ec">Star Level</span></div>
+      <div class="timecol"><div class="t">Lv4</div><span class="timechip" style="background:#f0f7ff">World Map Soft Open</span></div>
+      <div class="timecol"><div class="t">Lv5~6</div><span class="timechip" style="background:#f0f7ff">Branch Growth</span></div>
+      <div class="timecol"><div class="t">Lv6~7</div><span class="timechip" style="background:#f0f7ff">HQ Preview</span></div>
+      <div class="timecol"><div class="t">Step38~40</div><span class="timechip" style="background:#f4edff">Live Event</span></div>
+      <div class="timecol"><div class="t">Step44 전후</div><span class="timechip" style="background:#f0f7ff">Factory</span></div>
+      <div class="timecol"><div class="t">Step44+</div><span class="timechip" style="background:#f0f7ff">HQ Goal</span></div>
+      <div class="timecol"><div class="t">이후</div><span class="timechip" style="background:#f0f7ff">Promotion / Collection</span></div>
+    </div>
+    <div class="grid g2" style="margin-top:18px"><div class="card yellow"><h3>Before Step44</h3><p><b>“다음에 이런 게 있다”</b>를 Preview로 심습니다.</p></div><div class="card green"><h3>After Step44</h3><p><b>“이제 이걸 해봐”</b>로 실제 Goal을 전환합니다.</p></div></div>
+  </div>
+</section>
+
+<section class="page" id="evidence">
+  <div class="section">
+    <div class="eyebrow">12 · Evidence</div><h2>이 Layering을 지지하는<br>기획/데이터 신호</h2>
+    <div class="table-wrap"><table><thead><tr><th>근거</th><th>관찰</th><th>Layering에 주는 의미</th></tr></thead><tbody>
+      <tr><td><strong>S55 · Guide</strong></td><td>D2 +1.22%p, D3 +0.95%p 방향</td><td>L1에서 “다음 행동”의 명확성이 중요</td></tr>
+      <tr><td><strong>S56 · Meta</strong></td><td>초기 노출 시 Step 1_11 최대 −5.07%p, 해금 시점 수정 후 개선</td><td>Meta는 Core 학습 뒤에 순차적으로 쌓아야 함</td></tr>
+      <tr><td><strong>S57 · Contest</strong></td><td>IS 감소, RV 증가, 플레이 소폭 증가</td><td>목표형 Repeat Layer가 선택형 RV와 잘 연결됨</td></tr>
+      <tr><td><strong>S58 · Attendance</strong></td><td>RV ARPDAU +28.9%, RV 도달층 확대</td><td>일일 Habit Layer는 기존 비시청 유저도 RV로 유입 가능</td></tr>
+      <tr><td><strong>S59 · Factory</strong></td><td>깊은 유저에서 진입↑, D형 장기 방향 양호</td><td>익숙한 유저는 전용 재화·병목·자동화 같은 Mid-term Goal 수용 가능</td></tr>
+    </tbody></table></div>
+    <div class="keyline"><b>해석 범위</b> · 위 결과는 “동일한 개인이 단계별로 변화했다”는 직접 추적이 아니라, 스프린트/진행 깊이에서 반복적으로 관찰된 행동을 연결한 설계 가설입니다.</div>
+    <div class="src">Basis · Pizza Ready Sprint 55–59 성과와 유저 인사이트(메인 기획자 정리) + 현재 World Map/HQ/Step44 논의안</div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+const tabs=[...document.querySelectorAll('.nav button')], pages=[...document.querySelectorAll('.page')];
+function activate(id,push=true){
+  if(!document.getElementById(id)) id='overview';
+  tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+  pages.forEach(p=>p.classList.toggle('active',p.id===id));
+  if(push) history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0,behavior:'auto'});
+}
+tabs.forEach(b=>b.addEventListener('click',()=>activate(b.dataset.tab)));
+window.addEventListener('hashchange',()=>activate(location.hash.slice(1),false));
+activate(location.hash.slice(1)||'overview',false);
+
+const details={
+core:['Order / Cook / Serve','L0 · Core Action(핵심 행동)','유저의 직접 플레이','Dollar / Star / Upgrade 재료','Guide · Contest · Factory · World Progress','RV 성장 가속 / No Ads'],
+upgrade:['Install / Upgrade','L0 · Core Progress','Dollar / 재료','시설/직원 효율 + Store Growth','Star Level · Branch Growth · HQ Progress','RV Upgrade Boost / IAP 효율'],
+store:['Store Growth','L0→L4 연결축','Upgrade 누적','Store Grade / Visual State','World Map Branch · HQ Point','간접적: 성장 압축 Utility'],
+guide:['Guide Quest','L1 · Short Goal','현재 Core 상태','다음 행동 / 보상','Star Level · Core Continuation','초반 직접 수익화 최소화'],
+star:['Star Level','L1 · Progress Gate','Core Upgrade / Progress','기능 Unlock','World Map Soft Open · Meta Open','Unlock 이후 각 Layer Utility 생성'],
+preview:['Next Unlock Preview','L1 · Expectation','현재 Star/Step','다음 콘텐츠 기대','World / LiveOps / Factory 진입','직접 없음'],
+attendance:['Attendance','L2 · Daily Return Reason','일일 접속','보상 / RV 2배 기회','Core 재진입','Reward ×2 RV'],
+contest:['Weekly Contest','L2 · Weekly Repeat Motivation','평소 Core 행동','Point / Tier / Ranking Reward','Core 반복 + LiveOps 참여','Boost RV / Event Pack'],
+pass:['Pass / Pizza Fund','L2 · Seasonal Accumulation','플레이 누적','Season Progress / Hard Currency / Skin','장기 반복 플레이','Premium Pass / Bundle'],
+cheese:['Cheese Road / Permanent Growth','L2~L4 · Meta Accumulation','Core Progress','누적 성장 / 수집','World/HQ 장기 목표','선택형 Boost / IAP 가능'],
+factory:['Factory / Express','L3 · Permanent Mid-term Goal','Core 진행 / Dollar / EC','Automation / Efficiency / Factory Progress','Core Return · World 결과','EC RV / Upgrade RV / Starter·Master'],
+event:['Live Event','L3 · Temporary Mid-term Goal','Core 행동 / Event Currency','Milestone / Event Reward / Decoration','Core Return · World Collection','Event RV / Event Pack'],
+world:['World Map','L4 · Permanent Progress Space','Store 결과','Branch 외형 / Locked Branch 기대','HQ Progress','직접보다 장기 Utility 기반'],
+branch:['Branch Growth','L4 · Growth Feedback','Store Grade / Star','G1~G5 / Bronze~Gold 등 시각 성장','HQ Point / Revisit','간접 Utility'],
+revisit:['Promotion / Revisit','L4 · Completed Content Reuse','완료 Branch','짧은 미션 / 보상 / 재방문','HQ / Collection','선택형 RV 가능'],
+hq:['HQ / Franchise','L5 · Long-term Purpose','Branch Growth 누적','HQ Level / Franchise Progress','Benefit Unlock / Next Area','장기 Convenience IAP 가능'],
+benefit:['HQ Benefit Unlock','L5 · Mid/Long-term Reward','HQ Level','Event Plaza / 편의 / 신규 기능','새 Content Layer Open','직접 판매보다 장기 Retention 기여']
+};
+document.querySelectorAll('.node').forEach(n=>n.addEventListener('click',()=>{
+  document.querySelectorAll('.node').forEach(x=>x.classList.toggle('active',x===n));
+  const d=details[n.dataset.node];
+  ['detailTitle','detailRole','detailInput','detailOutput','detailFeed','detailMonetize'].forEach((id,i)=>document.getElementById(id).textContent=d[i]);
+}));
+document.querySelectorAll('.filters button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filters button').forEach(x=>x.classList.toggle('on',x===b));
+  const f=b.dataset.filter;
+  document.querySelectorAll('.node').forEach(n=>n.classList.toggle('dim',f!=='all'&&n.dataset.type!==f));
+}));
+</script>
+</body>
+</html>
