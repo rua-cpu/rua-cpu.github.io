@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Pizza Ready 9월 NRU 하락 원인 분석 — 빌드·배포·UA·유저 질·매출">
+  <title>Pizza Ready · 9월 NRU 하락 원인 분석</title>
+  <script>try{var t=localStorage.getItem('pr-nru-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <style>
+    :root{
+      --ink:#20242d;--muted:#5e6674;--paper:#f7f5ef;--panel:#ffffff;--card:#ffffff;--soft:#faf9f5;--line:#dedbd2;
+      --red:#e54b3f;--red-deep:#a72f2b;--yellow:#f4b83f;--green:#168a67;--blue:#2f6fc6;--purple:#7656b6;--orange:#dd7a32;
+      --soft-red:#fff0ec;--soft-yellow:#fff5d7;--soft-green:#eaf7f1;--soft-blue:#edf4ff;
+      --green-ink:#116b50;--red-ink:#9b342f;--yellow-ink:#8b6112;--blue-ink:#2f66aa;
+      --track:#ece9e2;--chip:#eeeae0;--chip-ink:#5d584e;--grid:#e9e5dc;--axis:#5e6674;--text2:#454b57;--text3:#555d69;
+      --deckbar:rgba(247,245,239,.94);--hover:#ffffff;--callout:#fff7f4;--caution:#f4f1ea;--scorebox:#f7f5ef;--cell:#f1eee8;
+      --qbg:#20242d;--qink:#ffffff;--thbg:#20242d;--thtx:#ffffff;--herostat:rgba(255,255,255,.72);
+      --cover:linear-gradient(135deg,#fff 0%,#fff7e4 55%,#ffe1d8 100%);--sceneno:#6f685c;--source:#6f685c;
+      --red-text:#bf3a30;--green-text:#137a5b;--blue-text:#2c6cc4;--orange-text:#b5591b;--purple-text:#7656b6;
+      --dot-empty:#8f897d;--bar-ink:#ffffff;--toggle-bg:#ebe8e0;--toggle-on:#ffffff;
+      --shadow:0 18px 55px rgba(38,34,27,.10);--radius:24px;--safe-top:env(safe-area-inset-top,0px);
+      color-scheme:light;
+    }
+    @media (prefers-color-scheme:dark){
+      :root:not([data-theme="light"]){
+        --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+        --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;--orange:#ea914e;
+        --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;
+        --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;
+        --track:#30343c;--chip:#30343c;--chip-ink:#c9cdd4;--grid:#30343c;--axis:#9aa1ad;--text2:#c8ccd4;--text3:#b3b9c3;
+        --deckbar:rgba(21,23,27,.92);--hover:#262a31;--callout:#2e2220;--caution:#23262d;--scorebox:#262a31;--cell:#2a2e35;
+        --qbg:#2b303a;--qink:#ffffff;--thbg:#2b303a;--thtx:#ffffff;--herostat:rgba(255,255,255,.05);
+        --cover:linear-gradient(135deg,#1d2026 0%,#2a251a 55%,#35211e 100%);--sceneno:#8a919c;--source:#8b919c;
+        --red-text:#f06b5f;--green-text:#34b489;--blue-text:#5b9bea;--orange-text:#ea914e;--purple-text:#9a7fd6;
+        --dot-empty:#6b7280;--bar-ink:#111418;--toggle-bg:#2a2e35;--toggle-on:#3a3f49;
+        --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+      }
+    }
+    :root[data-theme="dark"]{
+      --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+      --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;--orange:#ea914e;
+      --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;
+      --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;
+      --track:#30343c;--chip:#30343c;--chip-ink:#c9cdd4;--grid:#30343c;--axis:#9aa1ad;--text2:#c8ccd4;--text3:#b3b9c3;
+      --deckbar:rgba(21,23,27,.92);--hover:#262a31;--callout:#2e2220;--caution:#23262d;--scorebox:#262a31;--cell:#2a2e35;
+      --qbg:#2b303a;--qink:#ffffff;--thbg:#2b303a;--thtx:#ffffff;--herostat:rgba(255,255,255,.05);
+      --cover:linear-gradient(135deg,#1d2026 0%,#2a251a 55%,#35211e 100%);--sceneno:#8a919c;--source:#8b919c;
+        --red-text:#f06b5f;--green-text:#34b489;--blue-text:#5b9bea;--orange-text:#ea914e;--purple-text:#9a7fd6;
+        --dot-empty:#6b7280;--bar-ink:#111418;--toggle-bg:#2a2e35;--toggle-on:#3a3f49;
+      --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+    }
+    :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:calc(74px + env(safe-area-inset-top,0px))}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Segoe UI",sans-serif;font-size:17px;line-height:1.58;word-break:keep-all}
+    button{font:inherit;color:inherit}
+    :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+    b,strong{font-weight:850}
+    .deckbar{position:fixed;top:0;left:0;right:0;height:calc(64px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 22px 0;z-index:50;background:var(--deckbar);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px}
+    .brand{font-weight:900;letter-spacing:-.03em;white-space:nowrap}.brand b{color:var(--red-text)}
+    .nav{display:flex;gap:5px;overflow:auto;scrollbar-width:none;flex:1}.nav::-webkit-scrollbar{display:none}
+    .nav button{border:0;background:transparent;color:var(--muted);padding:7px 9px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:700}
+    .nav button:hover,.nav button.on{background:var(--hover);color:var(--ink)}
+    .actions{display:flex;gap:8px}.actions button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:7px 11px;cursor:pointer;font-size:13px;font-weight:800;color:var(--ink);white-space:nowrap}
+    .theme-toggle{display:inline-flex;padding:3px;background:var(--toggle-bg);border-radius:11px;gap:3px;border:1px solid var(--line)}.actions .theme-toggle button{border:0;background:transparent;padding:5px 11px;border-radius:8px;font-size:13px;font-weight:850;color:var(--muted)}.actions .theme-toggle button.on{background:var(--toggle-on);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+    .progress{position:fixed;top:calc(63px + env(safe-area-inset-top,0px));left:0;width:100%;height:3px;z-index:55}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--yellow));transition:width .15s}
+    main{padding:88px 22px calc(96px + env(safe-area-inset-bottom,0px))}
+    .scene:not(.active){display:none}
+    .scene.active{animation:slidein .22s ease-out}
+    @keyframes slidein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .pager-wrap{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:center;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+    .pager{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--deckbar);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:var(--shadow)}
+    .pager button{border:0;background:var(--card);color:var(--ink);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:850;cursor:pointer;border:1px solid var(--line)}
+    .pager button:disabled{opacity:.35;cursor:default}
+    .pager-info{min-width:150px;text-align:center;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap}.pager-info b{color:var(--ink);font-size:15px}
+    .scene{position:relative;max-width:1360px;min-height:max(600px,calc(100vh - 184px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);padding:56px 62px 64px;overflow:hidden}
+    .scene::after{content:attr(data-no);position:absolute;right:28px;bottom:20px;font-size:12px;font-weight:900;color:var(--sceneno);letter-spacing:.08em}
+    .eyebrow{font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--red-text);margin-bottom:10px}
+    h1,h2,h3,p{margin-top:0}h1,h2,h3{letter-spacing:-.045em;line-height:1.16}
+    h1{font-size:clamp(42px,6vw,82px);max-width:1050px;margin-bottom:22px}
+    h2{font-size:clamp(34px,4.3vw,58px);margin-bottom:20px}
+    h3{font-size:23px;margin-bottom:12px}
+    .lead{font-size:clamp(20px,2.1vw,29px);line-height:1.45;color:var(--text2);max-width:990px}
+    .sub{font-size:18px;color:var(--text2);max-width:900px;margin-bottom:0}
+    .note{color:var(--muted);font-size:14px;line-height:1.55}
+    .source{font-size:12px;color:var(--source);margin-top:12px}
+    .source a{color:inherit}
+    .grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .card{border:1px solid var(--line);border-radius:20px;padding:21px;background:var(--card);min-width:0}
+    .card p:last-child,.card ul:last-child{margin-bottom:0}
+    .card ul{padding-left:19px;margin:8px 0 0}.card li{margin:6px 0;font-size:15px}
+    .card.soft{background:var(--soft)}.card.red{background:var(--soft-red);border-color:color-mix(in srgb,var(--red) 30%,var(--line))}.card.green{background:var(--soft-green);border-color:color-mix(in srgb,var(--green) 30%,var(--line))}.card.blue{background:var(--soft-blue);border-color:color-mix(in srgb,var(--blue) 30%,var(--line))}.card.yellow{background:var(--soft-yellow);border-color:color-mix(in srgb,var(--yellow) 40%,var(--line))}
+    .card h3{font-size:19px}
+    .metric .label{color:var(--muted);font-size:13px;font-weight:800}.metric .value{font-size:42px;line-height:1.08;font-weight:950;letter-spacing:-.055em;margin:6px 0}.metric .value.up{color:var(--green)}.metric .value.down{color:var(--red-deep)}.metric .value.flat{color:var(--ink)}.metric .desc{font-size:14px;color:var(--text3)}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;background:var(--chip);color:var(--chip-ink);white-space:nowrap}.pill.high{background:var(--soft-green);color:var(--green-ink)}.pill.mid{background:var(--soft-yellow);color:var(--yellow-ink)}.pill.low{background:var(--soft-red);color:var(--red-ink)}.pill.info{background:var(--soft-blue);color:var(--blue-ink)}
+    .cover{background:var(--cover);display:flex;flex-direction:column;justify-content:center;padding-bottom:92px}
+    .cover .ring{position:absolute;border-radius:50%;border:32px solid rgba(229,75,63,.08);width:430px;height:430px;right:-130px;top:-130px}.cover .ring.r2{width:230px;height:230px;right:160px;top:110px;border-width:22px;border-color:rgba(244,184,63,.15)}
+    .hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:970px;margin-top:28px}.hero-stat{border-left:5px solid var(--red);padding:10px 18px;background:var(--herostat);border-radius:0 16px 16px 0}.hero-stat:nth-child(2){border-color:var(--yellow)}.hero-stat:nth-child(3){border-color:var(--green)}.hero-stat b{display:block;font-size:28px;letter-spacing:-.04em}.hero-stat span{font-size:14px;color:var(--muted)}
+    .timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:34px;position:relative}.timeline::before{content:"";position:absolute;left:6%;right:6%;top:29px;height:4px;background:var(--track)}.stage{position:relative;padding-top:58px}.stage .dot{position:absolute;top:15px;left:18px;width:31px;height:31px;border-radius:50%;background:var(--panel);border:8px solid var(--stage);box-shadow:0 0 0 5px var(--panel)}.stage .num{color:var(--stage-t,var(--stage));font-weight:950;font-size:18px}.stage h3{font-size:18px;margin:5px 0 8px}.stage p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:0}
+    .question{background:var(--qbg);color:var(--qink);border-radius:20px;padding:22px 25px;font-size:22px;font-weight:900;line-height:1.4}.question em{color:var(--yellow);font-style:normal}
+    .goal-result{display:grid;grid-template-columns:1fr 72px 1fr;align-items:stretch;gap:12px;margin-top:22px}.goal-result .arrow{display:grid;place-items:center;font-size:34px;color:var(--red);font-weight:900}.goal-result h3{font-size:18px}.goal-result ul{padding-left:20px;margin:8px 0 0}.goal-result li{margin:7px 0;font-size:15px}
+    .scorebox{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;padding:16px 19px;border-radius:16px;background:var(--scorebox);flex-wrap:wrap}.dots{display:inline-flex;gap:5px;vertical-align:middle}.dots i{width:13px;height:13px;border-radius:50%;background:transparent;box-shadow:inset 0 0 0 2px var(--dot-empty)}.dots i.fill{box-shadow:none}.dots i.fill{background:var(--green)}.dots.warn i.fill{background:var(--yellow)}.dots.bad i.fill{background:var(--red)}
+    .verdict{font-size:21px;font-weight:950}.verdict span{color:var(--green-text)}.verdict span.neg{color:var(--red-deep)}
+    .chart-card{border:1px solid var(--line);border-radius:20px;padding:19px;background:var(--card)}.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}.chart-head h3{font-size:18px;margin:0}.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.legend span::before{content:"";display:inline-block;width:14px;height:4px;border-radius:3px;background:var(--c);margin-right:6px;vertical-align:middle}
+    .svg-chart{width:100%;height:auto;display:block}.svg-chart text{font-family:inherit}.gridline{stroke:var(--grid);stroke-width:1}.axistext{font-size:12px;fill:var(--axis)}.valtext{font-size:12px;font-weight:900;fill:var(--ink)}.anntext{font-size:12px;font-weight:800;fill:var(--muted)}
+    .callout{border-left:5px solid var(--red);padding:16px 20px;background:var(--callout);border-radius:0 15px 15px 0;margin-top:18px}.callout b{color:var(--red-deep)}.callout.green{border-color:var(--green);background:var(--soft-green)}.callout.green b{color:var(--green-ink)}
+    .split-bars{display:grid;gap:14px;margin-top:6px}.split-row{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:center}.split-row .name{font-size:14px;font-weight:900}.split-pair{display:grid;gap:5px}.split-track{height:30px;background:var(--track);border-radius:8px;position:relative;overflow:hidden}.split-track i{position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--c);display:flex;align-items:center;padding:0 10px;color:var(--bar-ink);font-size:12px;font-weight:900;white-space:nowrap;border-radius:8px}.split-track i{font-style:normal}.split-track.before i{background:color-mix(in srgb,var(--c) 28%,var(--card));color:var(--ink)}
+    .geo{display:grid;gap:9px;margin-top:6px}.geo-row{display:grid;grid-template-columns:118px 1fr 58px 64px;gap:12px;align-items:center}.geo-row .lab{font-size:14px;font-weight:850}.geo-row .lab small{display:block;font-size:11px;color:var(--muted);font-weight:700}.geo-row .track{height:16px;background:var(--track);border-radius:999px;overflow:hidden}.geo-row .track i{display:block;height:100%;width:var(--w);background:var(--c,var(--red));border-radius:999px}.geo-row b{text-align:right;font-size:14px;color:var(--red-deep)}.geo-row b.flat{color:var(--muted)}.geo-row span{text-align:right;font-size:13px;color:var(--muted);font-weight:800}.geo-head{font-size:11px;font-weight:900;color:var(--muted)}.geo-head div:nth-child(n+3){text-align:right}
+    .table-wrap{overflow-x:auto;margin-top:18px;border-radius:20px}
+    .trait-map{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}.trait-map>div{background:var(--card);padding:14px 16px;font-size:14px}.trait-map .th{background:var(--thbg);color:var(--thtx);font-size:12px;font-weight:900;letter-spacing:.02em}.trait-map .trait{font-weight:950}.trait-map .evidence{color:var(--text3)}.trait-map .design{color:var(--green-ink);font-weight:750}
+    .hypo-map{grid-template-columns:1fr 1.25fr 1.5fr .75fr .75fr;min-width:980px}
+    .matrix{width:100%;border-collapse:separate;border-spacing:6px;min-width:640px}.matrix th{font-size:12px;color:var(--muted);padding:7px;font-weight:900}.matrix td{padding:12px 10px;border-radius:12px;background:var(--cell);text-align:center;font-size:14px;font-weight:850;font-variant-numeric:tabular-nums}.matrix td.rowh{background:transparent;text-align:left;font-weight:900}.matrix .good{background:var(--soft-green);color:var(--green-ink)}.matrix .warn{background:var(--soft-yellow);color:var(--yellow-ink)}.matrix .bad{background:var(--soft-red);color:var(--red-ink)}.matrix .dim{color:var(--muted);font-weight:700}
+    .num{font-variant-numeric:tabular-nums}
+    .principles{counter-reset:p;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.principle{position:relative;border:1px solid var(--line);border-radius:18px;padding:18px 18px 18px 62px;background:var(--card)}.principle::before{counter-increment:p;content:counter(p);position:absolute;left:18px;top:17px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--red-text);color:var(--bar-ink);font-size:13px;font-weight:950}.principle b{display:block;margin-bottom:3px}.principle span{color:var(--muted);font-size:14px}
+    .caution{display:flex;gap:12px;align-items:flex-start;background:var(--caution);border:1px solid var(--line);border-radius:15px;padding:14px 16px;font-size:13px;color:var(--text3)}.caution b{color:var(--ink)}
+    .askbox{margin-top:18px;border:1px solid var(--line);border-radius:18px;background:var(--soft);padding:16px 18px}.askbox .askhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;font-weight:900;color:var(--muted)}.askbox pre{margin:0;white-space:pre-wrap;word-break:keep-all;font-family:inherit;font-size:15px;line-height:1.6;color:var(--ink)}.copy{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:850}.copy.done{background:var(--soft-green);color:var(--green-ink);border-color:transparent}
+    .footer-note{position:absolute;left:62px;right:62px;bottom:22px;font-size:11px;color:var(--source);padding-right:80px}
+    @media (max-width:980px){body{font-size:16px}.scene{padding:42px 30px;min-height:auto}.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline{grid-template-columns:1fr}.timeline::before{left:33px;right:auto;top:18px;bottom:18px;width:4px;height:auto}.stage{padding:4px 0 4px 73px}.stage .dot{left:19px;top:9px}.goal-result{grid-template-columns:1fr}.goal-result .arrow{transform:rotate(90deg)}.footer-note{position:static;margin-top:24px;padding-right:0}.deckbar{padding-left:12px;padding-right:12px}}
+    @media (max-width:650px){main{padding:80px 10px 50px}.scene{padding:34px 20px;border-radius:22px}.g2,.g3,.g4,.hero-stats,.principles{grid-template-columns:1fr}.geo-row{grid-template-columns:86px 1fr 48px 52px;gap:8px}.split-row{grid-template-columns:64px 1fr}.nav{display:none}.brand{font-size:15px}.pager-info{min-width:118px}.pager button{padding:9px 13px}.lead{font-size:19px}.metric .value{font-size:34px}.question{font-size:19px}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.progress i{transition:none}.scene.active{animation:none}}
+    @page{size:16in 9in;margin:0}
+    @media print{.deckbar,.progress,.pager-wrap{display:none}.scene:not(.active){display:block}:root{padding:0}body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}main{padding:0}.scene{width:100%;height:9in;min-height:0;margin:0;border:0;border-radius:0;box-shadow:none;page-break-after:always;padding:42px 48px;overflow:hidden}.scene:last-child{page-break-after:auto}.footer-note{left:48px;right:48px}}
+    .metric .value.sm{font-size:30px;letter-spacing:-.04em}
+  </style>
+</head>
+<body>
+  <header class="deckbar">
+    <div class="brand"><b>Pizza Ready</b> · NRU 진단</div>
+    <nav class="nav" aria-label="목차">
+      <button data-target="cover" class="on">요약</button><button data-target="summary">결론</button><button data-target="timeline">타임라인</button><button data-target="trend">추이</button><button data-target="os">OS</button><button data-target="geo">국가</button><button data-target="hypo">가설 검증</button><button data-target="quality">유저 질</button><button data-target="revenue">매출</button><button data-target="hotfix">60.1.0</button><button data-target="next">다음 액션</button><button data-target="glossary">용어</button>
+    </nav>
+    <div class="actions"><div class="theme-toggle" role="group" aria-label="화면 테마"><button type="button" data-theme-set="light" aria-pressed="false">라이트</button><button type="button" data-theme-set="dark" aria-pressed="false">다크</button></div></div>
+  </header>
+  <div class="progress"><i id="progressBar"></i></div>
+
+  <main id="deck">
+    <section class="scene cover" id="cover" data-no="01 / 12">
+      <div class="ring"></div><div class="ring r2"></div>
+      <div class="eyebrow">NRU Diagnosis · 2026.08.24 – 09.24</div>
+      <h1>피자레디 NRU는<br>왜 빠졌나</h1>
+      <p class="lead">4주 동안 신규 유입이 절반 가까이 줄었지만, 들어온 유저의 리텐션과 플레이타임은 그대로였다. 문제는 <b>유저의 질이 아니라 들어오는 양</b>이다.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>−47%</b><span>NRU 4주 변화 · AOS+iOS 월~목 평균 47.3만 → 25.0만</span></div>
+        <div class="hero-stat"><b>−16%</b><span>총매출/일 4주 변화 · $48.2k → $40.3k</span></div>
+        <div class="hero-stat"><b>29%대 유지</b><span>AOS D1 리텐션 · 4주간 28.7~29.4%</span></div>
+      </div>
+      <div class="footer-note">핵심 메시지 · 하락은 9/7부터 4주째 주 단위로 이어졌고, 두 OS와 거의 모든 국가가 같이 빠졌다. 가장 유력한 원인은 UA 집행 축소다.</div>
+    </section>
+
+    <section class="scene" id="summary" data-no="02 / 12">
+      <div class="eyebrow">Bottom Line</div>
+      <h2>빌드 사고가 아니라<br>유입 볼륨이 줄었다</h2>
+      <div class="grid g3" style="margin-top:26px">
+        <div class="card green"><h3>확인된 것</h3><ul><li>AOS·iOS 모두 4주 연속 하락 (−49% / −32%)</li><li>IN·ID·PK·RU·IQ·VN 등 거의 전 국가 동반</li><li>매주 월요일마다 한 단계씩 내려가는 계단식</li><li>리텐션·플레이타임은 4주간 변화 없음</li></ul></div>
+        <div class="card yellow"><h3>가장 유력한 원인</h3><ul><li>슈센 측 UA 예산·입찰의 단계적 축소</li><li>9/7주·9/21주에 NRU가 −19%씩 빠질 때 매출은 +2%·−3%에 그쳤다. 단기 매출 기여가 낮은 트래픽부터 줄어든 모양이다</li></ul></div>
+        <div class="card red"><h3>아직 확인 필요</h3><ul><li>UA Spend·Install 원본 (슈센 MMP — 바이트브루 어트리뷰션은 미사용)</li><li>빌드별 신규 1인당 LTV (59.2.0 / 60.1.0 / 60.2.0)</li><li>RV·튜토리얼 퍼널 수치</li></ul></div>
+      </div>
+      <div class="question" style="margin-top:26px">핵심 질문 · 슈센이 9/7 이후 <em>UA 집행을 단계적으로 줄였는가</em>. 이 한 가지가 확인되면 원인이 확정된다.</div>
+      <div class="caution" style="margin-top:16px"><span>※</span><div><b>읽는 법</b> · 9/21주가 목요일까지만 있어 모든 주차를 월~목 평균으로 맞췄다. 9/25는 당일 부분 데이터라 제외했다.</div></div>
+    </section>
+
+    <section class="scene" id="timeline" data-no="03 / 12">
+      <div class="eyebrow">What Happened When</div>
+      <h2>하락은 60.1.0보다<br>열흘 먼저 시작됐다</h2>
+      <div class="timeline">
+        <div class="stage" style="--stage:var(--green);--stage-t:var(--green-text)"><span class="dot"></span><div class="num">8/28–30</div><h3>NRU 최고점</h3><p>AOS 일 48~54만. 이 구간의 정점이자 하락의 출발선이다.</p></div>
+        <div class="stage" style="--stage:var(--red);--stage-t:var(--red-text)"><span class="dot"></span><div class="num">9/7</div><h3>첫 계단 하락</h3><p>AOS 주간 −19%. 빌드 변경 없이 시작됐고, VN 유입은 이 주에 끊기듯 줄었다.</p></div>
+        <div class="stage" style="--stage:var(--orange);--stage-t:var(--orange-text)"><span class="dot"></span><div class="num">9/14–16</div><h3>59.2.0 100% 배포</h3><p>RU BigoAds 유입이 샤오미 스토어 구빌드로 가던 문제를 9/16에 해결했다.</p></div>
+        <div class="stage" style="--stage:var(--purple);--stage-t:var(--purple-text)"><span class="dot"></span><div class="num">9/17–20</div><h3>60.1.0 AOS 50%</h3><p>URP 전환으로 저사양 기기 크래시 4.8배. 9/20 18시 배포 중단.</p></div>
+        <div class="stage" style="--stage:var(--blue);--stage-t:var(--blue-text)"><span class="dot"></span><div class="num">9/23–24</div><h3>60.2.0 · 추석 연휴</h3><p>빌트인 롤백 핫픽스를 50% 배포했고, 9/24부터 연휴가 시작됐다.</p></div>
+      </div>
+      <div class="question" style="margin-top:34px">발견 · 하락 시작(9/7)이 <em>모든 빌드 이슈보다 앞선다</em>. 빌드는 마지막 주의 추가 낙폭 정도만 설명할 수 있다.</div>
+      <div class="caution" style="margin-top:16px"><span>※</span><div><b>9월 광고 구성</b> · 9월 한 달간 구글 네이티브 광고 100% 테스트(Anzu 대체)가 진행 중이라, 매출 추이를 볼 때 함께 고려해야 한다.</div></div>
+    </section>
+
+    <section class="scene" id="trend" data-no="04 / 12">
+      <div class="eyebrow">NRU Trend · AOS</div>
+      <h2>6월 이후 최저,<br>매주 한 계단씩</h2>
+      <p class="sub">AOS 기준 6월 이후 가장 낮은 4일이 모두 9/21~24다. 직전 최저였던 7/15(24.5만)보다도 낮다.</p>
+      <div class="chart-card" style="margin-top:22px">
+        <div class="chart-head"><h3>AOS 일별 신규 유저 · 6/1–9/24</h3><div class="legend"><span style="--c:var(--axis)">일별</span><span style="--c:var(--red)">7일 평균</span><span style="--c:var(--purple)">60.1.0 50% 기간</span></div></div>
+        <div id="trendChart" role="img" aria-label="AOS 일별 신규 유저 추이, 8월 말 53.5만 정점에서 9월 22일 20.8만까지 하락"></div>
+      </div>
+      <div class="table-wrap">
+        <table class="matrix">
+          <thead><tr><th></th><th>8/24주</th><th>8/31주</th><th>9/7주</th><th>9/14주</th><th>9/21주</th><th>4주 변화</th></tr></thead>
+          <tbody>
+            <tr><td class="rowh">AOS</td><td>42.6만</td><td>38.6만<br><small class="dim">−9%</small></td><td>31.3만<br><small class="dim">−19%</small></td><td>27.0만<br><small class="dim">−14%</small></td><td>21.8만<br><small class="dim">−19%</small></td><td class="bad">−49%</td></tr>
+            <tr><td class="rowh">iOS</td><td>4.7만</td><td>4.2만<br><small class="dim">−11%</small></td><td>3.9만<br><small class="dim">−6%</small></td><td>3.3만<br><small class="dim">−15%</small></td><td>3.2만<br><small class="dim">−4%</small></td><td class="bad">−32%</td></tr>
+            <tr><td class="rowh">합계</td><td>47.3만</td><td>42.8만<br><small class="dim">−10%</small></td><td>35.3만<br><small class="dim">−18%</small></td><td>30.3만<br><small class="dim">−14%</small></td><td>25.0만<br><small class="dim">−18%</small></td><td class="bad">−47%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="footer-note">월~목 평균, 셀 아래 작은 수치는 전주 대비 · 일요일→월요일은 평소에도 22~24% 빠진다. 9/21(−32%)의 추가 낙폭은 약 10%p다.</div>
+    </section>
+
+    <section class="scene" id="os" data-no="05 / 12">
+      <div class="eyebrow">AOS vs iOS</div>
+      <h2>AOS만의 문제가<br>아니다</h2>
+      <p class="sub">60.1.0은 AOS에만 나갔다. iOS도 4주째 같이 빠졌다는 건 빌드 밖의 공통 원인이 있다는 뜻이다.</p>
+      <div class="grid g2" style="margin-top:26px;align-items:start">
+        <div class="card">
+          <h3>NRU 월~목 평균 · 8/24주 → 9/21주</h3>
+          <div class="split-bars">
+            <div class="split-row"><div class="name">AOS</div><div class="split-pair"><div class="split-track before"><i style="--w:100%;--c:var(--blue)">8/24주 42.6만</i></div><div class="split-track"><i style="--w:51%;--c:var(--blue)">9/21주 21.8만</i></div></div></div>
+            <div class="split-row"><div class="name">iOS</div><div class="split-pair"><div class="split-track before"><i style="--w:100%;--c:var(--purple)">8/24주 4.7만</i></div><div class="split-track"><i style="--w:68%;--c:var(--purple)">9/21주 3.2만</i></div></div></div>
+          </div>
+          <p class="note" style="margin-top:12px;margin-bottom:0">막대 길이는 OS별 8/24주를 100%로 둔 상대값이다.</p>
+        </div>
+        <div class="grid g2">
+          <div class="card metric"><div class="label">AOS 4주 변화</div><div class="value down">−49%</div><div class="desc">NRU 42.6만 → 21.8만</div></div>
+          <div class="card metric"><div class="label">iOS 4주 변화</div><div class="value down">−32%</div><div class="desc">NRU 4.7만 → 3.2만</div></div>
+          <div class="card metric"><div class="label">최근 주 · 9/14 → 9/21</div><div class="value down sm">−19% / −4%</div><div class="desc">AOS / iOS</div></div>
+          <div class="card metric"><div class="label">빌드 이슈 전 · 8/31 → 9/7</div><div class="value down sm">−19% / −6%</div><div class="desc">AOS / iOS</div></div>
+        </div>
+      </div>
+      <div class="callout"><b>해석</b> · 최근 주 AOS 낙폭이 iOS보다 컸지만, 빌드 이슈가 없던 9/7주에도 비슷한 격차가 있었다. 이 격차를 60.1.0 탓으로 단정할 수 없다.</div>
+      <div class="footer-note">iOS 최저일은 9/23(2.87만)·9/22(3.05만)·9/24(3.13만) · 합산 기준 6월 이후 최저는 9/22(23.9만)</div>
+    </section>
+
+    <section class="scene" id="geo" data-no="06 / 12">
+      <div class="eyebrow">By Country · AOS</div>
+      <h2>거의 모든 국가가<br>같이 빠졌다</h2>
+      <p class="sub">60.1.0 크래시가 몰렸던 IN·BR만의 문제가 아니다. 저CPI 볼륨 국가 전반이 비슷한 폭으로 줄었다.</p>
+      <div class="grid g2" style="margin-top:24px;align-items:start">
+        <div class="card">
+          <div class="geo-row geo-head"><div>국가 · 9/21주 일평균</div><div>8/24주 대비 감소폭</div><div>4주</div><div>직전 주</div></div>
+          <div class="geo">
+            <div class="geo-row"><div class="lab">IN<small>9.9만</small></div><div class="track"><i style="--w:55%"></i></div><b>−44%</b><span>−7%</span></div>
+            <div class="geo-row"><div class="lab">BR<small>1.4만</small></div><div class="track"><i style="--w:4%;--c:var(--axis)"></i></div><b class="flat">보합</b><span>−17%</span></div>
+            <div class="geo-row"><div class="lab">ID<small>1.0만</small></div><div class="track"><i style="--w:59%"></i></div><b>−47%</b><span>−13%</span></div>
+            <div class="geo-row"><div class="lab">PK<small>7.2천</small></div><div class="track"><i style="--w:61%"></i></div><b>−49%</b><span>−11%</span></div>
+            <div class="geo-row"><div class="lab">MX<small>6.8천</small></div><div class="track"><i style="--w:44%"></i></div><b>−35%</b><span>−23%</span></div>
+            <div class="geo-row"><div class="lab">IQ<small>5.4천</small></div><div class="track"><i style="--w:73%"></i></div><b>−58%</b><span>−29%</span></div>
+            <div class="geo-row"><div class="lab">RU<small>4.9천</small></div><div class="track"><i style="--w:68%"></i></div><b>−54%</b><span>−12%</span></div>
+            <div class="geo-row"><div class="lab">PH<small>3.9천</small></div><div class="track"><i style="--w:56%"></i></div><b>−45%</b><span>−31%</span></div>
+            <div class="geo-row"><div class="lab">EG<small>3.7천</small></div><div class="track"><i style="--w:68%"></i></div><b>−54%</b><span>−27%</span></div>
+            <div class="geo-row"><div class="lab">VN<small>3.0천</small></div><div class="track"><i style="--w:95%"></i></div><b>−76%</b><span>−37%</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="callout" style="margin-top:0"><b>VN</b> · 9월 첫 주에 일 1.5만 → 0.4만으로 두 번에 걸쳐 끊기듯 줄었다. 특정 캠페인이나 매체가 멈춘 모양이다.</div>
+          <div class="callout green"><b>US</b> · 직전 주 대비 유일하게 늘었다(일 3.4천 → 3.8천). 저CPI 국가부터 줄이고 고가치 국가는 유지할 때 나오는 모양과 맞는다.</div>
+          <div class="callout"><b>BR</b> · 9/7주에 일 2.1만까지 올랐다가 이후 매일 줄고 있다(9/21 1.5만 → 9/24 1.3만).</div>
+          <div class="caution" style="margin-top:18px"><span>※</span><div><b>판단</b> · 기종별 크래시나 스토어 노출 페널티는 특정 기종·국가에 몰린다. 전 국가가 같이, 그것도 60.1.0 이전부터 빠진 모양은 이것으로 설명되지 않는다.</div></div>
+        </div>
+      </div>
+    </section>
+    <section class="scene" id="hypo" data-no="07 / 12">
+      <div class="eyebrow">Hypothesis Check</div>
+      <h2>다섯 가지 가설을<br>데이터로 걸렀다</h2>
+      <div class="table-wrap"><div class="trait-map hypo-map">
+        <div class="th">가설</div><div class="th">맞다면 보여야 할 모양</div><div class="th">실제 관찰</div><div class="th">가능성</div><div class="th">판단</div>
+        <div class="trait">UA 집행 축소 (슈센)</div><div class="evidence">두 OS·전 국가가 함께, 주 단위로 계단식 하락</div><div class="evidence">AOS −49%·iOS −32%, 거의 전 국가 동반, 매주 월요일마다 한 단계씩</div><div><span class="dots"><i class="fill"></i><i class="fill"></i><i class="fill"></i><i class="fill"></i><i></i></span></div><div><span class="pill high">가장 유력</span></div>
+        <div class="trait">60.1.0 영향 (ROAS 하락·스토어 노출)</div><div class="evidence">AOS·IN/BR·저사양 기종에 집중, 9/17 이후 시작</div><div class="evidence">하락은 9/7부터, iOS·전 국가 동반, 앱 전체 ARPDAU·D1 이상 없음</div><div><span class="dots bad"><i class="fill"></i><i></i><i></i><i></i><i></i></span></div><div><span class="pill low">주원인 아님</span></div>
+        <div class="trait">추석 연휴</div><div class="evidence">9/24부터 급락</div><div class="evidence">9/24 AOS는 오히려 반등(23.3만), 하락은 3주 전부터 진행</div><div><span class="dots bad"><i class="fill"></i><i></i><i></i><i></i><i></i></span></div><div><span class="pill low">미미</span></div>
+        <div class="trait">집계·트래킹 문제</div><div class="evidence">특정 버전·OS에서만 NRU 급감</div><div class="evidence">두 OS가 일관되게 감소, 60.2.0 통계 수정 이전부터 하락</div><div><span class="dots warn"><i class="fill"></i><i></i><i></i><i></i><i></i></span></div><div><span class="pill mid">낮음 · 버전별 확인 남음</span></div>
+        <div class="trait">크래시 직접 영향</div><div class="evidence">설치 이후 문제라 설치 수 자체는 유지</div><div class="evidence">9/20 중단·60.2.0 롤백 이후에도 하락 지속</div><div><span class="dots bad"><i class="fill"></i><i></i><i></i><i></i><i></i></span></div><div><span class="pill low">낮음</span></div>
+      </div></div>
+      <div class="callout"><b>UA 집행 데이터는 슈센 MMP에만 있다</b> · 바이트브루 어트리뷰션(Spend·비오가닉 설치)이 비어 있어, 원인 확정에는 슈센 확인이 필요하다.</div>
+      <div class="footer-note">스토어 노출 기준 · 구글플레이는 사용자 체감 크래시율이 전체 1.09%, 단일 기종 8%를 넘으면 해당 기종 사용자에게 노출을 줄일 수 있다 (Android vitals 문서).</div>
+    </section>
+
+    <section class="scene" id="quality" data-no="08 / 12">
+      <div class="eyebrow">User Quality</div>
+      <h2>들어온 유저의 질은<br>그대로다</h2>
+      <p class="sub">유입량은 반토막인데, 설치 주차별 리텐션과 플레이타임은 4주 내내 같은 자리에 있다.</p>
+      <div class="table-wrap"><table class="matrix">
+        <thead><tr><th>설치 주차</th><th>AOS D1</th><th>AOS D3</th><th>AOS D7</th><th>iOS D1</th><th>iOS D3</th><th>iOS D7</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">8/24주</td><td>29.2%</td><td>11.5%</td><td>4.4%</td><td>40.2%</td><td>18.3%</td><td>8.1%</td></tr>
+          <tr><td class="rowh">8/31주</td><td>29.1%</td><td>11.5%</td><td>4.3%</td><td>39.8%</td><td>17.9%</td><td>8.1%</td></tr>
+          <tr><td class="rowh">9/7주</td><td>28.8%</td><td>11.5%</td><td>4.5%</td><td>40.7%</td><td>18.5%</td><td>8.3%</td></tr>
+          <tr><td class="rowh">9/14주</td><td>28.7%</td><td>11.7%</td><td>4.6%</td><td>40.6%</td><td>18.8%</td><td class="good">8.8%</td></tr>
+          <tr><td class="rowh">9/21주*</td><td>29.4%</td><td>11.7%</td><td class="dim">집계 전</td><td>40.1%</td><td>18.8%</td><td class="dim">집계 전</td></tr>
+        </tbody>
+      </table></div>
+      <div class="grid g4" style="margin-top:18px">
+        <div class="card metric"><div class="label">AOS 세션/유저</div><div class="value flat sm">2.99 → 2.85</div><div class="desc">−5% · 소폭</div></div>
+        <div class="card metric"><div class="label">AOS 플레이타임</div><div class="value flat sm">876 → 854초</div><div class="desc">−3% · 보합</div></div>
+        <div class="card metric"><div class="label">iOS 세션/유저</div><div class="value flat sm">3.86 → 3.88</div><div class="desc">보합</div></div>
+        <div class="card metric"><div class="label">iOS 플레이타임</div><div class="value flat sm">1,100 → 1,099초</div><div class="desc">보합</div></div>
+      </div>
+      <div class="callout"><b>정정</b> · 9/20 AOS 코호트 D1(25.6%)은 60.1.0 영향이 아니다. 일요일 설치 코호트는 매주 25~26%로 낮다(8/30 25.4% · 9/6 25.5% · 9/13 26.2%).</div>
+      <div class="footer-note">월~목 설치 코호트 가중 평균 · *9/21주는 집계가 끝난 코호트만 반영 (D1 9/21~23, D3 9/21) · 세션·플레이타임은 8/24주 → 9/21주 월~목 평균 · iOS 일요일 코호트 D1이 37.7% → 35.2%로 조금씩 내려가 관찰이 필요하다.</div>
+    </section>
+
+    <section class="scene" id="revenue" data-no="09 / 12">
+      <div class="eyebrow">Revenue Impact</div>
+      <h2>매출은 덜 빠졌지만<br>시차를 두고 따라온다</h2>
+      <div class="grid g4" style="margin-top:22px">
+        <div class="card metric"><div class="label">총매출/일 · 전체</div><div class="value down">−16%</div><div class="desc">$48.2k → $40.3k</div></div>
+        <div class="card metric"><div class="label">총매출/일 · AOS</div><div class="value down">−22%</div><div class="desc">$27.2k → $21.1k</div></div>
+        <div class="card metric"><div class="label">총매출/일 · iOS</div><div class="value down">−9%</div><div class="desc">$21.0k → $19.2k · 전체 매출의 절반 가까이</div></div>
+        <div class="card metric"><div class="label">기존 유저 DAU · 전체</div><div class="value down">−25%</div><div class="desc">99.0만 → 74.1만 · 다음 주 매출의 바닥</div></div>
+      </div>
+      <div class="grid g2" style="margin-top:18px;align-items:start">
+        <div class="card"><h3>4주 변화 비교 · 8/24주 → 9/21주</h3>
+          <div class="table-wrap" style="margin-top:6px"><table class="matrix" style="min-width:520px">
+            <thead><tr><th></th><th>NRU</th><th>DAU</th><th>기존 DAU</th><th>총매출</th><th>ARPDAU</th></tr></thead>
+            <tbody>
+              <tr><td class="rowh">AOS</td><td class="bad">−49%</td><td class="bad">−34%</td><td class="bad">−26%</td><td class="warn">−22%</td><td>+17%</td></tr>
+              <tr><td class="rowh">iOS</td><td class="bad">−32%</td><td class="bad">−24%</td><td class="bad">−22%</td><td class="warn">−9%</td><td>+20%</td></tr>
+              <tr><td class="rowh">전체</td><td class="bad">−47%</td><td class="bad">−32%</td><td class="bad">−25%</td><td class="warn">−16%</td><td>+23%</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="card"><h3>AOS 전주 대비 · NRU와 매출이 따로 움직였다</h3>
+          <div class="table-wrap" style="margin-top:6px"><table class="matrix" style="min-width:420px">
+            <thead><tr><th>구간</th><th>NRU</th><th>DAU</th><th>총매출</th></tr></thead>
+            <tbody>
+              <tr><td class="rowh">8/24 → 8/31</td><td>−9%</td><td>−4%</td><td class="bad">−12%</td></tr>
+              <tr><td class="rowh">8/31 → 9/7</td><td class="bad">−19%</td><td>−12%</td><td>+2%</td></tr>
+              <tr><td class="rowh">9/7 → 9/14</td><td>−14%</td><td>−9%</td><td class="bad">−11%</td></tr>
+              <tr><td class="rowh">9/14 → 9/21</td><td class="bad">−19%</td><td>−13%</td><td>−3%</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+      <div class="callout"><b>시차 리스크</b> · 매출이 유저보다 덜 빠진 건 광고를 많이 보는 기존 유저가 버티고 있어서다. 그 기존 유저 풀이 −25% 줄고 있어, 유입이 회복되지 않으면 매출이 뒤따라 더 빠진다.</div>
+      <div class="footer-note">바이트브루 SDK 집계 기준이라 슈센 공유치(AOS ARPDAU 0.034)와 절대값이 다르다 · ARPDAU 상승은 기존 유저 비중이 커진 믹스 효과와 분기말 eCPM 영향이 섞인 것으로 개선 신호가 아니다 · iOS 9/14주 IAP 일시 급증($3.76k, 평소 2배)은 원인 확인 필요</div>
+    </section>
+
+    <section class="scene" id="hotfix" data-no="10 / 12">
+      <div class="eyebrow">Side Story · 60.1.0 Hotfix</div>
+      <h2>60.1.0 크래시는<br>원인과 조치가 정리됐다</h2>
+      <div class="goal-result">
+        <div class="card red"><h3>무엇이 문제였나</h3><ul>
+          <li>URP 전환으로 셰이더 메모리 점유 증가 → 3~4GB RAM, 여유 메모리 80MB 안팎 기기에서 크래시</li>
+          <li>크래시 1위 유저 500명 → 2,400명 (4.8배, 50% 롤아웃 규모)</li>
+          <li>MTK 칩셋 · 삼성·Oppo·Vivo · Android 11에 집중 → IN·BR</li>
+          <li>60.1.0 유저 ARPDAU −11% (0.034 → 0.030), RV 노출/DAU −12%</li></ul></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="card green"><h3>어떻게 조치했나</h3><ul>
+          <li>9/20 18시 배포 중단</li>
+          <li>저사양 FPS 30 고정 제거 (59.2.0과 동일하게 원복)</li>
+          <li>URP → 빌트인 렌더 파이프라인 롤백 + 통계 수정</li>
+          <li>9/23 60.2.0 50% 배포 · 성능 테스트 평균 FPS +22.6%, 드롭 프레임 +9.2% (vs 60.1.0)</li></ul></div>
+      </div>
+      <div class="scorebox"><div class="verdict">NRU 하락과의 관계 · <span class="neg">주원인 아님</span></div><span class="dots bad"><i class="fill"></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="caution" style="margin-top:16px"><span>※</span><div><b>참고</b> · 크래시리틱스 ‘신규 문제’ 6건은 위변조 앱에서 발생한 것으로 판단돼 핫픽스 범위에서 빠졌다. 60.2.0이 나간 9/23 코호트 D1은 29.9%로 정상이다.</div></div>
+    </section>
+
+    <section class="scene" id="next" data-no="11 / 12">
+      <div class="eyebrow">Next Actions</div>
+      <h2>슈센에 한 가지를<br>먼저 확인한다</h2>
+      <div class="askbox"><div class="askhead"><span>슈센 확인 요청 · 복사해서 전달</span><button class="copy" data-copy="askText">복사</button></div>
+<pre id="askText">[피자레디 NRU 관련 확인 요청]
+9/7 이후 UA 집행(예산·입찰)을 단계적으로 줄이셨나요? Y/N
+
+- 바이트브루 기준 AOS·iOS 모두, 거의 전 국가에서 NRU가 4주 연속 주 10~20%씩 감소 중입니다. (월~목 평균 47.3만 → 25.0만, −47%)
+- 가능하시면 9/1~ 일자별 Spend·Install(OS/국가별)도 공유 부탁드립니다.</pre></div>
+      <div class="principles">
+        <div class="principle"><b>슈센 UA 집행 확인</b><span>9/7 이후 예산·입찰 단계적 축소 여부(Y/N)와 OS·국가별 일자별 Spend·Install</span></div>
+        <div class="principle"><b>빌드별 신규 1인당 LTV</b><span>바이트브루 LTV를 Build로 나눠 59.2.0·60.1.0·60.2.0 비교 — 60.1.0이 UA 수익성에 영향을 줬는지 직접 확인</span></div>
+        <div class="principle"><b>RV 퍼널</b><span>ad_rv_request → ad_rv → ad_rv_complete, DAU당 완료 수를 9/14주와 9/21주로 비교</span></div>
+        <div class="principle"><b>신규 유저 튜토리얼 퍼널</b><span>Tutorial:Firstopen:Start → Step01~ 단계별 도달률로 초반 이탈 변화 확인</span></div>
+        <div class="principle"><b>Play Console vitals</b><span>60.1.0 기간 기종별 크래시 기준치(8%) 초과 표시가 있었는지 확인</span></div>
+        <div class="principle"><b>회복 추적</b><span>UA 집행이 복구되면 NRU와 기존 유저 DAU·매출이 따라오는지 1~2주 추적</span></div>
+      </div>
+    </section>
+
+    <section class="scene" id="glossary" data-no="12 / 12">
+      <div class="eyebrow">How to Read the Data</div>
+      <h2>처음 보는 사람을 위한<br>지표와 근거 읽는 법</h2>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card"><h3>NRU</h3><p class="note">하루 동안 새로 설치하고 처음 실행한 유저 수. 바이트브루 New Users 기준이다.</p></div>
+        <div class="card"><h3>DAU · 기존 유저 DAU</h3><p class="note">하루 활성 유저 수. 기존 유저 DAU는 DAU에서 그날의 NRU를 뺀 값으로, 다음 주 매출의 바닥이 된다.</p></div>
+        <div class="card"><h3>ARPDAU</h3><p class="note">하루 매출 ÷ DAU. 유저 구성이 바뀌면 개별 유저의 가치가 그대로여도 오르내린다.</p></div>
+        <div class="card"><h3>월~목 평균</h3><p class="note">주말에 NRU가 크게 뛰는 게임이라, 최신 주(9/21~24)와 같은 요일끼리 비교하려고 모든 주를 월~목으로 맞췄다.</p></div>
+        <div class="card"><h3>변화율 % · 변화폭 %p</h3><p class="note">%는 기존 값 대비 상대 변화, %p는 비율 자체의 차이다. D1 29.2% → 28.7%는 −0.5%p다.</p></div>
+        <div class="card"><h3>D1 · D7 리텐션</h3><p class="note">설치 후 1일·7일째 다시 접속한 비율. 월~목 설치 코호트의 가중 평균으로 봤다.</p></div>
+      </div>
+      <div class="caution" style="margin-top:20px"><span>※</span><div><b>자료 범위</b> · 바이트브루 Pizza Ready(AOS·iOS) Engagement·Retention·Monetization, #s2_pizzaready 배포·핫픽스 스레드, 슈센 일일 피드백 리포트, <a href="https://developer.android.com/games/optimize/vitals" target="_blank" rel="noopener">Android vitals 문서</a>. 2026-09-25 기준이며 9/25 부분 데이터는 제외했다.</div></div>
+    </section>
+  </main>
+
+  <div class="pager-wrap"><nav class="pager" aria-label="장 이동"><button type="button" id="prevBtn" aria-label="이전 장">‹ 이전</button><div class="pager-info" aria-live="polite"><b id="pageNo">01</b> / <span id="pageTotal">12</span> · <span id="pageName">요약</span></div><button type="button" id="nextBtn" aria-label="다음 장">다음 ›</button></nav></div>
+
+  <script>
+    const nru=[459.3,440.3,406.6,388.0,393.7,411.2,433.0,363.7,368.2,373.6,383.9,404.6,439.5,472.6,392.8,403.2,389.9,405.2,410.1,455.2,466.3,424.0,436.8,436.5,441.3,468.8,505.8,516.3,442.8,421.5,
+      397.5,381.6,374.5,379.3,408.2,321.9,327.5,326.7,344.3,343.4,367.7,400.9,333.5,304.9,245.2,245.2,272.5,312.1,362.1,317.9,312.8,296.4,289.9,300.4,317.7,343,288,281,286,301,358,
+      398,409,305,281,272,273,290,321,370,319,323,316,306,319,372,431,399,387,367,378,401,424,498,410,427,449,419,482,508,535,419,
+      388,377,360,409,436,453,345,307,300,301,305,370,371,283,267,266,264,266,290,309,211,208,219,233];
+    function trendChart(el){
+      const cw=Math.round(el.clientWidth)||1000, W=Math.max(320,Math.min(cw,1100)), H=W<640?270:350;
+      const p={l:W<640?44:56,r:W<640?14:24,t:34,b:40},minY=150,maxY=560,n=nru.length;
+      const x=i=>p.l+i*(W-p.l-p.r)/(n-1), y=v=>p.t+(maxY-v)*(H-p.t-p.b)/(maxY-minY);
+      const ma=nru.map((_,i)=>i<6?null:nru.slice(i-6,i+1).reduce((a,b)=>a+b,0)/7);
+      const path=arr=>arr.map((v,i)=>v==null?null:[x(i),y(v)]).filter(Boolean).map((pt,j)=>(j?'L':'M')+pt[0].toFixed(1)+' '+pt[1].toFixed(1)).join(' ');
+      const ticks=[200,300,400,500], months=[[0,'6/1'],[30,'7/1'],[61,'8/1'],[92,'9/1'],[115,'9/24']];
+      el.innerHTML=`<svg class="svg-chart" viewBox="0 0 ${W} ${H}">
+        ${ticks.map(t=>`<line class="gridline" x1="${p.l}" x2="${W-p.r}" y1="${y(t)}" y2="${y(t)}"/><text class="axistext" x="${p.l-8}" y="${y(t)+4}" text-anchor="end">${t/10}만</text>`).join('')}
+        ${months.map(([i,t])=>`<text class="axistext" x="${x(i)}" y="${H-14}" text-anchor="${i===115?'end':'middle'}">${t}</text>`).join('')}
+        <rect x="${x(108)}" y="${p.t}" width="${x(111)-x(108)}" height="${H-p.t-p.b}" style="fill:var(--purple);opacity:.16"/>
+        <text class="anntext" x="${x(109.5)}" y="${p.t-12}" text-anchor="middle">60.1.0</text>
+        <line x1="${x(98)}" x2="${x(98)}" y1="${p.t}" y2="${H-p.b}" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 4"/>
+        <text class="anntext" x="${x(98)-6}" y="${p.t-12}" text-anchor="end">9/7 하락 시작</text>
+        <line x1="${p.l}" x2="${W-p.r}" y1="${y(245.2)}" y2="${y(245.2)}" style="stroke:var(--muted);stroke-width:1.2;stroke-dasharray:2 5"/>
+        <text class="anntext" x="${x(44)}" y="${y(245.2)+18}" text-anchor="middle">7/15 직전 최저 24.5만</text>
+        <path d="${path(nru)}" style="fill:none;stroke:var(--axis);stroke-width:1.5;opacity:.55"/>
+        <path d="${path(ma)}" style="fill:none;stroke:var(--red);stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round"/>
+        <circle cx="${x(90)}" cy="${y(535)}" r="4.5" style="fill:var(--green)"/>
+        <text class="valtext" x="${x(90)}" y="${y(535)-10}" text-anchor="middle">8/30 53.5만</text>
+        <circle cx="${x(113)}" cy="${y(208)}" r="5" style="fill:var(--red)"/>
+        <text class="valtext" x="${x(113)-9}" y="${y(208)+20}" text-anchor="end">9/22 최저 20.8만</text>
+      </svg>`;
+    }
+    const trendEl=document.getElementById('trendChart');
+    trendChart(trendEl);
+    let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>trendChart(trendEl),150)});
+
+    const root=document.documentElement, mq=matchMedia('(prefers-color-scheme: dark)');
+    const effTheme=()=>root.getAttribute('data-theme')||(mq.matches?'dark':'light');
+    function syncToggle(){const e=effTheme();document.querySelectorAll('[data-theme-set]').forEach(b=>{const on=b.dataset.themeSet===e;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});}
+    document.querySelectorAll('[data-theme-set]').forEach(b=>b.addEventListener('click',()=>{root.setAttribute('data-theme',b.dataset.themeSet);try{localStorage.setItem('pr-nru-theme',b.dataset.themeSet);}catch(e){}syncToggle();}));
+    mq.addEventListener&&mq.addEventListener('change',syncToggle);
+    syncToggle();
+    let themeBeforePrint=null;
+    window.addEventListener('beforeprint',()=>{themeBeforePrint=root.getAttribute('data-theme');root.setAttribute('data-theme','light');});
+    window.addEventListener('afterprint',()=>{if(themeBeforePrint)root.setAttribute('data-theme',themeBeforePrint);else root.removeAttribute('data-theme');});
+
+    const scenes=[...document.querySelectorAll('.scene')], nav=[...document.querySelectorAll('.nav button')];
+    const names=Object.fromEntries(nav.map(b=>[b.dataset.target,b.textContent]));
+    const prevBtn=document.getElementById('prevBtn'), nextBtn=document.getElementById('nextBtn');
+    document.getElementById('pageTotal').textContent=String(scenes.length).padStart(2,'0');
+    let cur=0;
+    function showSlide(i,opts={}){
+      cur=Math.max(0,Math.min(scenes.length-1,i));
+      const id=scenes[cur].id;
+      scenes.forEach((s,k)=>{const on=k===cur;s.classList.toggle('active',on);s.setAttribute('aria-hidden',on?'false':'true');});
+      nav.forEach(b=>{const on=b.dataset.target===id;b.classList.toggle('on',on);if(on){b.setAttribute('aria-current','page');b.scrollIntoView({block:'nearest',inline:'center'});}else b.removeAttribute('aria-current');});
+      document.getElementById('pageNo').textContent=String(cur+1).padStart(2,'0');
+      document.getElementById('pageName').textContent=names[id]||'';
+      prevBtn.disabled=cur===0; nextBtn.disabled=cur===scenes.length-1;
+      document.getElementById('progressBar').style.width=((cur+1)/scenes.length*100)+'%';
+      if(!opts.keepHash){try{history.replaceState(null,'','#'+id);}catch(e){}}
+      window.scrollTo({top:0,behavior:'instant'});
+      if(id==='trend') trendChart(trendEl);
+    }
+    nav.forEach(b=>b.addEventListener('click',()=>showSlide(scenes.findIndex(s=>s.id===b.dataset.target))));
+    prevBtn.addEventListener('click',()=>showSlide(cur-1));
+    nextBtn.addEventListener('click',()=>showSlide(cur+1));
+    document.addEventListener('keydown',e=>{
+      if(e.altKey||e.ctrlKey||e.metaKey||(e.target.closest&&e.target.closest('input,textarea,select')))return;
+      if(e.key==='ArrowRight'){e.preventDefault();showSlide(cur+1);}
+      else if(e.key==='ArrowLeft'){e.preventDefault();showSlide(cur-1);}
+    });
+    let tx=null,ty=null;
+    document.querySelector('main').addEventListener('touchstart',e=>{const t=e.changedTouches[0];tx=t.clientX;ty=t.clientY;},{passive:true});
+    document.querySelector('main').addEventListener('touchend',e=>{if(tx===null)return;const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;tx=null;
+      if(Math.abs(dx)>70&&Math.abs(dy)<45&&!e.target.closest('.table-wrap'))showSlide(cur+(dx<0?1:-1));},{passive:true});
+    const startIdx=scenes.findIndex(s=>'#'+s.id===location.hash);
+    showSlide(startIdx<0?0:startIdx,{keepHash:startIdx<0});
+    document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
+      const el=document.getElementById(b.dataset.copy);
+      try{await navigator.clipboard.writeText(el.innerText);b.textContent='복사됨';b.classList.add('done');setTimeout(()=>{b.textContent='복사';b.classList.remove('done')},1800);}
+      catch(err){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='선택됨 · Ctrl+C';}
+    }));
+  </script>
+</body>
+</html>
