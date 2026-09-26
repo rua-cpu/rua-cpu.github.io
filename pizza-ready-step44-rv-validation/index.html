@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Pizza Ready Step44 이후 RV 감소 원인과 Factory RV 순증 여부를 검증하기 위한 PM·DA 분석 요청서">
+<title>Pizza Ready · Step44 RV 가설 검증안</title>
+
+<style>
+:root{
+  --ink:#20242d;--muted:#646c78;--paper:#f7f5ef;--panel:#ffffff;--card:#ffffff;--soft:#faf9f5;--line:#dedbd2;
+  --red:#e54b3f;--red-deep:#a72f2b;--yellow:#f4b83f;--green:#168a67;--blue:#3478d4;--purple:#7656b6;
+  --soft-red:#fff0ec;--soft-yellow:#fff5d7;--soft-green:#eaf7f1;--soft-blue:#edf4ff;--soft-purple:#f2edfb;
+  --green-ink:#116b50;--red-ink:#9b342f;--yellow-ink:#8b6112;--blue-ink:#2f66aa;
+  --track:#ece9e2;--hover:#fff;--shadow:0 18px 55px rgba(38,34,27,.10);--side:214px;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+  --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;
+  --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;--soft-purple:#302740;
+  --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;--track:#30343c;--hover:#2a2e35;
+  --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+  --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;
+  --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;--soft-purple:#302740;
+  --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;--track:#30343c;--hover:#2a2e35;
+  --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Segoe UI",sans-serif;line-height:1.55;word-break:keep-all}
+button{font:inherit;color:inherit}.state{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);height:100vh;height:100dvh}
+.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:24px 16px 18px;display:flex;flex-direction:column;min-height:0}
+.brand{padding:0 9px 20px;border-bottom:1px solid var(--line)}.brand .small{font-size:10px;font-weight:900;letter-spacing:.13em;color:var(--red);text-transform:uppercase}.brand strong{display:block;font-size:21px;letter-spacing:-.04em;margin-top:7px}.brand p{margin:7px 0 0;font-size:11px;color:var(--muted);line-height:1.55}
+.nav{display:grid;gap:7px;padding-top:16px}.nav label{display:flex;align-items:flex-start;gap:10px;padding:11px 10px;border-radius:12px;cursor:pointer;color:var(--muted);transition:.15s;background:transparent}.nav label:hover{background:var(--soft)}.nav .no{font-size:11px;font-weight:950;color:#9b9589;width:23px;flex:0 0 23px}.nav .name{font-size:13px;font-weight:850;line-height:1.3}.nav .en{display:block;font-size:9px;font-weight:650;margin-top:3px;color:#9aa0aa}
+#tab0:checked~.app label[for=tab0],#tab1:checked~.app label[for=tab1],#tab2:checked~.app label[for=tab2],#tab3:checked~.app label[for=tab3],#tab4:checked~.app label[for=tab4],#tab5:checked~.app label[for=tab5]{background:var(--ink);color:var(--panel)}
+#tab0:checked~.app label[for=tab0] .no,#tab1:checked~.app label[for=tab1] .no,#tab2:checked~.app label[for=tab2] .no,#tab3:checked~.app label[for=tab3] .no,#tab4:checked~.app label[for=tab4] .no,#tab5:checked~.app label[for=tab5] .no{color:var(--yellow)}
+#tab0:checked~.app label[for=tab0] .en,#tab1:checked~.app label[for=tab1] .en,#tab2:checked~.app label[for=tab2] .en,#tab3:checked~.app label[for=tab3] .en,#tab4:checked~.app label[for=tab4] .en,#tab5:checked~.app label[for=tab5] .en{color:#b8bec8}
+.side-foot{margin-top:auto;padding:13px 9px 0;border-top:1px solid var(--line);font-size:10px;color:var(--muted);line-height:1.65}
+.workspace{min-width:0;min-height:0;display:flex;flex-direction:column}.topbar{height:62px;flex:0 0 62px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:14px}.topbar .title{font-size:13px;font-weight:900}.actions{display:flex;align-items:center;gap:8px}.theme{display:inline-flex;padding:3px;background:var(--track);border:1px solid var(--line);border-radius:11px;gap:3px}.theme button{border:0;background:transparent;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:850;cursor:pointer;color:var(--muted)}.theme button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.main{flex:1;min-height:0;padding:20px}.scene{display:none;height:100%;max-width:1280px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:34px 38px;overflow:hidden;position:relative}.scene.active{display:flex;flex-direction:column;animation:in .18s ease-out}@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.scene::after{content:attr(data-no);position:absolute;right:24px;bottom:16px;font-size:11px;font-weight:900;color:#9a9489;letter-spacing:.08em}
+.eyebrow{font-size:11px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:var(--red);margin-bottom:7px}h1,h2,h3,p{margin-top:0}h1,h2,h3{letter-spacing:-.04em;line-height:1.18}h1{font-size:clamp(34px,4.2vw,58px);margin-bottom:10px}h2{font-size:clamp(30px,3.8vw,48px);margin-bottom:10px}h3{font-size:18px;margin-bottom:8px}.sub{font-size:16px;color:var(--muted);margin-bottom:0;max-width:980px}.lead{font-size:20px;color:var(--muted);max-width:980px}
+.cover{background:linear-gradient(135deg,var(--panel) 0%,var(--soft-yellow) 55%,var(--soft-red) 100%);justify-content:center}.cover .ring{position:absolute;width:380px;height:380px;border-radius:50%;right:-120px;top:-145px;border:32px solid color-mix(in srgb,var(--red) 10%,transparent)}.cover .ring.r2{width:205px;height:205px;right:150px;top:100px;border-width:20px;border-color:color-mix(in srgb,var(--yellow) 20%,transparent)}
+.hero-line{font-size:clamp(22px,2.3vw,31px);font-weight:900;line-height:1.45;max-width:930px;margin:8px 0 0}.hero-line em{font-style:normal;color:var(--red-deep)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;max-width:980px;margin-top:24px}.hero-stat{border-left:5px solid var(--red);padding:10px 15px;background:color-mix(in srgb,var(--card) 76%,transparent);border-radius:0 15px 15px 0}.hero-stat:nth-child(2){border-color:var(--yellow)}.hero-stat:nth-child(3){border-color:var(--green)}.hero-stat b{display:block;font-size:22px;margin-bottom:3px}.hero-stat span{font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{border:1px solid var(--line);border-radius:18px;padding:18px 19px;background:var(--card);min-width:0}.card.soft{background:var(--soft)}.card.red{background:var(--soft-red)}.card.green{background:var(--soft-green)}.card.blue{background:var(--soft-blue)}.card.yellow{background:var(--soft-yellow)}.card p:last-child{margin-bottom:0}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:900;background:var(--track);color:var(--muted);white-space:nowrap}.pill.red{background:var(--soft-red);color:var(--red-ink)}.pill.green{background:var(--soft-green);color:var(--green-ink)}.pill.blue{background:var(--soft-blue);color:var(--blue-ink)}.pill.yellow{background:var(--soft-yellow);color:var(--yellow-ink)}
+.question{background:var(--ink);color:var(--panel);border-radius:19px;padding:19px 22px;font-size:21px;font-weight:900;line-height:1.42;margin-top:18px}.question em{font-style:normal;color:var(--yellow)}
+.callout{border-left:5px solid var(--red);padding:13px 17px;background:var(--soft-red);border-radius:0 14px 14px 0;font-size:12px;line-height:1.6}.callout.green{border-color:var(--green);background:var(--soft-green)}.callout b{color:var(--red-deep)}.callout.green b{color:var(--green-ink)}
+.hypo{display:grid;grid-template-rows:auto 1fr auto;min-height:245px}.hypo .sentence{font-size:20px;font-weight:900;line-height:1.48;margin-top:12px}.hypo .pattern{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;font-size:13px;color:var(--muted)}.hypo .pattern strong{color:var(--ink)}
+.metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}.metric{border:1px solid var(--line);border-radius:18px;padding:18px;background:var(--card)}.metric .n{font-size:10px;font-weight:950;letter-spacing:.08em;color:var(--red);margin-bottom:6px}.metric .name{font-size:18px;font-weight:900;letter-spacing:-.03em}.metric .eng{font-size:11px;color:var(--muted);margin-top:2px}.metric .formula{margin-top:13px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;font-weight:800}.metric .why{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.55}.metric .unit{display:inline-block;margin-top:10px;font-size:10px;font-weight:900;color:var(--blue-ink);background:var(--soft-blue);padding:4px 7px;border-radius:6px}
+.guard{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:14px}.guard .card{padding:15px 17px}.guard h3{font-size:15px}.chips{display:flex;flex-wrap:wrap;gap:7px}.chips span{font-size:10px;font-weight:850;padding:4px 7px;border:1px solid var(--line);border-radius:7px;background:var(--card)}
+.flow{display:grid;grid-template-columns:1fr 58px 1fr 58px 1fr;align-items:stretch;margin-top:20px}.flow-card{border:1px solid var(--line);border-radius:18px;padding:18px;background:var(--card)}.flow-card .step{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--panel);font-size:11px;font-weight:950;margin-bottom:12px}.flow-card h3{font-size:17px}.flow-card p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:0}.flow-arrow{display:grid;place-items:center;color:var(--red);font-size:26px;font-weight:950}.branch{margin-top:11px;padding:9px 10px;border-radius:10px;background:var(--soft-blue);font-size:11px;color:var(--blue-ink);font-weight:800}.branch.amber{background:var(--soft-yellow);color:var(--yellow-ink)}
+.decision{width:100%;border-collapse:separate;border-spacing:6px;margin-top:18px}.decision th{font-size:11px;color:var(--muted);padding:7px}.decision td{padding:13px 12px;border-radius:12px;background:var(--soft);font-size:12px;vertical-align:top}.decision td:first-child{font-weight:900}.decision .good{background:var(--soft-green)}.decision .warn{background:var(--soft-yellow)}.decision .bad{background:var(--soft-red)}
+.askbox{margin-top:14px;border:1px solid var(--line);border-radius:16px;background:var(--soft);padding:14px 16px}.askhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:11px;font-weight:900;color:var(--muted)}.copy{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:5px 9px;font-size:10px;font-weight:850;cursor:pointer}.askbox pre{white-space:pre-wrap;margin:0;font-family:inherit;font-size:12px;line-height:1.55;color:var(--ink)}
+.pager{height:48px;flex:0 0 48px;border-top:1px solid var(--line);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 24px}.pager button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:11px;font-weight:850;cursor:pointer}.pager button:disabled{opacity:.35}.page-info{font-size:11px;color:var(--muted)}.page-info b{color:var(--ink)}
+@media(max-width:1050px){:root{--side:178px}.main{padding:14px}.scene{padding:27px 28px}.hero-stats,.metric-grid{gap:10px}.hero-stat b{font-size:20px}.metric{padding:15px}.flow{grid-template-columns:1fr 42px 1fr 42px 1fr}.nav .name{font-size:12px}}
+@media(max-width:820px){:root{--side:148px}.brand strong{font-size:18px}.brand p{font-size:10px}.sidebar{padding:18px 10px 13px}.nav label{padding:9px 7px;gap:6px}.nav .no{width:18px;flex-basis:18px;font-size:9px}.nav .name{font-size:11px}.nav .en{display:none}.scene{padding:24px 22px}.topbar{padding:0 16px}.hero-line{font-size:22px}.hero-stats,.g3,.metric-grid{grid-template-columns:1fr 1fr}.hero-stat:nth-child(3),.metric:nth-child(3){grid-column:1 / -1}.hypo .sentence{font-size:17px}.flow{grid-template-columns:1fr}.flow-arrow{transform:rotate(90deg);min-height:24px}.guard{grid-template-columns:1fr}.decision td{font-size:11px;padding:10px}.pager{padding:0 16px}}
+@media(max-width:600px){:root{--side:104px}.brand .small{font-size:8px}.brand strong{font-size:14px}.brand p{font-size:8px}.nav label{display:block}.nav .no{display:block;margin-bottom:3px}.nav .name{font-size:10px}.topbar .title{font-size:11px}.theme button{padding:4px 6px;font-size:9px}.main{padding:8px}.scene{padding:18px 15px;border-radius:20px}.hero-stats,.g2,.g3,.metric-grid{grid-template-columns:1fr}.hero-stat:nth-child(3),.metric:nth-child(3){grid-column:auto}.question{font-size:17px}.sub{font-size:13px}.decision th:nth-child(3),.decision td:nth-child(3){display:none}}
+@media(max-height:760px) and (min-width:820px){.scene{padding-top:24px;padding-bottom:24px}h1,h2{font-size:34px}.sub{font-size:14px}.hero-line{font-size:23px}.hero-stats{margin-top:18px}.hero-stat{padding:8px 13px}.hypo{min-height:210px}.hypo .sentence{font-size:17px}.metric-grid{margin-top:12px}.metric{padding:14px}.guard{margin-top:10px}.flow{margin-top:14px}.flow-card{padding:14px}.decision{margin-top:12px}.decision td{padding:10px}.askbox{margin-top:10px;padding:10px 14px}}
+
+
+/* DA Request: two decisions, no dense table */
+.cohort-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:15px;padding:10px;border:1px solid var(--line);border-radius:15px;background:var(--soft)}
+.cohort-strip>div{padding:8px 10px;border-right:1px solid var(--line);min-width:0}.cohort-strip>div:last-child{border-right:0}
+.cohort-strip .k{display:block;font-size:9px;font-weight:950;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}.cohort-strip b{display:block;font-size:11px;line-height:1.35}
+.request-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.request-card{border:1px solid var(--line);border-radius:18px;padding:15px;background:var(--card);min-width:0}
+.request-card.primary{border-top:5px solid var(--blue)}.request-card.secondary{border-top:5px solid var(--green)}
+.request-head{display:flex;align-items:flex-start;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.request-no{width:29px;height:29px;flex:0 0 29px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--panel);font-size:12px;font-weight:950}
+.request-head h3{font-size:17px;margin:1px 0 2px}.request-head p{font-size:10px;color:var(--muted);margin:0}
+.request-groups{display:grid;gap:7px;margin-top:10px}
+.request-group{display:grid;grid-template-columns:76px 1fr;align-items:start;gap:9px;padding:7px 8px;border-radius:10px;background:var(--soft)}
+.request-group span{font-size:8px;font-weight:950;letter-spacing:.07em;color:var(--muted);padding-top:2px}.request-group b{font-size:11px;line-height:1.38}
+.deliverable{display:grid;grid-template-columns:76px 1fr;gap:3px 9px;align-items:center;margin-top:10px;padding:9px 10px;border-radius:11px;background:var(--soft-blue)}
+.secondary .deliverable{background:var(--soft-green)}
+.deliverable span{grid-row:1 / 3;font-size:8px;font-weight:950;letter-spacing:.05em;color:var(--muted)}.deliverable b{font-size:12px}.deliverable small{font-size:9px;color:var(--muted)}
+.optional-row{display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:9px;margin-top:10px;padding:9px 11px;border:1px dashed var(--line);border-radius:12px;background:var(--soft)}
+.optional-badge{font-size:8px;font-weight:950;color:var(--yellow-ink);background:var(--soft-yellow);border-radius:999px;padding:4px 7px;white-space:nowrap}.optional-row b{font-size:11px}.optional-row span:not(.optional-badge){font-size:10px;color:var(--muted)}.optional-row em{font-style:normal;font-size:9px;font-weight:850;color:var(--red-ink);white-space:nowrap}
+
+/* ===== iPad / embedded-preview safe: CSS-only navigation ===== */
+.ipad-badge,.select-hint{display:inline-flex;align-items:center;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 10px;font-size:10px;font-weight:850;color:var(--muted);white-space:nowrap}
+.scene.active{display:none!important}
+#tab0:checked~.app #request,
+#tab1:checked~.app #hypothesis,
+#tab2:checked~.app #metrics,
+#tab3:checked~.app #data-request,
+#tab4:checked~.app #flow,
+#tab5:checked~.app #decision{display:flex!important;flex-direction:column;animation:in .18s ease-out}
+
+.pager-set{display:none;width:100%;align-items:center;justify-content:space-between;gap:10px}
+#tab0:checked~.app .pager-0,
+#tab1:checked~.app .pager-1,
+#tab2:checked~.app .pager-2,
+#tab3:checked~.app .pager-3,
+#tab4:checked~.app .pager-4,
+#tab5:checked~.app .pager-5{display:flex}
+.css-pager label,.pager-disabled{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:11px;font-weight:850;cursor:pointer;white-space:nowrap}
+.pager-disabled{opacity:.35;cursor:default}
+
+/* Avoid features that can make embedded iPad viewers fail to paint. */
+.app{height:100vh;min-height:100vh}
+.topbar{background:var(--paper);backdrop-filter:none;-webkit-backdrop-filter:none}
+.cover .ring{border-color:rgba(229,75,63,.10)}
+.cover .ring.r2{border-color:rgba(244,184,63,.20)}
+.hero-stat{background:rgba(255,255,255,.74)}
+
+/* iPad portrait: preserve the deck layout instead of stacking into a long page. */
+@media (min-width:700px) and (max-width:900px){
+  :root{--side:142px}
+  .sidebar{padding:16px 9px 12px}
+  .brand strong{font-size:17px}.brand p{font-size:9px}
+  .nav label{padding:8px 6px;gap:6px}.nav .no{width:17px;flex-basis:17px;font-size:9px}.nav .name{font-size:10px}.nav .en{display:none}
+  .topbar{height:52px;flex-basis:52px;padding:0 12px}.topbar .title{font-size:11px}
+  .main{padding:9px}
+  .scene{padding:18px 18px 20px;border-radius:20px;overflow:hidden}
+  h1{font-size:33px;margin-bottom:8px}h2{font-size:29px;margin-bottom:7px}h3{font-size:15px}
+  .eyebrow{font-size:9px;margin-bottom:5px}.sub{font-size:12px}.hero-line{font-size:19px;line-height:1.35}
+  .hero-stats,.g3,.metric-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .hero-stat:nth-child(3),.metric:nth-child(3){grid-column:auto}
+  .g2{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .hero-stat{padding:7px 9px}.hero-stat b{font-size:17px}.hero-stat span{font-size:9px}
+  .question{font-size:14px;padding:12px 14px}
+  .card{padding:12px}.hypo{min-height:0}.hypo .sentence{font-size:14px;line-height:1.4}.pattern{font-size:10px}
+  .metric{padding:10px}.metric .n{font-size:9px}.metric .name{font-size:14px}.metric .eng,.metric .formula,.metric .why,.unit{font-size:9px}
+  .guard{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.chips{gap:5px}.chips span{font-size:9px;padding:4px 6px}
+  .flow{grid-template-columns:1fr 24px 1fr 24px 1fr;gap:5px}.flow-arrow{transform:none;min-height:0;font-size:18px}.flow-card{padding:10px}.flow-card h3{font-size:13px}.flow-card p,.branch{font-size:9px}
+  .decision th,.decision td{font-size:9px;padding:7px 8px;line-height:1.35}
+  .askbox{padding:10px 12px}.askbox pre{font-size:10px;line-height:1.42}.askhead{font-size:10px}
+  .callout{font-size:10px;padding:9px 11px;margin-top:8px}
+  .pager{height:42px;flex-basis:42px;padding:0 12px}.css-pager label,.pager-disabled{font-size:10px;padding:6px 10px}.page-info{font-size:10px}
+  .cohort-strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:7px}.cohort-strip>div{border-right:0;padding:5px 7px}.cohort-strip .k{font-size:8px}.cohort-strip b{font-size:9px}
+  .request-grid{gap:8px}.request-card{padding:10px}.request-head{gap:7px;padding-bottom:7px}.request-no{width:24px;height:24px;flex-basis:24px;font-size:10px}.request-head h3{font-size:14px}.request-head p{font-size:8px}
+  .request-groups{gap:5px;margin-top:7px}.request-group{grid-template-columns:60px 1fr;gap:6px;padding:5px 6px}.request-group span{font-size:7px}.request-group b{font-size:9px}
+  .deliverable{grid-template-columns:58px 1fr;margin-top:7px;padding:6px 7px}.deliverable span{font-size:7px}.deliverable b{font-size:10px}.deliverable small{font-size:8px}
+  .optional-row{grid-template-columns:auto auto 1fr;margin-top:7px;padding:6px 8px}.optional-row em{display:none}.optional-row b{font-size:9px}.optional-row span:not(.optional-badge){font-size:8px}
+}
+
+/* iPad landscape / small desktop: slightly denser but unchanged visual language. */
+@media (min-width:901px) and (max-width:1180px){
+  .scene{padding:26px 30px}
+  h1{font-size:43px}h2{font-size:38px}
+  .hero-line{font-size:24px}
+}
+
+</style>
+</head>
+<body>
+<input class="state" type="radio" name="tab" id="tab0" checked>
+<input class="state" type="radio" name="tab" id="tab1">
+<input class="state" type="radio" name="tab" id="tab2">
+<input class="state" type="radio" name="tab" id="tab3">
+<input class="state" type="radio" name="tab" id="tab4">
+<input class="state" type="radio" name="tab" id="tab5">
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="small">MOLIP × SUPERCENT</div><strong>Step44 RV 진단</strong><p>가설 → 지표 → 분석 → 판단<br>PM · DA 공유용</p></div>
+    <nav class="nav">
+      <label for="tab0" data-index="0"><span class="no">00</span><span class="name">요청 요약<span class="en">The Request</span></span></label>
+      <label for="tab1" data-index="1"><span class="no">01</span><span class="name">검증 가설<span class="en">Hypotheses</span></span></label>
+      <label for="tab2" data-index="2"><span class="no">02</span><span class="name">확인 지표<span class="en">Metrics</span></span></label>
+      <label for="tab3" data-index="3"><span class="no">03</span><span class="name">DA 요청 데이터<span class="en">Data Request</span></span></label>
+      <label for="tab4" data-index="4"><span class="no">04</span><span class="name">분석 순서<span class="en">Analysis Flow</span></span></label>
+      <label for="tab5" data-index="5"><span class="no">05</span><span class="name">결과와 판단<span class="en">Decision</span></span></label>
+    </nav>
+    <div class="side-foot"><b>이번 문서의 목적</b><br>“왜 RV가 줄었나?”와<br>“Factory가 실제 순증을 만들었나?”만 확인합니다.</div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <div class="title"><b style="color:var(--red)">Pizza Ready</b> · Step44 RV 가설 검증안</div>
+      <div class="actions"><span class="ipad-badge">iPad · CSS Tab</span></div>
+    </header>
+    <main class="main">
+      <section class="scene cover" id="request" data-no="01 / 06">
+        <div class="ring"></div><div class="ring r2"></div>
+        <div class="eyebrow">00 · The Request</div>
+        <h1>Step44 이후 RV가<br>왜 줄어드는지 확인하고 싶습니다</h1>
+        <p class="hero-line">확인할 것은 복잡하지 않습니다. <em>플레이 중단 때문인지</em>, 아니면 <em>계속 플레이하지만 RV를 쓸 이유가 약해진 것인지</em>를 구분합니다.</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><b>WHERE</b><span>Step44 이후 RV가 어디서 얼마나 줄었는가</span></div>
+          <div class="hero-stat"><b>WHY</b><span>플레이 중단인가, RV 선택 이유 감소인가</span></div>
+          <div class="hero-stat"><b>INCREMENT</b><span>Factory가 전체 RV/User를 실제로 늘렸는가</span></div>
+        </div>
+        <div class="question">한 문장으로 · <em>“Step44 이후 Goal/Friction 약화가 RV 감소와 관련 있는가?”</em>를 확인하는 분석 요청입니다.</div>
+      </section>
+
+      <section class="scene" id="hypothesis" data-no="02 / 06">
+        <div class="eyebrow">01 · Hypotheses</div>
+        <h2>가설은 두 개만 둡니다</h2>
+        <p class="sub">관찰된 사실과 우리가 추정하는 이유를 분리해서 보겠습니다.</p>
+        <div class="grid g2" style="margin-top:18px">
+          <article class="card hypo blue">
+            <div><span class="pill blue">H1 · 감소 원인</span><p class="sentence">Step44 이후 RV 감소는 <b>플레이 중단만이 아니라</b>, 성장을 앞당길 이유가 약해진 것과 관련될 수 있습니다.</p></div>
+            <div></div>
+            <p class="pattern">가설과 맞는 패턴 · 플레이를 이어가는 유저에서도 <strong>RV Viewer Rate 또는 RV/User가 감소</strong></p>
+          </article>
+          <article class="card hypo red">
+            <div><span class="pill red">H2 · Factory 효과</span><p class="sentence">Factory의 목표와 가속 보상이 유용하다면, Step44 이후 <b>Total RV/User가 실제로 증가</b>할 수 있습니다.</p></div>
+            <div></div>
+            <p class="pattern">가설과 맞는 패턴 · <strong>Factory RV만이 아니라 전체 RV가 증가</strong>하고, 진행·복귀·수익이 악화되지 않음</p>
+          </article>
+        </div>
+        <div class="grid g2" style="margin-top:14px">
+          <div class="callout"><b>H1 해석 주의</b> RV Offer 노출 자체가 줄었거나 플레이 시간이 줄었다면 “필요 감소”로 단정하지 않습니다.</div>
+          <div class="callout green"><b>H2 해석 주의</b> Factory RV ↑ + 기존 RV ↓ + Total RV 동일이면 순증으로 보지 않습니다.</div>
+        </div>
+      </section>
+
+      <section class="scene" id="metrics" data-no="03 / 06">
+        <div class="eyebrow">02 · Metrics</div>
+        <h2>우선 필요한 핵심 지표는 세 가지입니다</h2>
+        <p class="sub">PM·DA가 첫 번째 분석에서 바로 확인할 값만 남겼습니다.</p>
+        <div class="metric-grid">
+          <div class="metric"><div class="n">01 · WHERE</div><div class="name">Step별 RV/User</div><div class="eng">RV Imps / Reached User</div><div class="formula">RV 총횟수 ÷ 해당 Step 도달 유저</div><div class="why">Step1~100에 Step44를 표시해서 감소 지점을 확인합니다.</div><span class="unit">0회 시청자 포함</span></div>
+          <div class="metric"><div class="n">02 · WHO</div><div class="name">RV Viewer Rate</div><div class="eng">RV 참여율</div><div class="formula">RV 1회 이상 유저 ÷ Step 도달 유저</div><div class="why">RV를 보는 사람 자체가 줄었는지 확인합니다.</div><span class="unit">단위 · %</span></div>
+          <div class="metric"><div class="n">03 · INCREMENT</div><div class="name">Post-Step44 Total RV/User</div><div class="eng">기존 RV + Factory RV</div><div class="formula">전체 RV ÷ Step44 최초 도달 유저</div><div class="why">신규 RV가 기존 RV를 옮겨온 것인지 실제 순증인지 판단합니다.</div><span class="unit">동일 관찰기간</span></div>
+        </div>
+        <div class="guard">
+          <div class="card soft"><h3>행동 확인</h3><div class="chips"><span>Playtime</span><span>Next Step</span><span>Next Session</span><span>RV Offer / Select / Complete</span></div></div>
+          <div class="card soft"><h3>Guardrail</h3><div class="chips"><span>D1 / D3 / D7</span><span>Total Revenue/User</span><span>IS</span><span>IAP</span></div></div>
+        </div>
+        <div class="callout" style="margin-top:14px"><b>요청 산출물</b> Step별 그래프 1장 + Control/Factory 비교표 1장. 유저 수와 관찰기간을 같이 표시해 주세요.</div>
+      </section>
+
+      <section class="scene" id="data-request" data-no="04 / 06">
+        <div class="eyebrow">03 · Data Request</div>
+        <h2>DA에게는 이 두 세트만 먼저 요청합니다</h2>
+        <p class="sub">많이 뽑는 것이 아니라, <b>H1 원인 구분</b>과 <b>H2 Factory 순증 여부</b>를 바로 판단할 수 있는 데이터만 요청합니다.</p>
+
+        <div class="cohort-strip">
+          <div><span class="k">기준 Cohort</span><b>Step44 최초 도달 User</b></div>
+          <div><span class="k">비교</span><b>동일 Test 기간 · Control vs D</b></div>
+          <div><span class="k">분리</span><b>AOS / iOS · WW 우선</b></div>
+          <div><span class="k">분모</span><b>RV 0회 User 포함</b></div>
+        </div>
+
+        <div class="request-grid">
+          <article class="request-card primary">
+            <div class="request-head">
+              <span class="request-no">①</span>
+              <div><h3>Step44 전후 변화</h3><p>H1 · 플레이 이탈인가, RV Need 감소인가?</p></div>
+            </div>
+            <div class="request-groups">
+              <div class="request-group"><span>BASE</span><b>Step 30~70 Reached User</b></div>
+              <div class="request-group"><span>RV</span><b>RV Viewer Rate · Total RV/User</b></div>
+              <div class="request-group"><span>BEHAVIOR</span><b>Playtime/User · Next Step 또는 Session End · Next Session</b></div>
+            </div>
+            <div class="deliverable"><span>산출물</span><b>Step별 Line Graph 1장</b><small>Step44 표시 · 유저 수 함께 표기</small></div>
+          </article>
+
+          <article class="request-card secondary">
+            <div class="request-head">
+              <span class="request-no">②</span>
+              <div><h3>Factory 순증 비교</h3><p>H2 · 새 RV가 전체 RV를 실제로 늘렸나?</p></div>
+            </div>
+            <div class="request-groups">
+              <div class="request-group"><span>RV</span><b>Total RV/User · Core RV/User · Factory RV/User · Viewer Rate</b></div>
+              <div class="request-group"><span>BEHAVIOR</span><b>Playtime/User · Next Session Rate</b></div>
+              <div class="request-group"><span>GUARDRAIL</span><b>D1/D3/D7 · RV/IS/IAP · Total Revenue/User</b></div>
+            </div>
+            <div class="deliverable"><span>산출물</span><b>Control vs D 비교표 1장</b><small>동일 관찰기간 · 표본 수 함께 표기</small></div>
+          </article>
+        </div>
+
+        <div class="optional-row">
+          <span class="optional-badge">2차 · 필요할 때만</span>
+          <b>Factory 내부 Path</b>
+          <span>Exposure → Entry → RV View → Progress → Main Return → Next Session</span>
+          <em>처음부터 전체 Journey를 요청하지 않습니다.</em>
+        </div>
+      </section>
+
+      <section class="scene" id="flow" data-no="05 / 06">
+        <div class="eyebrow">04 · Analysis Flow</div>
+        <h2>분석 순서는 세 단계면 충분합니다</h2>
+        <p class="sub">처음부터 모든 User Journey를 복원하지 않고, 원인을 먼저 나눈 뒤 Factory 순증을 봅니다.</p>
+        <div class="flow">
+          <div class="flow-card"><div class="step">1</div><h3>플레이와 RV가 같이 줄었나?</h3><p>Playtime / Step 진행 / Next Session과 RV 감소를 같이 봅니다.</p><div class="branch amber">플레이도 감소 → 이탈/세션 종료 가능성 우선</div><div class="branch">플레이 유지 + RV 감소 → Offer/선택 감소 확인</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><div class="step">2</div><h3>Factory가 Total RV를 늘렸나?</h3><p>Control vs Factory 실험군의 Post-Step44 Total RV/User를 비교합니다.</p><div class="branch">기존 RV와 Factory RV를 분리해 Cannibalization 확인</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><div class="step">3</div><h3>그 증가가 건강한가?</h3><p>진행·복귀·Retention·Total Revenue/User가 악화되지 않는지 확인합니다.</p><div class="branch amber">RV만 ↑, 다른 지표 ↓ → 성공으로 판단하지 않음</div></div>
+        </div>
+        <div class="callout" style="margin-top:16px"><b>비교 원칙</b> Factory 진입군/미진입군 차이는 행동 설명용입니다. 효과 판정은 동일 기간의 무작위 배정 Control vs 실험군 비교를 우선합니다.</div>
+      </section>
+
+      <section class="scene" id="decision" data-no="06 / 06">
+        <div class="eyebrow">05 · Decision</div>
+        <h2>결과에 따라 다음 기획 판단을 이렇게 나눕니다</h2>
+        <table class="decision" aria-label="결과별 판단">
+          <thead><tr><th>관찰 결과</th><th>해석</th><th>다음 행동</th></tr></thead>
+          <tbody>
+            <tr><td class="good">Total RV ↑ + 진행·복귀·수익 유지</td><td>새 Goal/Friction이 RV Utility를 만들었다는 가설 지지</td><td>같은 연결 구조를 후속 콘텐츠에서 테스트</td></tr>
+            <tr><td class="warn">Factory RV ↑ + 기존 RV ↓ + Total RV 동일</td><td>RV 위치 이동 가능성 · 순증 근거 없음</td><td>RV 확대 판단 보류, 진행/복귀 효과 별도 확인</td></tr>
+            <tr><td class="bad">Total RV ↑ + 진행·복귀·수익 악화</td><td>광고 지표만 좋아진 상태일 수 있음</td><td>Friction / 보상 / 노출 재설계</td></tr>
+            <tr><td>전체 RV 개선 없음</td><td>이번 Factory 설정이 RV Need를 만든 근거 없음</td><td>목표·보상 효용과 Open Timing 재검토</td></tr>
+          </tbody>
+        </table>
+        <div class="askbox">
+          <div class="askhead"><span>PM · DA 전달용 한 문장</span><span class="select-hint">선택해서 복사</span></div>
+          <pre id="ask">Step44 이후 RV 감소가 단순 플레이 이탈 때문인지, 계속 플레이하지만 RV를 사용할 이유가 약해진 것인지 구분하고 싶습니다. Step별 RV/User와 RV Viewer Rate를 먼저 보고, Factory 실험군에서는 Post-Step44 Total RV/User가 Control 대비 실제로 증가했는지 확인 부탁드립니다. 진행·다음 Session·Retention·Total Revenue/User는 Guardrail로 함께 보고 싶습니다.</pre>
+        </div>
+        <div class="callout green" style="margin-top:14px"><b>최종 목적</b> Step44 이후 RV 사용 이유를 회복하되, 유저 경험과 전체 수익을 같이 개선하는 구조인지 판단합니다.</div>
+      </section>
+    </main>
+    <footer class="pager css-pager" aria-label="페이지 이동">
+      <div class="pager-set pager-0"><span class="pager-disabled">‹ 이전</span><div class="page-info"><b>01</b> / 06 · 요청 요약</div><label for="tab1">다음 ›</label></div>
+      <div class="pager-set pager-1"><label for="tab0">‹ 이전</label><div class="page-info"><b>02</b> / 06 · 검증 가설</div><label for="tab2">다음 ›</label></div>
+      <div class="pager-set pager-2"><label for="tab1">‹ 이전</label><div class="page-info"><b>03</b> / 06 · 확인 지표</div><label for="tab3">다음 ›</label></div>
+      <div class="pager-set pager-3"><label for="tab2">‹ 이전</label><div class="page-info"><b>04</b> / 06 · DA 요청 데이터</div><label for="tab4">다음 ›</label></div>
+      <div class="pager-set pager-4"><label for="tab3">‹ 이전</label><div class="page-info"><b>05</b> / 06 · 분석 순서</div><label for="tab5">다음 ›</label></div>
+      <div class="pager-set pager-5"><label for="tab4">‹ 이전</label><div class="page-info"><b>06</b> / 06 · 결과와 판단</div><span class="pager-disabled">다음 ›</span></div>
+    </footer>
+  </div>
+</div>
+
+</body>
+</html>
