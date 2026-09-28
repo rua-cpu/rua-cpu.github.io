@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Pizza Ready SP60 핫픽스 60.2.0 vs 59.2.0 — 튜토리얼·RV·수익화 비교">
+<title>Pizza Ready · 60.2.0 vs 59.2.0 진단</title>
+<script>try{var t=localStorage.getItem('pr-602-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<style>
+    :root{
+      --ink:#20242d;--muted:#5e6674;--paper:#f7f5ef;--panel:#ffffff;--card:#ffffff;--soft:#faf9f5;--line:#dedbd2;
+      --red:#e54b3f;--red-deep:#a72f2b;--yellow:#f4b83f;--green:#168a67;--blue:#2f6fc6;--purple:#7656b6;--orange:#dd7a32;
+      --soft-red:#fff0ec;--soft-yellow:#fff5d7;--soft-green:#eaf7f1;--soft-blue:#edf4ff;
+      --green-ink:#116b50;--red-ink:#9b342f;--yellow-ink:#8b6112;--blue-ink:#2f66aa;
+      --track:#ece9e2;--chip:#eeeae0;--chip-ink:#5d584e;--grid:#e9e5dc;--axis:#5e6674;--text2:#454b57;--text3:#555d69;
+      --deckbar:rgba(247,245,239,.94);--hover:#ffffff;--callout:#fff7f4;--caution:#f4f1ea;--scorebox:#f7f5ef;--cell:#f1eee8;
+      --qbg:#20242d;--qink:#ffffff;--thbg:#20242d;--thtx:#ffffff;--herostat:rgba(255,255,255,.72);
+      --cover:linear-gradient(135deg,#fff 0%,#fff7e4 55%,#ffe1d8 100%);--sceneno:#6f685c;--source:#6f685c;
+      --red-text:#bf3a30;--green-text:#137a5b;--blue-text:#2c6cc4;--orange-text:#b5591b;--purple-text:#7656b6;
+      --bar-ink:#ffffff;--toggle-bg:#ebe8e0;--toggle-on:#ffffff;
+      --c-us:#2f6fc6;--c-in:#dd7a32;--c-br:#168a67;
+      --bad2:#f6c9c0;--bad2-ink:#8a2620;
+      --shadow:0 18px 55px rgba(38,34,27,.10);--radius:24px;
+      color-scheme:light;
+    }
+    @media (prefers-color-scheme:dark){
+      :root:not([data-theme="light"]){
+        --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+        --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;--orange:#ea914e;
+        --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;
+        --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;
+        --track:#30343c;--chip:#30343c;--chip-ink:#c9cdd4;--grid:#30343c;--axis:#9aa1ad;--text2:#c8ccd4;--text3:#b3b9c3;
+        --deckbar:rgba(21,23,27,.92);--hover:#262a31;--callout:#2e2220;--caution:#23262d;--scorebox:#262a31;--cell:#2a2e35;
+        --qbg:#2b303a;--qink:#ffffff;--thbg:#2b303a;--thtx:#ffffff;--herostat:rgba(255,255,255,.05);
+        --cover:linear-gradient(135deg,#1d2026 0%,#2a251a 55%,#35211e 100%);--sceneno:#8a919c;--source:#8b919c;
+        --red-text:#f06b5f;--green-text:#34b489;--blue-text:#5b9bea;--orange-text:#ea914e;--purple-text:#9a7fd6;
+        --bar-ink:#111418;--toggle-bg:#2a2e35;--toggle-on:#3a3f49;
+        --c-us:#6ea6ee;--c-in:#f0a062;--c-br:#3cc394;
+        --bad2:#5a2a25;--bad2-ink:#ffb3a9;
+        --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+      }
+    }
+    :root[data-theme="dark"]{
+      --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+      --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;--orange:#ea914e;
+      --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;
+      --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;
+      --track:#30343c;--chip:#30343c;--chip-ink:#c9cdd4;--grid:#30343c;--axis:#9aa1ad;--text2:#c8ccd4;--text3:#b3b9c3;
+      --deckbar:rgba(21,23,27,.92);--hover:#262a31;--callout:#2e2220;--caution:#23262d;--scorebox:#262a31;--cell:#2a2e35;
+      --qbg:#2b303a;--qink:#ffffff;--thbg:#2b303a;--thtx:#ffffff;--herostat:rgba(255,255,255,.05);
+      --cover:linear-gradient(135deg,#1d2026 0%,#2a251a 55%,#35211e 100%);--sceneno:#8a919c;--source:#8b919c;
+      --red-text:#f06b5f;--green-text:#34b489;--blue-text:#5b9bea;--orange-text:#ea914e;--purple-text:#9a7fd6;
+      --bar-ink:#111418;--toggle-bg:#2a2e35;--toggle-on:#3a3f49;
+      --c-us:#6ea6ee;--c-in:#f0a062;--c-br:#3cc394;
+      --bad2:#5a2a25;--bad2-ink:#ffb3a9;
+      --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+    }
+    :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-padding-top:calc(74px + env(safe-area-inset-top,0px))}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Segoe UI",sans-serif;font-size:17px;line-height:1.58;word-break:keep-all}
+    button{font:inherit;color:inherit}
+    :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+    b,strong{font-weight:850}
+    .deckbar{position:fixed;top:0;left:0;right:0;height:calc(64px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 22px 0;z-index:50;background:var(--deckbar);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px}
+    .brand{font-weight:900;letter-spacing:-.03em;white-space:nowrap}.brand b{color:var(--red-text)}
+    .nav{display:flex;gap:5px;overflow:auto;scrollbar-width:none;flex:1}.nav::-webkit-scrollbar{display:none}
+    .nav button{border:0;background:transparent;color:var(--muted);padding:7px 9px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:700}
+    .nav button:hover,.nav button.on{background:var(--hover);color:var(--ink)}
+    .actions{display:flex;gap:8px}
+    .theme-toggle{display:inline-flex;padding:3px;background:var(--toggle-bg);border-radius:11px;gap:3px;border:1px solid var(--line)}
+    .theme-toggle button{border:0;background:transparent;padding:5px 11px;border-radius:8px;font-size:13px;font-weight:850;color:var(--muted);cursor:pointer}
+    .theme-toggle button.on{background:var(--toggle-on);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+    .progress{position:fixed;top:calc(63px + env(safe-area-inset-top,0px));left:0;width:100%;height:3px;z-index:55}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--yellow));transition:width .15s}
+    main{padding:88px 22px calc(96px + env(safe-area-inset-bottom,0px))}
+    .scene:not(.active){display:none}
+    .scene.active{animation:slidein .22s ease-out}
+    @keyframes slidein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .pager-wrap{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:center;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+    .pager{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--deckbar);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:var(--shadow)}
+    .pager button{background:var(--card);color:var(--ink);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:850;cursor:pointer;border:1px solid var(--line)}
+    .pager button:disabled{opacity:.35;cursor:default}
+    .pager-info{min-width:150px;text-align:center;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap}.pager-info b{color:var(--ink);font-size:15px}
+    .scene{position:relative;max-width:1360px;min-height:max(600px,calc(100vh - 184px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);padding:56px 62px 64px;overflow:hidden}
+    .scene::after{content:attr(data-no);position:absolute;right:28px;bottom:20px;font-size:12px;font-weight:900;color:var(--sceneno);letter-spacing:.08em}
+    .eyebrow{font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--red-text);margin-bottom:10px}
+    h1,h2,h3,p{margin-top:0}h1,h2,h3{letter-spacing:-.045em;line-height:1.16}
+    h1{font-size:clamp(40px,5.6vw,76px);max-width:1080px;margin-bottom:22px}
+    h2{font-size:clamp(32px,4.1vw,54px);margin-bottom:20px}
+    h3{font-size:21px;margin-bottom:12px}
+    .lead{font-size:clamp(20px,2.1vw,28px);line-height:1.45;color:var(--text2);max-width:1000px}
+    .sub{font-size:18px;color:var(--text2);max-width:920px;margin-bottom:0}
+    .note{color:var(--muted);font-size:14px;line-height:1.55}
+    .grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .card{border:1px solid var(--line);border-radius:20px;padding:21px;background:var(--card);min-width:0}
+    .card p:last-child,.card ul:last-child{margin-bottom:0}
+    .card ul{padding-left:19px;margin:8px 0 0}.card li{margin:6px 0;font-size:15px}
+    .card.soft{background:var(--soft)}.card.red{background:var(--soft-red);border-color:color-mix(in srgb,var(--red) 30%,var(--line))}.card.green{background:var(--soft-green);border-color:color-mix(in srgb,var(--green) 30%,var(--line))}.card.blue{background:var(--soft-blue);border-color:color-mix(in srgb,var(--blue) 30%,var(--line))}.card.yellow{background:var(--soft-yellow);border-color:color-mix(in srgb,var(--yellow) 40%,var(--line))}
+    .card h3{font-size:19px}
+    .metric .label{color:var(--muted);font-size:13px;font-weight:800}.metric .value{font-size:40px;line-height:1.08;font-weight:950;letter-spacing:-.055em;margin:6px 0}.metric .value.up{color:var(--green)}.metric .value.down{color:var(--red-deep)}.metric .value.flat{color:var(--ink)}.metric .desc{font-size:14px;color:var(--text3)}
+    .metric .value.sm{font-size:28px;letter-spacing:-.04em}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;background:var(--chip);color:var(--chip-ink);white-space:nowrap}.pill.high{background:var(--soft-green);color:var(--green-ink)}.pill.mid{background:var(--soft-yellow);color:var(--yellow-ink)}.pill.low{background:var(--soft-red);color:var(--red-ink)}.pill.info{background:var(--soft-blue);color:var(--blue-ink)}
+    .cover{background:var(--cover);display:flex;flex-direction:column;justify-content:center;padding-bottom:92px}
+    .cover .ring{position:absolute;border-radius:50%;border:32px solid rgba(229,75,63,.08);width:430px;height:430px;right:-130px;top:-130px}.cover .ring.r2{width:230px;height:230px;right:160px;top:110px;border-width:22px;border-color:rgba(244,184,63,.15)}
+    .hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1000px;margin-top:28px}.hero-stat{border-left:5px solid var(--red);padding:10px 18px;background:var(--herostat);border-radius:0 16px 16px 0}.hero-stat:nth-child(2){border-color:var(--yellow)}.hero-stat:nth-child(3){border-color:var(--green)}.hero-stat b{display:block;font-size:28px;letter-spacing:-.04em}.hero-stat span{font-size:14px;color:var(--muted)}
+    .timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:26px;position:relative}.timeline::before{content:"";position:absolute;left:6%;right:6%;top:29px;height:4px;background:var(--track)}.stage{position:relative;padding-top:58px}.stage .dot{position:absolute;top:15px;left:18px;width:31px;height:31px;border-radius:50%;background:var(--panel);border:8px solid var(--stage);box-shadow:0 0 0 5px var(--panel)}.stage .num{color:var(--stage-t,var(--stage));font-weight:950;font-size:18px}.stage h3{font-size:18px;margin:5px 0 8px}.stage p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:0}
+    .question{background:var(--qbg);color:var(--qink);border-radius:20px;padding:22px 25px;font-size:21px;font-weight:900;line-height:1.42}.question em{color:var(--yellow);font-style:normal}
+    .chart-card{border:1px solid var(--line);border-radius:20px;padding:19px;background:var(--card)}.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}.chart-head h3{font-size:18px;margin:0}
+    .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center}
+    .legend .sw{display:inline-flex;align-items:center;gap:6px;font-weight:800}
+    .legend .sw i{display:inline-block;width:18px;height:0;border-top:3px solid var(--c)}
+    .legend .sw i.dash{border-top-style:dashed}
+    .legend button.sw{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 10px;cursor:pointer;color:var(--ink)}
+    .legend button.sw[aria-pressed="false"]{opacity:.38}
+    .svg-chart{width:100%;height:auto;display:block}.svg-chart text{font-family:inherit}.gridline{stroke:var(--grid);stroke-width:1}.axistext{font-size:12px;fill:var(--axis)}.valtext{font-size:12px;font-weight:900;fill:var(--ink)}.anntext{font-size:12px;font-weight:800;fill:var(--muted)}
+    .callout{border-left:5px solid var(--red);padding:16px 20px;background:var(--callout);border-radius:0 15px 15px 0;margin-top:18px}.callout b{color:var(--red-deep)}.callout.green{border-color:var(--green);background:var(--soft-green)}.callout.green b{color:var(--green-ink)}.callout.blue{border-color:var(--blue);background:var(--soft-blue)}.callout.blue b{color:var(--blue-ink)}
+    .table-wrap{overflow-x:auto;margin-top:18px;border-radius:20px}
+    .matrix{width:100%;border-collapse:separate;border-spacing:6px;min-width:640px}.matrix th{font-size:12px;color:var(--muted);padding:7px;font-weight:900;vertical-align:bottom}.matrix th small{display:block;font-weight:700;font-size:11px}.matrix td{padding:11px 10px;border-radius:12px;background:var(--cell);text-align:center;font-size:14px;font-weight:850;font-variant-numeric:tabular-nums}.matrix td.rowh{background:transparent;text-align:left;font-weight:900;white-space:nowrap}.matrix td.rowh small{display:block;font-weight:700;color:var(--muted);font-size:11px}.matrix .good{background:var(--soft-green);color:var(--green-ink)}.matrix .warn{background:var(--soft-yellow);color:var(--yellow-ink)}.matrix .bad{background:var(--soft-red);color:var(--red-ink)}.matrix .bad2{background:var(--bad2);color:var(--bad2-ink)}.matrix .dim{color:var(--muted);font-weight:700}.matrix td small{display:block;font-size:11px;font-weight:700;color:var(--muted)}
+    .matrix td.ns{opacity:.5}
+    .seg{display:inline-flex;padding:3px;background:var(--toggle-bg);border-radius:11px;gap:3px;border:1px solid var(--line)}.seg button{border:0;background:transparent;padding:6px 14px;border-radius:8px;font-size:14px;font-weight:850;color:var(--muted);cursor:pointer}.seg button.on{background:var(--toggle-on);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+    .bars{display:grid;gap:12px;margin-top:8px}.bar-row{display:grid;grid-template-columns:118px 1fr 58px;gap:12px;align-items:center}.bar-row .lab{font-size:14px;font-weight:850}.bar-row .lab small{display:block;font-size:11px;color:var(--muted);font-weight:700}.bar-row .track{height:22px;background:var(--track);border-radius:7px;overflow:hidden}.bar-row .track i{display:block;height:100%;width:var(--w);background:var(--c,var(--red));border-radius:7px}.bar-row b{text-align:right;font-size:15px;font-variant-numeric:tabular-nums}
+    .bar-group{padding-top:4px}.bar-group+.bar-group{border-top:1px dashed var(--line);margin-top:6px;padding-top:12px}.bar-group h4{margin:0 0 6px;font-size:14px;color:var(--muted)}
+    .principles{counter-reset:p;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.principle{position:relative;border:1px solid var(--line);border-radius:18px;padding:18px 18px 18px 62px;background:var(--card)}.principle::before{counter-increment:p;content:counter(p);position:absolute;left:18px;top:17px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--red-text);color:var(--bar-ink);font-size:13px;font-weight:950}.principle b{display:block;margin-bottom:3px}.principle span{color:var(--muted);font-size:14px}
+    .caution{display:flex;gap:12px;align-items:flex-start;background:var(--caution);border:1px solid var(--line);border-radius:15px;padding:14px 16px;font-size:13px;color:var(--text3)}.caution b{color:var(--ink)}
+    .askbox{margin-top:18px;border:1px solid var(--line);border-radius:18px;background:var(--soft);padding:16px 18px}.askbox .askhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;font-weight:900;color:var(--muted)}.askbox pre{margin:0;white-space:pre-wrap;word-break:keep-all;font-family:inherit;font-size:15px;line-height:1.6;color:var(--ink)}.copy{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:850}.copy.done{background:var(--soft-green);color:var(--green-ink);border-color:transparent}
+    .footer-note{position:absolute;left:62px;right:62px;bottom:22px;font-size:11px;color:var(--source);padding-right:80px}
+    .flow{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:stretch;gap:8px;margin-top:22px}.flow .arrow{display:grid;place-items:center;font-size:26px;color:var(--muted);font-weight:900}
+    .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin-top:8px}.kv dt{color:var(--muted);font-weight:800}.kv dd{margin:0;font-weight:750}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--chip);padding:1px 6px;border-radius:6px}
+    @media (max-width:980px){body{font-size:16px}.scene{padding:42px 30px;min-height:auto}.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline{grid-template-columns:1fr}.timeline::before{left:33px;right:auto;top:18px;bottom:18px;width:4px;height:auto}.stage{padding:4px 0 4px 73px}.stage .dot{left:19px;top:9px}.flow{grid-template-columns:1fr}.flow .arrow{transform:rotate(90deg)}.footer-note{position:static;margin-top:24px;padding-right:0}.deckbar{padding-left:12px;padding-right:12px}}
+    @media (max-width:650px){main{padding:80px 10px 50px}.scene{padding:34px 20px;border-radius:22px}.g2,.g3,.g4,.hero-stats,.principles{grid-template-columns:1fr}.bar-row{grid-template-columns:84px 1fr 50px;gap:8px}.nav{display:none}.brand{font-size:15px}.pager-info{min-width:118px}.pager button{padding:9px 13px}.lead{font-size:19px}.metric .value{font-size:32px}.question{font-size:18px}}
+    @media (prefers-reduced-motion:reduce){.progress i{transition:none}.scene.active{animation:none}}
+    @page{size:16in 9in;margin:0}
+    @media print{.deckbar,.progress,.pager-wrap{display:none}.scene:not(.active){display:block}:root{padding:0}body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}main{padding:0}.scene{width:100%;height:9in;min-height:0;margin:0;border:0;border-radius:0;box-shadow:none;page-break-after:always;padding:42px 48px;overflow:hidden}.scene:last-child{page-break-after:auto}.footer-note{left:48px;right:48px}}
+  
+    .source{font-size:12px;color:var(--source);margin-top:10px;margin-bottom:0}
+    .trait-map{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}.trait-map>div{background:var(--card);padding:12px 14px;font-size:13.5px}.trait-map .th{background:var(--thbg);color:var(--thtx);font-size:12px;font-weight:900}.trait-map .trait{font-weight:950}.trait-map .evidence{color:var(--text3)}
+    .hypo-map{grid-template-columns:1fr 1.5fr 1.4fr .6fr 1.1fr;min-width:980px}
+</style></head>
+<body>
+  <header class="deckbar">
+    <div class="brand"><b>Pizza Ready</b> · 60.2.0 vs 59.2.0</div>
+    <nav class="nav" aria-label="목차">
+      <button data-target="cover" class="on">요약</button><button data-target="summary">결론</button><button data-target="hotfix">핫픽스 내역</button><button data-target="method">조회 기준</button><button data-target="tut">튜토리얼</button><button data-target="drop">스텝 이탈률</button><button data-target="rv">RV 시청</button><button data-target="money">수익화</button><button data-target="perf">빌드 퍼포먼스</button><button data-target="hypo">해석·가설</button><button data-target="next">다음 액션</button><button data-target="appendix">부록 60.1.0</button><button data-target="glossary">읽는 법</button>
+    </nav>
+    <div class="actions"><div class="theme-toggle" role="group" aria-label="화면 테마"><button type="button" data-theme-set="light" aria-pressed="false">라이트</button><button type="button" data-theme-set="dark" aria-pressed="false">다크</button></div></div>
+  </header>
+  <div class="progress"><i id="progressBar"></i></div>
+
+  <main id="deck">
+    <section class="scene cover" id="cover">
+      <div class="ring"></div><div class="ring r2"></div>
+      <div class="eyebrow">SP60 핫픽스 · 60.2.0 vs 59.2.0 · AOS · 설치 9/24–9/27</div>
+      <h1>핫픽스 이후 US는 회복,<br>IN·BR은 격차가 남았다</h1>
+      <p class="lead">60.1.0의 URP 크래시를 되돌린 60.2.0을 50% 배포 기간의 신규 유저 기준으로 59.2.0과 비교했다. <b>US는 튜토리얼·수익 모두 정상으로 돌아왔지만, IN·BR은 튜토리얼 −3%p와 RV 시청 −12~−14%가 남아 있다.</b></p>
+      <div class="hero-stats">
+        <div class="hero-stat"><b id="hs1">—</b><span>스텝 108 도달률 격차 · US / IN / BR</span></div>
+        <div class="hero-stat"><b id="hs2">—</b><span>1인당 RV 시청 · US / IN / BR</span></div>
+        <div class="hero-stat"><b id="hs3">—</b><span>US 광고 ARPDAU · eCPM</span></div>
+      </div>
+      <div class="footer-note">바이트브루 Pizza Ready (AOS) · User Install → Tutorial_XXX_Open · ad_rv_complete · Revenue Reports · 설치일 4일 층화 · 슈센 공유 지표 및 빌드 퍼포먼스(#s2_pizzaready 9/28)</div>
+    </section>
+
+    <section class="scene" id="summary">
+      <div class="eyebrow">Bottom Line</div>
+      <h2>핫픽스는 US 기준으로<br>목표를 달성했다</h2>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card green"><h3>회복된 것 · US</h3><ul>
+          <li>튜토리얼 도달률이 오히려 <b id="s1">—</b> 높다 (101~108)</li>
+          <li>광고 ARPDAU <b id="s2">—</b>, eCPM <b id="s3">—</b></li>
+          <li>유저 1인당 광고 노출 <b id="s4">—</b></li>
+          <li>슈센 확인: Crash-free 정상, IS·RV ImpDAU·ARPDAU·eCPM 59.2.0과 동일</li></ul></div>
+        <div class="card yellow"><h3>남아 있는 것 · IN·BR</h3><ul>
+          <li>튜토리얼 105~110 도달률 <b id="s5">—</b></li>
+          <li>1인당 RV 시청 IN <b id="s6">—</b>, BR <b id="s7">—</b></li>
+          <li>슈센 확인과 같은 방향: "US 외 국가 IS·RV ImpDAU 약 7% 하락"</li>
+          <li>IN eCPM −4.4%로 단가도 함께 내려갔다</li></ul></div>
+        <div class="card red"><h3>슈센 공유 퍼포먼스와 맞물리는 지점</h3><ul>
+          <li><b>Lv.1(4GB 미만) 스타트업 19.74s → 21.13s (+7.1%)</b> · 다른 등급은 오히려 개선</li>
+          <li>드롭 프레임 전체 +19.4%, Lv.1 +31.6% (Lv.2는 −0.3%로 변화 없음)</li>
+          <li>저사양 비중이 높은 IN·BR에서만 초반 이탈이 늘어난 것과 구간이 맞는다</li>
+          <li>9/28 100% 배포 + A/B 시작 → 이후에는 빌드 간 비교군이 사라진다</li></ul></div>
+      </div>
+      <div class="question" style="margin-top:22px">핵심 질문 · IN·BR의 잔여 격차는 <em>저사양 기기 첫 실행 지연</em>으로 설명되는가. A/B에서 국가 × Device Level로 확인하면 갈린다.</div>
+    </section>
+
+    <section class="scene" id="hotfix">
+      <div class="eyebrow">Why the Hotfix</div>
+      <h2>60.1.0에서 무엇이 문제였고<br>60.2.0에서 무엇을 되돌렸나</h2>
+      <div class="goal-result" style="grid-template-columns:1fr 72px 1fr">
+        <div class="card red"><h3>60.1.0의 문제 (9/17~9/20)</h3><ul>
+          <li><b>렌더 파이프라인을 빌트인 → URP로 변경</b>한 결과 비정상 종료가 증가해 배포 중단</li>
+          <li>셰이더 메모리 점유 증가 → 3~4GB RAM·여유 메모리 80MB 안팎 기기에서 크래시</li>
+          <li>크래시 1위 이슈 영향 유저 500명 → 2,400명 (4.8배, 50% 롤아웃 규모)</li>
+          <li>MTK 칩셋 · 삼성·Oppo·Vivo · Android 11에 집중 → IN·BR</li>
+          <li>9/20 18시 배포 중단</li></ul></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="card green"><h3>60.2.0 핫픽스 내역 (9/23 QA, 9/23 17시 50% 배포)</h3><ul>
+          <li><b>URP → 빌트인 렌더 파이프라인 원복</b></li>
+          <li><b>통계 수정</b></li>
+          <li><b>60.1.0에 적용됐던 "저사양 기기 프레임 30 제한" 제거</b></li>
+          <li>행크님: 처음부터 끝까지 진행 테스트, 문제 없음 확인</li></ul></div>
+      </div>
+      <div class="caution" style="margin-top:16px"><span>※</span><div><b>통계 수정 범위</b> · 스펙리스트에 "통계 수정"이 포함돼 있다. Tutorial_XXX_Open 발송 시점·조건이 바뀌었다면 이번 비교의 전제가 달라지므로, 개발팀 확인이 필요하다(다음 액션 3번).</div></div>
+      <div class="footer-note">#s2_pizzaready 9/23 QA 빌드 스레드(행크·제이콥), 9/21 60.1.0 크래시 분석, 9/28 스펙리스트 최종본</div>
+    </section>
+
+    <section class="scene" id="method">
+      <div class="eyebrow">How It Was Measured</div>
+      <h2>50% 배포 기간의<br>신규 설치 유저만 비교했다</h2>
+      <div class="grid g2" style="margin-top:18px;align-items:start">
+        <div class="card"><h3>비교 구간</h3><div class="table-wrap" style="margin-top:6px"><table class="matrix" id="tblWin" style="min-width:420px"></table></div>
+          <p class="note" style="margin-top:10px">9/28 100% 배포 전까지의 4일. 설치일마다 같은 관찰 기간(D0~D1)으로 맞춰 층화했다.</p></div>
+        <div class="grid" style="gap:12px">
+          <div class="card"><h3>업데이트 유저 제외</h3><p class="note">퍼널 시작점을 바이트브루 <code>User Install</code>로 잡아, 해당 빌드로 설치한 유저만 분모가 된다. 59.2.0에서 업데이트된 유저가 섞이지 않는다.</p></div>
+          <div class="card"><h3>이벤트</h3><p class="note">튜토리얼은 <code>Tutorial_XXX_Open</code>(WW 전수). RV는 <code>ad_rv_complete</code>. 수익 지표는 Revenue Reports 빌드별 값이다.</p></div>
+          <div class="card"><h3>DAU는 비교하지 않는다</h3><p class="note">50% 롤아웃이라 빌드별 DAU 절대값은 배포 비율을 반영한 값이다. 대신 유저당 지표(ARPDAU·ImpDAU·eCPM)로 비교한다.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" id="tut">
+      <div class="eyebrow">Tutorial Reach</div>
+      <h2>튜토리얼 도달률:<br>US는 +, IN·BR은 −</h2>
+      <div class="chart-card" style="margin-top:12px">
+        <div class="chart-head"><h3>스텝별 도달률 격차 · 60.2.0 − 59.2.0 (%p, 설치일 층화)</h3><div class="legend" id="gapLegend"></div></div>
+        <div id="gapChart" role="img" aria-label="US는 0 위, IN과 BR은 105~110 구간에서 −3%p 안팎"></div>
+        <p class="note" style="margin:6px 0 0">채운 점은 |z| ≥ 2. IN은 표본이 커서 작은 차이도 유의하게 잡힌다.</p>
+      </div>
+      <div class="table-wrap"><table class="matrix" id="tblReach" style="min-width:860px"></table></div>
+      <div class="footer-note">도달률 = 스텝 도달 유저 ÷ 해당 빌드 설치 유저 · 설치 9/24~27 합산</div>
+    </section>
+
+    <section class="scene" id="drop">
+      <div class="eyebrow">Step Drop-off</div>
+      <h2>어느 구간에서<br>더 빠졌나</h2>
+      <p class="sub">직전 스텝 도달자 중 다음 스텝에 못 간 비율. 60.2.0이 더 높으면 그 구간에서 이탈이 늘었다는 뜻이다.</p>
+      <div class="table-wrap"><table class="matrix" id="tblDrop" style="min-width:900px"></table></div>
+      <div class="grid g2" style="margin-top:8px">
+        <div class="callout"><b>IN·BR · 설치→101</b> · 첫 실행에서 매장 문 오픈까지 이탈이 IN 8.8%→10.1%, BR 8.1%→9.1%로 늘었다. 초반 진입 구간이다.</div>
+        <div class="callout"><b>IN·BR · 104→105, 105→106</b> · 각각 1%p 안팎 추가 이탈. 이후 구간은 두 빌드가 비슷해 격차가 더 벌어지지는 않는다.</div>
+      </div>
+    </section>
+
+    <section class="scene" id="rv">
+      <div class="eyebrow">RV Watching</div>
+      <h2>RV 시청은<br>세 국가 모두 줄었다</h2>
+      <div class="grid g3" style="margin-top:18px" id="rvCards"></div>
+      <div class="grid g2" style="margin-top:16px;align-items:start">
+        <div class="card"><h3>US 지면별 RV 시청 (상위 8)</h3><div class="table-wrap" style="margin-top:6px"><table class="matrix" id="tblPl" style="min-width:420px"></table></div></div>
+        <div>
+          <div class="callout"><b>US는 특정 지면 문제가 아니다</b> · 상위 8개 지면이 고르게 −4~−21% 줄었다. 시청 유저 수 자체가 줄어든 영향이 크다.</div>
+          <div class="callout"><b>IN·BR 하락폭이 더 크다</b> · 1인당 RV가 IN −14.5%, BR −12.4%로 US(−6.3%)의 2배다. 슈센이 공유한 "US 외 국가 ImpDAU 약 7% 하락"과 같은 방향이며, 신규 유저 기준이라 하락폭이 더 크게 나온다.</div>
+          <div class="caution" style="margin-top:14px"><span>※</span><div>1인당 RV = ad_rv_complete ÷ 해당 빌드 설치 유저. 튜토리얼 진행이 느리면 RV 시청 기회도 함께 줄어, 두 지표는 독립적이지 않다.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" id="money">
+      <div class="eyebrow">Monetization</div>
+      <h2>수익화 지표:<br>US는 개선, IN은 단가 하락</h2>
+      <div class="table-wrap" style="margin-top:14px"><table class="matrix" id="tblMon" style="min-width:980px"></table></div>
+      <div class="grid g2" style="margin-top:10px">
+        <div class="callout green"><b>US</b> · 광고 ARPDAU +16.5%, eCPM +10.9%, 유저당 광고 노출 +4.4%. 슈센이 "59.2.0과 동일한 수준"이라고 본 구간이며, 바이트브루 기준으로는 오히려 개선됐다.</div>
+        <div class="callout"><b>IN</b> · 광고 ARPDAU는 +1.7%로 보합이지만 eCPM −4.4%, 유저당 노출 −0.9%. 단가와 노출이 함께 눌렸다.</div>
+      </div>
+      <div class="caution" style="margin-top:12px"><span>※</span><div><b>DAU·총매출은 비교 대상이 아니다</b> · 50% 롤아웃 기간이라 빌드별 DAU와 매출 총액은 배포 비율을 반영한다(표에 참고용으로만 표기). 판단은 유저당 지표로 한다. 또한 바이트브루 매출 API는 광고 포맷(RV/IS)을 분리하지 않아, RV 전용 ARPDAU는 슈센·DA 지표를 봐야 한다.</div></div>
+    </section>
+
+    <section class="scene" id="perf">
+      <div class="eyebrow">Build Performance · 슈센 공유</div>
+      <h2>저사양 기기만<br>첫 실행이 1.39초 느려졌다</h2>
+      <p class="sub">59.2.0 vs 60.2.0 · 플레이타임 30분 · Device Level별. 슈센이 9/28 공유한 빌드 퍼포먼스 지표다.</p>
+      <div class="table-wrap" style="margin-top:14px"><table class="matrix" id="tblPerf" style="min-width:940px"></table></div>
+      <div class="grid g3" style="margin-top:14px">
+        <div class="callout"><b>스타트업 시간</b> · Lv.1(4GB 미만)만 19.74s → 21.13s(+7.1%)로 느려졌다. Lv.2·Lv.3은 오히려 빨라졌고 전체 평균도 −0.7%다.</div>
+        <div class="callout"><b>드롭 프레임</b> · 전체 +19.4%. 다만 Lv.2는 −0.3%로 변화가 없고, Lv.3은 증가율(+36.4%)은 크지만 절대값이 82.4로 Lv.1(221.3)의 1/3 수준이다.</div>
+        <div class="callout green"><b>평균 FPS · 메모리</b> · FPS는 전 구간 개선(+0.9~+5.3%). 유니티 메모리는 +0.2~+1.0MB로 증가폭이 작다.</div>
+      </div>
+      <div class="caution" style="margin-top:14px"><span>※</span><div><b>메모리 증가 원인 (행크님)</b> · 신규 콘텐츠를 리모트 컨피그로 Off해도 스테이지에 캔디 곡괭이 RV 오브젝트가 존재해 리소스가 미리 로드된다. 음향도 미리 세팅되고 UI 캔버스에도 추가돼 있다. 다만 Lv.1은 메모리 증가가 +0.4MB에 그치는데 스타트업만 느려져, 메모리 총량보다 로딩 과정 쪽으로 보인다.</div></div>
+      <div class="footer-note">#s2_pizzaready 9/28 제이콥님 공유 이미지(STARTUP TIME · DROPPED FRAMES · AVERAGE FPS · UNITY MEMORY) · N은 59.2.0 / 60.2.0 샘플 수</div>
+    </section>
+
+    <section class="scene" id="hypo">
+      <div class="eyebrow">Interpretation</div>
+      <h2>IN·BR 잔여 격차를<br>어떻게 볼 것인가</h2>
+      <div class="table-wrap" style="margin-top:16px"><div class="trait-map hypo-map">
+        <div class="th">가설</div><div class="th">근거</div><div class="th">반대 근거 · 남은 의문</div><div class="th">가능성</div><div class="th">검증</div>
+        <div class="trait">H1 · 저사양 기기 첫 실행 지연이 초반 이탈을 만든다</div><div class="evidence">Lv.1 스타트업 +1.39초(+7.1%), 드롭 프레임 +31.6%. 다른 등급은 스타트업이 오히려 개선됐다. 튜토리얼 격차도 설치→101 등 초반에 몰려 있고, 저사양 비중이 높은 IN·BR에서만 크다. US에 영향이 없는 것과도 맞는다</div><div class="evidence">Lv.3도 드롭 프레임이 +36.4% 늘었지만 절대값은 낮다. 기기 등급별 유저 구성은 직접 확인하지 않았다</div><div><span class="pill high">가장 유력</span></div><div class="evidence">A/B에서 국가 × Device Level별 스타트업·드롭 프레임과 튜토리얼 도달률을 함께 확인</div>
+        <div class="trait">H2 · 유입 구성 차이 (제조사 스토어 경유 등)</div><div class="evidence">이전 60.1.0 분석에서 IN Vivo·BR 샤오미의 설치 비중이 1.3~1.4배로 부풀었고, 그 제조사에만 격차가 있었다</div><div class="evidence">이번 구간의 제조사별 분해는 아직 하지 않았다. 슈센 MMP의 스토어·매체 구성 확인도 미회신</div><div><span class="pill mid">확인 필요</span></div><div class="evidence">같은 기간을 제조사별로 재조회 · 슈센에 유입 경로 확인</div>
+        <div class="trait">H3 · 통계 수정으로 이벤트 발송이 바뀌었다</div><div class="evidence">60.2.0 스펙리스트에 "통계 수정"이 포함돼 있다</div><div class="evidence">발송 로직이 바뀌었다면 US에도 나타나야 하는데, US는 오히려 도달률이 높다</div><div><span class="pill low">낮음</span></div><div class="evidence">개발팀에 통계 수정 범위 확인</div>
+      </div></div>
+      <div class="callout blue"><b>공통 전제</b> · 두 빌드 모두 신규 콘텐츠(비밀 과자점)가 Off였다. 따라서 이 비교는 콘텐츠 효과가 아니라 <b>빌드 자체의 영향</b>을 본 것이다. 콘텐츠 효과는 9/28 시작한 A/B 결과로 판단해야 한다.</div>
+    </section>
+
+    <section class="scene" id="next">
+      <div class="eyebrow">Next Actions</div>
+      <h2>다음 단계</h2>
+      <div class="askbox"><div class="askhead"><span>공유용 요약 · 복사해서 전달</span><button class="copy" data-copy="askTxt">복사</button></div>
+<pre id="askTxt">[SP60 핫픽스 60.2.0 vs 59.2.0 분석 공유]
+조회: 바이트브루 AOS · 50% 배포 기간 설치 유저(9/24~27) · User Install 기준 · 설치일 층화
+
+1. US는 회복됐습니다
+- 튜토리얼 도달률 101~108에서 오히려 +0.6~+1.1%p (59.2.0 대비)
+- 광고 ARPDAU +16.5%, eCPM +10.9%, 유저당 광고 노출 +4.4%
+- 슈센 공유(Crash-free 정상, 지표 동일)와 같은 방향입니다
+
+2. IN·BR은 격차가 남아 있습니다
+- 튜토리얼 105~110 도달률 IN −2.6~−3.0%p, BR −2.5~−2.8%p
+- 1인당 RV 시청 IN −14.5%, BR −12.4% (US −6.3%)
+- IN은 eCPM도 −4.4%로 단가가 함께 내려갔습니다
+- 슈센 공유 "US 외 국가 IS·RV ImpDAU 약 7% 하락"과 같은 방향입니다
+
+3. 이탈이 늘어난 구간은 초반입니다
+- 설치→101(매장 문): IN 8.8%→10.1%, BR 8.1%→9.1%
+- 104→105, 105→106에서 각각 1%p 안팎 추가 이탈
+- 이후 구간은 두 빌드가 비슷합니다
+- 슈센 공유 퍼포먼스에서 Lv.1(4GB 미만) 스타트업이 +1.39초(+7.1%) 느려진 것과 구간이 맞습니다. 다른 등급은 오히려 개선됐습니다.
+
+4. 확인 요청
+- (개발) 60.2.0 통계 수정에 Tutorial_XXX_Open 발송 변경이 포함됐는지
+- (A/B) 스타트업 시간·드롭 프레임·FPS·메모리를 A/B군 × 국가 × Device Level로 확인 (특히 IN Lv.1)
+- (슈센) IN·BR 60.x 설치의 스토어·매체 구성</pre></div>
+      <div class="principles">
+        <div class="principle"><b>A/B에서 성능 지표 병행</b><span>스타트업 시간·드롭 프레임·FPS·메모리를 A/B군별, 국가 × Device Level별로. IN Lv.1 구간이 핵심</span></div>
+        <div class="principle"><b>제조사별 재조회</b><span>이번 구간(9/24~27)을 제조사별로 나눠 H2 확인. 60.1.0 때처럼 설치 비중 배율이 부풀었는지</span></div>
+        <div class="principle"><b>통계 수정 범위 확인</b><span>개발팀에 Tutorial_XXX_Open 발송 로직 변경 여부 확인. 비교의 전제</span></div>
+        <div class="principle"><b>100% 배포 후 추적</b><span>9/28부터 비교군이 사라진다. 배포 전 59.2.0 기간과 국가별로 같은 퍼널을 비교해 격차가 남는지 확인</span></div>
+      </div>
+    </section>
+
+    <section class="scene" id="appendix">
+      <div class="eyebrow">Appendix</div>
+      <h2>부록 · 60.1.0 진단 요약</h2>
+      <p class="sub">배포가 중단된 60.1.0(9/17~9/20 설치) 분석 결과다. 핫픽스의 배경이자, 이번 결과와 비교하기 위한 참고 자료다.</p>
+      <div class="table-wrap"><table class="matrix" style="min-width:820px">
+        <thead><tr><th style="text-align:left">항목</th><th>60.1.0 (9/17~20)</th><th>60.2.0 (9/24~27)</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">US 스텝 108 도달 격차</td><td class="warn">−1.5%p</td><td class="good">+0.6%p</td></tr>
+          <tr><td class="rowh">IN 스텝 108 도달 격차</td><td class="bad">−3.8%p</td><td class="bad">−3.0%p</td></tr>
+          <tr><td class="rowh">BR 스텝 108 도달 격차</td><td class="bad">−4.9%p</td><td class="bad">−2.7%p</td></tr>
+          <tr><td class="rowh">Android 11 · 101→104 이탈</td><td class="bad">2~3배 급증 (IN 5.2%→16.6%)</td><td class="good">해소</td></tr>
+          <tr><td class="rowh">크래시</td><td class="bad">1위 이슈 영향 유저 4.8배</td><td class="good">Crash-free 정상</td></tr>
+        </tbody></table></div>
+      <div class="grid g2" style="margin-top:14px">
+        <div class="callout"><b>60.1.0에서 확인된 것</b> · 격차가 설치 비중이 부풀어 있던 제조사(IN Vivo, BR 샤오미·리얼미)에 몰려 있었다. Vivo는 상위 22개 기종 중 21개가 배율 1.3배 이상이었다.</div>
+        <div class="callout green"><b>핫픽스 효과</b> · Android 11 급증은 해소됐고 US는 완전히 회복됐다. BR 격차도 절반으로 줄었다. IN은 −3.8%p → −3.0%p로 소폭만 줄었다.</div>
+      </div>
+      <div class="footer-note">상세 내용은 별도 문서 「SP60 튜토리얼 스텝 이탈 포인트 문서」 참고</div>
+    </section>
+
+    <section class="scene" id="glossary">
+      <div class="eyebrow">How to Read the Data</div>
+      <h2>지표와 근거 읽는 법</h2>
+      <div class="grid g3" style="margin-top:20px">
+        <div class="card"><h3>도달률</h3><p class="note">스텝 도달 유저 ÷ 해당 빌드 설치 유저(User Install). 업데이트 유저는 제외된다.</p></div>
+        <div class="card"><h3>이탈률</h3><p class="note">직전 스텝 도달자 중 다음 스텝에 못 간 비율. 어느 구간에서 빠지는지 볼 때 쓴다.</p></div>
+        <div class="card"><h3>격차 · |z|</h3><p class="note">같은 설치일끼리 60.2.0 − 59.2.0을 구해 표본 크기로 가중 평균. |z| ≥ 2면 우연일 가능성이 낮다.</p></div>
+        <div class="card"><h3>1인당 RV</h3><p class="note">ad_rv_complete ÷ 설치 유저. 슈센 RV ImpDAU와 기준이 달라 절대값은 다르다.</p></div>
+        <div class="card"><h3>광고 ARPDAU · eCPM</h3><p class="note">바이트브루 Revenue Reports 빌드별 값. RV·IS·배너 합계이며 포맷 분리는 되지 않는다.</p></div>
+        <div class="card"><h3>왜 DAU를 비교하지 않나</h3><p class="note">50% 롤아웃이라 빌드별 DAU는 배포 비율을 반영한다. 유저당 지표로 비교해야 한다.</p></div>
+      </div>
+      <div class="caution" style="margin-top:18px"><span>※</span><div><b>자료 범위</b> · 바이트브루 Pizza Ready (AOS) Funnels·Breakdowns·Revenue Reports, #s2_pizzaready(9/21 크래시 분석, 9/23 QA 빌드, 9/28 50% 배포 결과), 트래킹 플랜 V3(260904). 2026-09-28 기준. 60.2.0은 9/28 100% 배포 및 1차 A/B 테스트가 시작됐다.</div></div>
+    </section>
+  </main>
+
+  <div class="pager-wrap"><nav class="pager" aria-label="장 이동"><button type="button" id="prevBtn" aria-label="이전 장">‹ 이전</button><div class="pager-info" aria-live="polite"><b id="pageNo">01</b> / <span id="pageTotal">13</span> · <span id="pageName">요약</span></div><button type="button" id="nextBtn" aria-label="다음 장">다음 ›</button></nav></div>
+
+<script>
+const D={"steps":["Install",101,102,104,105,106,107,108,110,116,124],"names":{"101":"매장 문 오픈","102":"테이블1 오픈","104":"카운터 오픈","105":"테이블2 오픈","106":"1번째 확장 발판","107":"HR 사무실 오픈","108":"플레이어 사무실 오픈","110":"2번째 확장 발판","116":"3번째 확장 발판","124":"4번째 확장 발판"},"tut":{"US|60.2.0":[14853,13624,13222,12888,11903,10940,9199,8314,7026,4649,2677],"US|59.2.0":[16004,14512,14086,13798,12709,11607,9737,8856,7564,5034,2873],"IN|60.2.0":[496298,446297,432691,422428,371555,325321,286240,254607,203168,125941,61676],"IN|59.2.0":[423390,386172,376711,368442,328677,290379,256742,230159,184647,116215,57655],"BR|60.2.0":[52522,47749,46301,45262,40526,36246,29270,26190,21620,13413,6809],"BR|59.2.0":[50444,46337,45275,44365,39950,36104,29508,26521,22015,13870,7226]},"str":{"US":[[0,0],[1,3.1],[0.96,2.6],[0.51,1.3],[0.69,1.5],[1.11,2.2],[1.08,1.9],[0.62,1.1],[0,0],[-0.2,-0.4],[0.07,0.2]],"IN":[[0,0],[-1.29,-21.1],[-1.8,-26.5],[-1.91,-26.4],[-2.75,-30.9],[-3,-30.5],[-2.91,-28.3],[-3,-28.7],[-2.61,-25.2],[-1.99,-21.5],[-1.12,-15.8]],"BR":[[0,0],[-0.95,-5.4],[-1.59,-8.2],[-1.77,-8.5],[-2.04,-7.9],[-2.56,-9],[-2.75,-8.9],[-2.69,-8.6],[-2.46,-8],[-1.94,-7.1],[-1.35,-6.3]]},"rv":{"US|60.2.0":[28697,7127],"US|59.2.0":[32707,7932],"IN|60.2.0":[468919,230129],"IN|59.2.0":[470446,213808],"BR|60.2.0":[52637,25867],"BR|59.2.0":[57515,25584]},"strrv":{"US":-6.33,"IN":-14.48,"BR":-12.44},"mon":{"US":{"n":[0.45103,9.98543,63.0,20708,0.4943,10235.9,1025083],"o":[0.38706,9.0057,60.37,30156,0.4136,12472.3,1384929]},"IN":{"n":[0.0060744,0.320335,25.35,436569,0.0061761,2696.3,8417047],"o":[0.0059714,0.334956,25.57,678995,0.0061397,4168.8,12445912]},"BR":{"n":[0.0290365,0.922968,39.75,67513,0.0298221,2013.4,2181416],"o":[0.0280717,0.921781,40.53,86951,0.0289662,2518.6,2732368]},"WW":{"n":[0.0301696,1.274519,32.55,1131795,0.0325164,36801.9,28875120],"o":[0.0255701,1.175103,31.0,1682759,0.0272,43034.2,38922496]}},"pl":{"US|60.2.0":[["up_table",3000],["worker_employ",2734],["money_floor",2450],["up_express",2071],["up_machine",1999],["capa_floor",1507],["video_bonus",1497],["boost_floor",1377]],"US|59.2.0":[["up_table",3371],["worker_employ",3026],["money_floor",2532],["up_express",2195],["up_machine",2165],["capa_floor",1904],["video_bonus",1749],["boost_floor",1696]]},"plk":{"up_table":"RV 전용 테이블","worker_employ":"직원 고용","money_floor":"바닥 돈","up_machine":"RV 전용 머신","up_express":"익스프레스(공장) 시설","capa_floor":"바닥 장갑","boost_floor":"바닥 인라인","video_bonus":"딜리버리 보상","up_counter":"RV 전용 카운터","player_speed":"플레이어 속도","best_upgrade":"최고가 시설 발판","money_floor_boost":"바닥 돈 5배","starlv_x2":"별레벨 보상 2배","cleaning":"청소로봇","express_upgrade_boost":"익스프레스 발판","player_capacity":"플레이어 용량","ec_floor_rv":"익스프레스 코인","player_price":"플레이어 가격","up_dthru":"RV 드라이브스루","up_pktable":"RV 패키지 테이블","offline_reward":"오프라인 보상 2배","worker_speed":"직원 속도","worker_capacity":"직원 용량","worker_income":"직원 소득","cv_speed_floor":"컨베이어 스피드","sc_floor_rv":"익스프레스 머니","pk_speed_floor":"패키징 스피드","rider_reward":"라이더 리워드","rider_call":"라이더 콜","flyer_2x":"전단지 2배","order_3x":"스페셜오더 3배","time_reward":"데일리 보상 스킵","boost_floor_1":"바닥 인라인 1","boost_floor_2":"바닥 인라인 2","boost_floor_3":"바닥 인라인 3","boost_floor_4":"바닥 인라인 4","pizza_challenge1":"먹방 챌린지","reward_7days":"출석부 2배"},"sc":{"perf":{"drop":{"All":[99.6,118.9,19.4],"Lv.1":[168.2,221.3,31.6],"Lv.2":[115.4,115.0,-0.3],"Lv.3":[60.4,82.4,36.4]},"start":{"All":[16.06,15.94,-0.7],"Lv.1":[19.74,21.13,7.1],"Lv.2":[17.01,16.77,-1.5],"Lv.3":[13.91,13.73,-1.3]},"fps":{"All":[57.1,58.5,2.5],"Lv.1":[55.1,56.9,3.1],"Lv.2":[55.9,58.9,5.3],"Lv.3":[58.5,59.0,0.9]},"mem":{"All":[235.4,237.5,0.9],"Lv.1":[231.3,231.7,0.2],"Lv.2":[236.6,238.2,0.6],"Lv.3":[237.0,239.4,1.0]},"n":{"All":[824,831],"Lv.1":[219,178],"Lv.2":[158,173],"Lv.3":[447,480]},"note":"플레이타임 30분 · 2026-09-28 11:32 조회"},"jacob":{"us":"Crash-free 정상 · IS/RV ImpDAU·ARPDAU·eCPM 59.2.0과 동일","nonus":"IS·RV ImpDAU 약 7% 하락 (인도 등)"}}};
+const ST=D.steps,NM=D.names,PLK=D.plk,TUT=D.tut,STR=D.str,RV=D.rv,MON=D.mon;
+const CT=[['US','--c-us'],['IN','--c-in'],['BR','--c-br']];
+const fmt=(v,d=1)=>{const r=Math.round(v*Math.pow(10,d))/Math.pow(10,d);return (r>0?'+':r<0?'−':'±')+Math.abs(r).toFixed(d);};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const set=(id,h)=>{const e=document.getElementById(id);if(e)e.innerHTML=h;};
+const cls=(d,z)=>Math.abs(z)<2?'ns':(d>0?'good':(d<=-2?'bad':'warn'));
+const pc=(a,b)=>100*(a/b-1);
+const idx=s=>ST.indexOf(s);
+const reach=(k,s)=>{const a=TUT[k];return a[idx(s)]/a[0]*100;};
+const rvpu=k=>RV[k][0]/TUT[k][0];
+
+/* headline */
+(function(){
+  const g=c=>STR[c][idx(108)][0];
+  set('hs1',CT.map(([c])=>fmt(g(c),1)).join(' / ')+'%p');
+  set('hs2',CT.map(([c])=>fmt(D.strrv[c],0)).join(' / ')+'%');
+  const m=MON.US;set('hs3',fmt(pc(m.n[0],m.o[0]),0)+'% · '+fmt(pc(m.n[1],m.o[1]),0)+'%');
+  const us=STR.US;const rng=[101,104,105,106,107,108].map(s=>us[idx(s)][0]);
+  set('s1',fmt(Math.min(...rng),1)+'~'+fmt(Math.max(...rng),1)+'%p');
+  set('s2',fmt(pc(m.n[0],m.o[0]))+'%');set('s3',fmt(pc(m.n[1],m.o[1]))+'%');set('s4',fmt(pc(m.n[2],m.o[2]))+'%');
+  const seg=c=>[105,106,107,108,110].map(s=>STR[c][idx(s)][0]);
+  const all=[...seg('IN'),...seg('BR')];
+  set('s5',fmt(Math.min(...all),1)+'~'+fmt(Math.max(...all),1)+'%p');
+  set('s6',fmt(D.strrv.IN)+'%');set('s7',fmt(D.strrv.BR)+'%');
+})();
+
+/* window table */
+(function(){let h='<thead><tr><th style="text-align:left">구분</th><th>60.2.0 설치</th><th>59.2.0 설치</th></tr></thead><tbody>';
+ CT.forEach(([c])=>{h+=`<tr><td class="rowh">${c}</td><td><b>${TUT[c+'|60.2.0'][0].toLocaleString()}</b></td><td><b>${TUT[c+'|59.2.0'][0].toLocaleString()}</b></td></tr>`;});
+ h+=`<tr><td class="rowh">기간</td><td colspan="2" class="dim">설치 9/24~9/27 · 설치일마다 D0~D1 관찰</td></tr>`;
+ set('tblWin',h+'</tbody>');})();
+
+/* gap chart */
+const gapS=CT.map(([c,col])=>({c,col,vals:STR[c],on:true}));
+const gl=document.getElementById('gapLegend');
+gapS.forEach(q=>{const b=document.createElement('button');b.type='button';b.className='sw';b.setAttribute('aria-pressed','true');b.innerHTML=`<i style="--c:var(${q.col})"></i>${q.c}`;b.onclick=()=>{q.on=!q.on;b.setAttribute('aria-pressed',String(q.on));gapChart();};gl.appendChild(b);});
+function gapChart(){const el=document.getElementById('gapChart');const W=Math.max(320,Math.min(Math.round(el.clientWidth)||1000,1240)),H=W<640?270:330;
+ const p={l:44,r:16,t:20,b:42},minY=-4,maxY=2,n=ST.length;
+ const x=i=>p.l+i*(W-p.l-p.r)/(n-1),y=v=>p.t+(maxY-Math.max(minY,Math.min(maxY,v)))*(H-p.t-p.b)/(maxY-minY);
+ let s=`<svg class="svg-chart" viewBox="0 0 ${W} ${H}">`;
+ for(let t=minY;t<=maxY;t++)s+=`<line class="gridline" x1="${p.l}" x2="${W-p.r}" y1="${y(t)}" y2="${y(t)}" ${t===0?'style="stroke:var(--axis);stroke-width:1.6"':''}/><text class="axistext" x="${p.l-7}" y="${y(t)+4}" text-anchor="end">${t>0?'+'+t:t}</text>`;
+ ST.forEach((st,i)=>{s+=`<text class="axistext" x="${x(i)}" y="${H-p.b+16}" text-anchor="middle">${i?st:'설치'}</text>`;});
+ s+=`<text class="anntext" x="${W/2}" y="${H-8}" text-anchor="middle">튜토리얼 스텝</text>`;
+ gapS.filter(q=>q.on).forEach(q=>{s+=`<path d="${q.vals.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v[0]).toFixed(1)).join(' ')}" style="fill:none;stroke:var(${q.col});stroke-width:2.8"/>`;
+  q.vals.forEach((v,i)=>{const sig=Math.abs(v[1])>=2;s+=`<circle cx="${x(i)}" cy="${y(v[0])}" r="${sig?3.6:2.6}" style="fill:${sig?'var('+q.col+')':'var(--card)'};stroke:var(${q.col});stroke-width:1.4"><title>${q.c} · 스텝 ${ST[i]} ${esc(NM[ST[i]])} · ${fmt(v[0],2)}%p (z ${v[1]})</title></circle>`;});
+  const li=n-1;s+=`<text class="valtext" x="${x(li)-6}" y="${y(q.vals[li][0])-9}" text-anchor="end" style="fill:var(${q.col});font-size:11px">${q.c}</text>`;});
+ el.innerHTML=s+'</svg>';}
+
+/* reach table */
+(function(){const rows=[101,104,105,106,107,108,110,116,124];
+ let h='<thead><tr><th style="text-align:left">스텝</th>'+CT.map(([c])=>`<th colspan="2">${c}<small>59.2.0 → 60.2.0 · 격차</small></th>`).join('')+'</tr></thead><tbody>';
+ rows.forEach(s=>{h+=`<tr><td class="rowh">${s}<small>${esc(NM[s])}</small></td>`;
+  CT.forEach(([c])=>{const o=reach(c+'|59.2.0',s),n=reach(c+'|60.2.0',s);const [d,z]=STR[c][idx(s)];
+   h+=`<td class="dim">${o.toFixed(1)}% → ${n.toFixed(1)}%</td><td class="${cls(d,z)}">${fmt(d,2)}%p<small>z ${z}</small></td>`;});
+  h+='</tr>';});
+ set('tblReach',h+'</tbody>');})();
+
+/* drop table */
+(function(){const rows=[101,102,104,105,106,107,108,110,116];
+ let h='<thead><tr><th style="text-align:left">구간</th>'+CT.map(([c])=>`<th colspan="2">${c}<small>59.2.0 → 60.2.0</small></th>`).join('')+'</tr></thead><tbody>';
+ rows.forEach(s=>{const i=idx(s);const lab=i===1?'설치 → 101':`${ST[i-1]} → ${s}`;
+  h+=`<tr><td class="rowh">${lab}<small>${esc(NM[s])}</small></td>`;
+  CT.forEach(([c])=>{const a=TUT[c+'|59.2.0'],b=TUT[c+'|60.2.0'];const o=100*(1-a[i]/a[i-1]),n=100*(1-b[i]/b[i-1]);const dd=n-o;
+   const k=dd>=0.8?'bad':dd>=0.3?'warn':dd<=-0.3?'good':'';
+   h+=`<td class="dim">${o.toFixed(1)}% → ${n.toFixed(1)}%</td><td class="${k}">${fmt(dd,1)}%p</td>`;});
+  h+='</tr>';});
+ set('tblDrop',h+'</tbody>');})();
+
+/* RV cards + placement */
+(function(){
+ set('rvCards',CT.map(([c,col])=>{const n=rvpu(c+'|60.2.0'),o=rvpu(c+'|59.2.0');const g=D.strrv[c];
+  return `<div class="card metric"><div class="label">${c} · 1인당 RV 시청</div><div class="value ${g<-8?'down':'flat'} sm">${fmt(g,1)}%</div><div class="desc">${o.toFixed(2)}회 → ${n.toFixed(2)}회<br><span class="note">시청 총량 ${RV[c+'|59.2.0'][0].toLocaleString()} → ${RV[c+'|60.2.0'][0].toLocaleString()}</span></div></div>`;}).join(''));
+ const a=Object.fromEntries(D.pl['US|59.2.0']),b=Object.fromEntries(D.pl['US|60.2.0']);
+ let h='<thead><tr><th style="text-align:left">지면</th><th>59.2.0</th><th>60.2.0</th><th>변화</th></tr></thead><tbody>';
+ D.pl['US|59.2.0'].forEach(([p,v])=>{const n=b[p]||0;const d=pc(n,v);h+=`<tr><td class="rowh">${esc(PLK[p]||p)}</td><td class="dim">${v.toLocaleString()}</td><td>${n.toLocaleString()}</td><td class="${d<=-15?'bad':d<=-5?'warn':''}">${fmt(d,0)}%</td></tr>`;});
+ set('tblPl',h+'</tbody>');})();
+
+/* monetization table */
+(function(){const rows=[['US','US'],['IN','IN'],['BR','BR'],['WW','전체']];
+ let h='<thead><tr><th style="text-align:left">국가</th><th>광고 ARPDAU<small>59.2.0 → 60.2.0</small></th><th>변화</th><th>eCPM</th><th>변화</th><th>유저당 광고 노출<small>ImpDAU</small></th><th>변화</th><th>총 ARPDAU</th><th class="dim">DAU · 매출<small>참고 · 롤아웃 비율 영향</small></th></tr></thead><tbody>';
+ rows.forEach(([k,lab])=>{const m=MON[k];if(!m)return;const n=m.n,o=m.o;
+  const c=v=>v>=3?'good':v<=-3?'bad':'';
+  const f4=v=>v<0.01?v.toFixed(4):v.toFixed(3);
+  h+=`<tr><td class="rowh">${lab}</td><td class="dim">${f4(o[0])} → ${f4(n[0])}</td><td class="${c(pc(n[0],o[0]))}">${fmt(pc(n[0],o[0]))}%</td><td class="dim">$${o[1].toFixed(2)} → $${n[1].toFixed(2)}</td><td class="${c(pc(n[1],o[1]))}">${fmt(pc(n[1],o[1]))}%</td><td class="dim">${o[2].toFixed(1)} → ${n[2].toFixed(1)}</td><td class="${c(pc(n[2],o[2]))}">${fmt(pc(n[2],o[2]))}%</td><td class="${c(pc(n[4],o[4]))}">${fmt(pc(n[4],o[4]))}%</td><td class="dim" style="font-size:12px">DAU ${Math.round(o[3]).toLocaleString()} → ${Math.round(n[3]).toLocaleString()}<br>매출 $${Math.round(o[5]).toLocaleString()} → $${Math.round(n[5]).toLocaleString()}</td></tr>`;});
+ set('tblMon',h+'</tbody>');})();
+
+/* perf table */
+(function(){const P=D.sc.perf;const LV=[['All','전체'],['Lv.1','Lv.1 · 4GB 미만'],['Lv.2','Lv.2 · 4–6GB'],['Lv.3','Lv.3 · 6GB 이상']];
+ const M=[['start','스타트업 시간','s',true],['drop','드롭 프레임','',true],['fps','평균 FPS','',false],['mem','유니티 메모리','MB',true]];
+ let h='<thead><tr><th style="text-align:left">Device Level</th>'+M.map(m=>`<th colspan="2">${m[1]}<small>59.2.0 → 60.2.0 · 변화</small></th>`).join('')+'<th>샘플<small>A / B</small></th></tr></thead><tbody>';
+ LV.forEach(([k,lab])=>{h+=`<tr><td class="rowh">${lab}</td>`;
+  M.forEach(([mk,,unit,lowGood])=>{const v=P[mk][k];const d=v[2];const bad=lowGood?d>0:d<0;
+   const cl=Math.abs(d)<1?'':(bad?(Math.abs(d)>=15?'bad':'warn'):'good');
+   const f=x=>mk==='mem'?x.toFixed(1):(mk==='start'?x.toFixed(2):x.toFixed(1));
+   h+=`<td class="dim">${f(v[0])}${unit} → ${f(v[1])}${unit}</td><td class="${cl}">${fmt(d,1)}%</td>`;});
+  h+=`<td class="dim" style="font-size:12px">${P.n[k][0]} / ${P.n[k][1]}</td></tr>`;});
+ set('tblPerf',h+'</tbody>');})();
+
+/* theme & deck */
+const root=document.documentElement,mq=matchMedia('(prefers-color-scheme: dark)');const eff=()=>root.getAttribute('data-theme')||(mq.matches?'dark':'light');
+function syncToggle(){const e=eff();document.querySelectorAll('[data-theme-set]').forEach(b=>{const on=b.dataset.themeSet===e;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});}
+document.querySelectorAll('[data-theme-set]').forEach(b=>b.addEventListener('click',()=>{root.setAttribute('data-theme',b.dataset.themeSet);try{localStorage.setItem('pr-602-theme',b.dataset.themeSet);}catch(e){}syncToggle();}));mq.addEventListener&&mq.addEventListener('change',syncToggle);syncToggle();
+let tbp=null;window.addEventListener('beforeprint',()=>{tbp=root.getAttribute('data-theme');root.setAttribute('data-theme','light');});window.addEventListener('afterprint',()=>{if(tbp)root.setAttribute('data-theme',tbp);else root.removeAttribute('data-theme');});
+const scenes=[...document.querySelectorAll('.scene')],nav=[...document.querySelectorAll('.nav button')];const names=Object.fromEntries(nav.map(b=>[b.dataset.target,b.textContent]));
+const prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn');document.getElementById('pageTotal').textContent=String(scenes.length).padStart(2,'0');
+scenes.forEach((s,i)=>s.setAttribute('data-no',String(i+1).padStart(2,'0')+' / '+String(scenes.length).padStart(2,'0')));let cur=0;
+function redraw(id){if(id==='tut')gapChart();}
+function showSlide(i,o={}){cur=Math.max(0,Math.min(scenes.length-1,i));const id=scenes[cur].id;scenes.forEach((s,k)=>{const on=k===cur;s.classList.toggle('active',on);s.setAttribute('aria-hidden',on?'false':'true');});
+ nav.forEach(b=>{const on=b.dataset.target===id;b.classList.toggle('on',on);if(on){b.setAttribute('aria-current','page');b.scrollIntoView({block:'nearest',inline:'center'});}else b.removeAttribute('aria-current');});
+ document.getElementById('pageNo').textContent=String(cur+1).padStart(2,'0');document.getElementById('pageName').textContent=names[id]||'';prevBtn.disabled=cur===0;nextBtn.disabled=cur===scenes.length-1;
+ document.getElementById('progressBar').style.width=((cur+1)/scenes.length*100)+'%';if(!o.keepHash){try{history.replaceState(null,'','#'+id);}catch(e){}}window.scrollTo({top:0,behavior:'instant'});redraw(id);}
+nav.forEach(b=>b.addEventListener('click',()=>showSlide(scenes.findIndex(s=>s.id===b.dataset.target))));prevBtn.addEventListener('click',()=>showSlide(cur-1));nextBtn.addEventListener('click',()=>showSlide(cur+1));
+document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowRight'){e.preventDefault();showSlide(cur+1);}else if(e.key==='ArrowLeft'){e.preventDefault();showSlide(cur-1);}});
+let tx=null,ty=null;const mainEl=document.querySelector('main');mainEl.addEventListener('touchstart',e=>{const t=e.changedTouches[0];tx=t.clientX;ty=t.clientY;},{passive:true});
+mainEl.addEventListener('touchend',e=>{if(tx===null)return;const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;tx=null;if(Math.abs(dx)>70&&Math.abs(dy)<45&&!e.target.closest('.table-wrap,.chart-card'))showSlide(cur+(dx<0?1:-1));},{passive:true});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>redraw(scenes[cur].id),150)});
+const si=scenes.findIndex(s=>'#'+s.id===location.hash);showSlide(si<0?0:si,{keepHash:si<0});
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{const el=document.getElementById(b.dataset.copy);try{await navigator.clipboard.writeText(el.innerText);b.textContent='복사됨';b.classList.add('done');setTimeout(()=>{b.textContent='복사';b.classList.remove('done')},1800);}catch(err){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='선택됨 · Ctrl+C';}}));
+
+</script>
+</body></html>
