@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Pizza Ready SP60 튜토리얼 이탈 진단 — 60.1.0 / 60.2.0 vs 59.2.0, US·IN·BR, OS별">
+  <title>Pizza Ready · SP60 튜토리얼 이탈 진단</title>
+  <script>try{var t=localStorage.getItem('pr-tut-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <style>
+    :root{
+      --ink:#20242d;--muted:#5e6674;--paper:#f7f5ef;--panel:#ffffff;--card:#ffffff;--soft:#faf9f5;--line:#dedbd2;
+      --red:#e54b3f;--red-deep:#a72f2b;--yellow:#f4b83f;--green:#168a67;--blue:#2f6fc6;--purple:#7656b6;--orange:#dd7a32;
+      --soft-red:#fff0ec;--soft-yellow:#fff5d7;--soft-green:#eaf7f1;--soft-blue:#edf4ff;
+      --green-ink:#116b50;--red-ink:#9b342f;--yellow-ink:#8b6112;--blue-ink:#2f66aa;
+      --track:#ece9e2;--chip:#eeeae0;--chip-ink:#5d584e;--grid:#e9e5dc;--axis:#5e6674;--text2:#454b57;--text3:#555d69;
+      --deckbar:rgba(247,245,239,.94);--hover:#ffffff;--callout:#fff7f4;--caution:#f4f1ea;--scorebox:#f7f5ef;--cell:#f1eee8;
+      --qbg:#20242d;--qink:#ffffff;--thbg:#20242d;--thtx:#ffffff;--herostat:rgba(255,255,255,.72);
+      --cover:linear-gradient(135deg,#fff 0%,#fff7e4 55%,#ffe1d8 100%);--sceneno:#6f685c;--source:#6f685c;
+      --red-text:#bf3a30;--green-text:#137a5b;--blue-text:#2c6cc4;--orange-text:#b5591b;--purple-text:#7656b6;
+      --bar-ink:#ffffff;--toggle-bg:#ebe8e0;--toggle-on:#ffffff;
+      --c-us:#2f6fc6;--c-in:#dd7a32;--c-br:#168a67;
+      --bad2:#f6c9c0;--bad2-ink:#8a2620;
+      --shadow:0 18px 55px rgba(38,34,27,.10);--radius:24px;
+      color-scheme:light;
+    }
+    @media (prefers-color-scheme:dark){
+      :root:not([data-theme="light"]){
+        --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+        --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;--orange:#ea914e;
+        --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;
+        --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;
+        --track:#30343c;--chip:#30343c;--chip-ink:#c9cdd4;--grid:#30343c;--axis:#9aa1ad;--text2:#c8ccd4;--text3:#b3b9c3;
+        --deckbar:rgba(21,23,27,.92);--hover:#262a31;--callout:#2e2220;--caution:#23262d;--scorebox:#262a31;--cell:#2a2e35;
+        --qbg:#2b303a;--qink:#ffffff;--thbg:#2b303a;--thtx:#ffffff;--herostat:rgba(255,255,255,.05);
+        --cover:linear-gradient(135deg,#1d2026 0%,#2a251a 55%,#35211e 100%);--sceneno:#8a919c;--source:#8b919c;
+        --red-text:#f06b5f;--green-text:#34b489;--blue-text:#5b9bea;--orange-text:#ea914e;--purple-text:#9a7fd6;
+        --bar-ink:#111418;--toggle-bg:#2a2e35;--toggle-on:#3a3f49;
+        --c-us:#6ea6ee;--c-in:#f0a062;--c-br:#3cc394;
+        --bad2:#5a2a25;--bad2-ink:#ffb3a9;
+        --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+      }
+    }
+    :root[data-theme="dark"]{
+      --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+      --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;--orange:#ea914e;
+      --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;
+      --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;
+      --track:#30343c;--chip:#30343c;--chip-ink:#c9cdd4;--grid:#30343c;--axis:#9aa1ad;--text2:#c8ccd4;--text3:#b3b9c3;
+      --deckbar:rgba(21,23,27,.92);--hover:#262a31;--callout:#2e2220;--caution:#23262d;--scorebox:#262a31;--cell:#2a2e35;
+      --qbg:#2b303a;--qink:#ffffff;--thbg:#2b303a;--thtx:#ffffff;--herostat:rgba(255,255,255,.05);
+      --cover:linear-gradient(135deg,#1d2026 0%,#2a251a 55%,#35211e 100%);--sceneno:#8a919c;--source:#8b919c;
+      --red-text:#f06b5f;--green-text:#34b489;--blue-text:#5b9bea;--orange-text:#ea914e;--purple-text:#9a7fd6;
+      --bar-ink:#111418;--toggle-bg:#2a2e35;--toggle-on:#3a3f49;
+      --c-us:#6ea6ee;--c-in:#f0a062;--c-br:#3cc394;
+      --bad2:#5a2a25;--bad2-ink:#ffb3a9;
+      --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+    }
+    :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-padding-top:calc(74px + env(safe-area-inset-top,0px))}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Segoe UI",sans-serif;font-size:17px;line-height:1.58;word-break:keep-all}
+    button{font:inherit;color:inherit}
+    :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+    b,strong{font-weight:850}
+    .deckbar{position:fixed;top:0;left:0;right:0;height:calc(64px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 22px 0;z-index:50;background:var(--deckbar);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px}
+    .brand{font-weight:900;letter-spacing:-.03em;white-space:nowrap}.brand b{color:var(--red-text)}
+    .nav{display:flex;gap:5px;overflow:auto;scrollbar-width:none;flex:1}.nav::-webkit-scrollbar{display:none}
+    .nav button{border:0;background:transparent;color:var(--muted);padding:7px 9px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:700}
+    .nav button:hover,.nav button.on{background:var(--hover);color:var(--ink)}
+    .actions{display:flex;gap:8px}
+    .theme-toggle{display:inline-flex;padding:3px;background:var(--toggle-bg);border-radius:11px;gap:3px;border:1px solid var(--line)}
+    .theme-toggle button{border:0;background:transparent;padding:5px 11px;border-radius:8px;font-size:13px;font-weight:850;color:var(--muted);cursor:pointer}
+    .theme-toggle button.on{background:var(--toggle-on);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+    .progress{position:fixed;top:calc(63px + env(safe-area-inset-top,0px));left:0;width:100%;height:3px;z-index:55}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--yellow));transition:width .15s}
+    main{padding:88px 22px calc(96px + env(safe-area-inset-bottom,0px))}
+    .scene:not(.active){display:none}
+    .scene.active{animation:slidein .22s ease-out}
+    @keyframes slidein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .pager-wrap{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:center;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+    .pager{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--deckbar);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:var(--shadow)}
+    .pager button{background:var(--card);color:var(--ink);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:850;cursor:pointer;border:1px solid var(--line)}
+    .pager button:disabled{opacity:.35;cursor:default}
+    .pager-info{min-width:150px;text-align:center;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap}.pager-info b{color:var(--ink);font-size:15px}
+    .scene{position:relative;max-width:1360px;min-height:max(600px,calc(100vh - 184px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);padding:56px 62px 64px;overflow:hidden}
+    .scene::after{content:attr(data-no);position:absolute;right:28px;bottom:20px;font-size:12px;font-weight:900;color:var(--sceneno);letter-spacing:.08em}
+    .eyebrow{font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--red-text);margin-bottom:10px}
+    h1,h2,h3,p{margin-top:0}h1,h2,h3{letter-spacing:-.045em;line-height:1.16}
+    h1{font-size:clamp(40px,5.6vw,76px);max-width:1080px;margin-bottom:22px}
+    h2{font-size:clamp(32px,4.1vw,54px);margin-bottom:20px}
+    h3{font-size:21px;margin-bottom:12px}
+    .lead{font-size:clamp(20px,2.1vw,28px);line-height:1.45;color:var(--text2);max-width:1000px}
+    .sub{font-size:18px;color:var(--text2);max-width:920px;margin-bottom:0}
+    .note{color:var(--muted);font-size:14px;line-height:1.55}
+    .grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .card{border:1px solid var(--line);border-radius:20px;padding:21px;background:var(--card);min-width:0}
+    .card p:last-child,.card ul:last-child{margin-bottom:0}
+    .card ul{padding-left:19px;margin:8px 0 0}.card li{margin:6px 0;font-size:15px}
+    .card.soft{background:var(--soft)}.card.red{background:var(--soft-red);border-color:color-mix(in srgb,var(--red) 30%,var(--line))}.card.green{background:var(--soft-green);border-color:color-mix(in srgb,var(--green) 30%,var(--line))}.card.blue{background:var(--soft-blue);border-color:color-mix(in srgb,var(--blue) 30%,var(--line))}.card.yellow{background:var(--soft-yellow);border-color:color-mix(in srgb,var(--yellow) 40%,var(--line))}
+    .card h3{font-size:19px}
+    .metric .label{color:var(--muted);font-size:13px;font-weight:800}.metric .value{font-size:40px;line-height:1.08;font-weight:950;letter-spacing:-.055em;margin:6px 0}.metric .value.up{color:var(--green)}.metric .value.down{color:var(--red-deep)}.metric .value.flat{color:var(--ink)}.metric .desc{font-size:14px;color:var(--text3)}
+    .metric .value.sm{font-size:28px;letter-spacing:-.04em}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;background:var(--chip);color:var(--chip-ink);white-space:nowrap}.pill.high{background:var(--soft-green);color:var(--green-ink)}.pill.mid{background:var(--soft-yellow);color:var(--yellow-ink)}.pill.low{background:var(--soft-red);color:var(--red-ink)}.pill.info{background:var(--soft-blue);color:var(--blue-ink)}
+    .cover{background:var(--cover);display:flex;flex-direction:column;justify-content:center;padding-bottom:92px}
+    .cover .ring{position:absolute;border-radius:50%;border:32px solid rgba(229,75,63,.08);width:430px;height:430px;right:-130px;top:-130px}.cover .ring.r2{width:230px;height:230px;right:160px;top:110px;border-width:22px;border-color:rgba(244,184,63,.15)}
+    .hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1000px;margin-top:28px}.hero-stat{border-left:5px solid var(--red);padding:10px 18px;background:var(--herostat);border-radius:0 16px 16px 0}.hero-stat:nth-child(2){border-color:var(--yellow)}.hero-stat:nth-child(3){border-color:var(--green)}.hero-stat b{display:block;font-size:28px;letter-spacing:-.04em}.hero-stat span{font-size:14px;color:var(--muted)}
+    .timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:26px;position:relative}.timeline::before{content:"";position:absolute;left:6%;right:6%;top:29px;height:4px;background:var(--track)}.stage{position:relative;padding-top:58px}.stage .dot{position:absolute;top:15px;left:18px;width:31px;height:31px;border-radius:50%;background:var(--panel);border:8px solid var(--stage);box-shadow:0 0 0 5px var(--panel)}.stage .num{color:var(--stage-t,var(--stage));font-weight:950;font-size:18px}.stage h3{font-size:18px;margin:5px 0 8px}.stage p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:0}
+    .question{background:var(--qbg);color:var(--qink);border-radius:20px;padding:22px 25px;font-size:21px;font-weight:900;line-height:1.42}.question em{color:var(--yellow);font-style:normal}
+    .chart-card{border:1px solid var(--line);border-radius:20px;padding:19px;background:var(--card)}.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}.chart-head h3{font-size:18px;margin:0}
+    .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center}
+    .legend .sw{display:inline-flex;align-items:center;gap:6px;font-weight:800}
+    .legend .sw i{display:inline-block;width:18px;height:0;border-top:3px solid var(--c)}
+    .legend .sw i.dash{border-top-style:dashed}
+    .legend button.sw{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 10px;cursor:pointer;color:var(--ink)}
+    .legend button.sw[aria-pressed="false"]{opacity:.38}
+    .svg-chart{width:100%;height:auto;display:block}.svg-chart text{font-family:inherit}.gridline{stroke:var(--grid);stroke-width:1}.axistext{font-size:12px;fill:var(--axis)}.valtext{font-size:12px;font-weight:900;fill:var(--ink)}.anntext{font-size:12px;font-weight:800;fill:var(--muted)}
+    .callout{border-left:5px solid var(--red);padding:16px 20px;background:var(--callout);border-radius:0 15px 15px 0;margin-top:18px}.callout b{color:var(--red-deep)}.callout.green{border-color:var(--green);background:var(--soft-green)}.callout.green b{color:var(--green-ink)}.callout.blue{border-color:var(--blue);background:var(--soft-blue)}.callout.blue b{color:var(--blue-ink)}
+    .table-wrap{overflow-x:auto;margin-top:18px;border-radius:20px}
+    .matrix{width:100%;border-collapse:separate;border-spacing:6px;min-width:640px}.matrix th{font-size:12px;color:var(--muted);padding:7px;font-weight:900;vertical-align:bottom}.matrix th small{display:block;font-weight:700;font-size:11px}.matrix td{padding:11px 10px;border-radius:12px;background:var(--cell);text-align:center;font-size:14px;font-weight:850;font-variant-numeric:tabular-nums}.matrix td.rowh{background:transparent;text-align:left;font-weight:900;white-space:nowrap}.matrix td.rowh small{display:block;font-weight:700;color:var(--muted);font-size:11px}.matrix .good{background:var(--soft-green);color:var(--green-ink)}.matrix .warn{background:var(--soft-yellow);color:var(--yellow-ink)}.matrix .bad{background:var(--soft-red);color:var(--red-ink)}.matrix .bad2{background:var(--bad2);color:var(--bad2-ink)}.matrix .dim{color:var(--muted);font-weight:700}.matrix td small{display:block;font-size:11px;font-weight:700;color:var(--muted)}
+    .matrix td.ns{opacity:.5}
+    .seg{display:inline-flex;padding:3px;background:var(--toggle-bg);border-radius:11px;gap:3px;border:1px solid var(--line)}.seg button{border:0;background:transparent;padding:6px 14px;border-radius:8px;font-size:14px;font-weight:850;color:var(--muted);cursor:pointer}.seg button.on{background:var(--toggle-on);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+    .bars{display:grid;gap:12px;margin-top:8px}.bar-row{display:grid;grid-template-columns:118px 1fr 58px;gap:12px;align-items:center}.bar-row .lab{font-size:14px;font-weight:850}.bar-row .lab small{display:block;font-size:11px;color:var(--muted);font-weight:700}.bar-row .track{height:22px;background:var(--track);border-radius:7px;overflow:hidden}.bar-row .track i{display:block;height:100%;width:var(--w);background:var(--c,var(--red));border-radius:7px}.bar-row b{text-align:right;font-size:15px;font-variant-numeric:tabular-nums}
+    .bar-group{padding-top:4px}.bar-group+.bar-group{border-top:1px dashed var(--line);margin-top:6px;padding-top:12px}.bar-group h4{margin:0 0 6px;font-size:14px;color:var(--muted)}
+    .trait-map{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}.trait-map>div{background:var(--card);padding:12px 14px;font-size:13.5px}.trait-map .th{background:var(--thbg);color:var(--thtx);font-size:12px;font-weight:900}.trait-map .trait{font-weight:950}.trait-map .evidence{color:var(--text3)}
+    .hypo-map{grid-template-columns:1.05fr 1.6fr 1.45fr .6fr 1.2fr;min-width:1000px}
+    .principles{counter-reset:p;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.principle{position:relative;border:1px solid var(--line);border-radius:18px;padding:18px 18px 18px 62px;background:var(--card)}.principle::before{counter-increment:p;content:counter(p);position:absolute;left:18px;top:17px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--red-text);color:var(--bar-ink);font-size:13px;font-weight:950}.principle b{display:block;margin-bottom:3px}.principle span{color:var(--muted);font-size:14px}
+    .caution{display:flex;gap:12px;align-items:flex-start;background:var(--caution);border:1px solid var(--line);border-radius:15px;padding:14px 16px;font-size:13px;color:var(--text3)}.caution b{color:var(--ink)}
+    .askbox{margin-top:18px;border:1px solid var(--line);border-radius:18px;background:var(--soft);padding:16px 18px}.askbox .askhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;font-weight:900;color:var(--muted)}.askbox pre{margin:0;white-space:pre-wrap;word-break:keep-all;font-family:inherit;font-size:15px;line-height:1.6;color:var(--ink)}.copy{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:850}.copy.done{background:var(--soft-green);color:var(--green-ink);border-color:transparent}
+    .footer-note{position:absolute;left:62px;right:62px;bottom:22px;font-size:11px;color:var(--source);padding-right:80px}
+    .flow{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:stretch;gap:8px;margin-top:22px}.flow .arrow{display:grid;place-items:center;font-size:26px;color:var(--muted);font-weight:900}
+    .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin-top:8px}.kv dt{color:var(--muted);font-weight:800}.kv dd{margin:0;font-weight:750}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--chip);padding:1px 6px;border-radius:6px}
+    @media (max-width:980px){body{font-size:16px}.scene{padding:42px 30px;min-height:auto}.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline{grid-template-columns:1fr}.timeline::before{left:33px;right:auto;top:18px;bottom:18px;width:4px;height:auto}.stage{padding:4px 0 4px 73px}.stage .dot{left:19px;top:9px}.flow{grid-template-columns:1fr}.flow .arrow{transform:rotate(90deg)}.footer-note{position:static;margin-top:24px;padding-right:0}.deckbar{padding-left:12px;padding-right:12px}}
+    @media (max-width:650px){main{padding:80px 10px 50px}.scene{padding:34px 20px;border-radius:22px}.g2,.g3,.g4,.hero-stats,.principles{grid-template-columns:1fr}.bar-row{grid-template-columns:84px 1fr 50px;gap:8px}.nav{display:none}.brand{font-size:15px}.pager-info{min-width:118px}.pager button{padding:9px 13px}.lead{font-size:19px}.metric .value{font-size:32px}.question{font-size:18px}}
+    @media (prefers-reduced-motion:reduce){.progress i{transition:none}.scene.active{animation:none}}
+    @page{size:16in 9in;margin:0}
+    @media print{.deckbar,.progress,.pager-wrap{display:none}.scene:not(.active){display:block}:root{padding:0}body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}main{padding:0}.scene{width:100%;height:9in;min-height:0;margin:0;border:0;border-radius:0;box-shadow:none;page-break-after:always;padding:42px 48px;overflow:hidden}.scene:last-child{page-break-after:auto}.footer-note{left:48px;right:48px}}
+  </style>
+</head>
+<body>
+  <header class="deckbar">
+    <div class="brand"><b>Pizza Ready</b> · SP60 튜토리얼</div>
+    <nav class="nav" aria-label="목차">
+      <button data-target="cover" class="on">요약</button><button data-target="summary">결론</button><button data-target="method">조회 기준</button><button data-target="chart">핵심 그래프</button><button data-target="p1">60.1.0</button><button data-target="p2">60.2.0</button><button data-target="os">OS별</button><button data-target="a11">Android 11</button><button data-target="mf">제조사별</button><button data-target="hypo">한계·가설</button><button data-target="dev">개발 확인</button><button data-target="base">기존 이탈</button><button data-target="glossary">읽는 법</button>
+    </nav>
+    <div class="actions"><div class="theme-toggle" role="group" aria-label="화면 테마"><button type="button" data-theme-set="light" aria-pressed="false">라이트</button><button type="button" data-theme-set="dark" aria-pressed="false">다크</button></div></div>
+  </header>
+  <div class="progress"><i id="progressBar"></i></div>
+
+  <main id="deck">
+    <!-- 01 -->
+    <section class="scene cover" id="cover" data-no="01 / 11">
+      <div class="ring"></div><div class="ring r2"></div>
+      <div class="eyebrow">Tutorial Drop-off · SP60 (60.1.0 / 60.2.0) vs 59.2.0</div>
+      <h1>SP60 빌드에서<br>튜토리얼 이탈은 어디서 늘었나</h1>
+      <p class="lead">60.1.0에서 US·IN·BR 모두 튜토리얼 이탈이 늘었다. 60.2.0에서 IN·BR에 남은 격차는 <b>새 빌드 설치 비중이 비정상적으로 높은 제조사</b>에만 있고, 나머지 제조사는 59.2.0과 차이가 없다.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>−3.8 / −4.9%p</b><span>60.1.0 · IN / BR 스텝 108 도달률 (59.2.0 대비)</span></div>
+        <div class="hero-stat"><b>−7.5 / −9.0%p</b><span>60.2.0 · 설치 비중 급증 제조사 (IN Vivo / BR 샤오미·리얼미)</span></div>
+        <div class="hero-stat"><b>+0.4 / +1.1%p</b><span>60.2.0 · 그 외 제조사 (IN / BR, 60.2.0 설치의 63%) · US도 차이 없음</span></div>
+      </div>
+      <div class="footer-note">바이트브루 Pizza Ready (AOS) Funnels · User Install → Tutorial_XXX_Open · 2026-09-26 기준 · 두 빌드 모두 50% 롤아웃 기간의 신규 설치 유저</div>
+    </section>
+
+    <!-- 02 -->
+    <section class="scene" id="summary" data-no="02 / 11">
+      <div class="eyebrow">Bottom Line</div>
+      <h2>60.2.0에서 빌드 영향은 사라졌고,<br>남은 격차는 유입 구성 차이로 보인다</h2>
+      <div class="grid g3" style="margin-top:26px">
+        <div class="card green"><h3>확인된 것</h3><ul>
+          <li>60.1.0: 세 국가 모두 59.2.0보다 튜토리얼 도달률이 낮다</li>
+          <li>US는 첫 실행→매장 문 오픈(101) 한 구간, IN·BR은 101~108 전반에서 이탈이 늘었다</li>
+          <li>Android 11은 101~104 구간 이탈이 따로 2~3배로 늘었다 (IN 104 도달 −10.3%p)</li>
+          <li>60.2.0: US 차이 없음, Android 11 급증 구간 해소</li></ul></div>
+        <div class="card yellow"><h3>60.2.0에 남은 격차</h3><ul>
+          <li>IN·BR 국가 전체로는 108 도달 −2.5%p 안팎</li>
+          <li>이 격차는 IN Vivo, BR 샤오미·리얼미에만 있다. 이 제조사들만 60.2.0 설치 비중이 1.3~1.4배로 부풀어 있다</li>
+          <li>그 외 제조사(60.2.0 설치의 63%)는 59.2.0과 차이가 없다</li>
+          <li>제조사 스토어 경유 유입의 구성 차이일 가능성이 높다 <span class="pill mid">가설</span></li></ul></div>
+        <div class="card red"><h3>확인이 필요한 것</h3><ul>
+          <li><b>슈센</b>: 해당 제조사 설치의 스토어·매체 구성, 제조사 스토어의 60.x 배포 방식</li>
+          <li><b>개발팀</b>: 60.1.0 Android 11 스텝 102~104 구간 리소스</li>
+          <li><b>개발팀</b>: 60.2.0 통계 수정이 Tutorial_XXX_Open 발송에 영향을 줬는지</li></ul></div>
+      </div>
+      <div class="question" style="margin-top:26px">핵심 질문 · IN Vivo·BR 샤오미 유저가 <em>60.x를 구글 플레이가 아닌 경로(제조사 스토어·특정 매체)로 더 많이 설치했는가</em>. 이것이 확인되면 60.2.0의 빌드 품질 문제는 배제된다.</div>
+    </section>
+
+    <!-- 03 -->
+    <section class="scene" id="method" data-no="03 / 11">
+      <div class="eyebrow">How It Was Measured</div>
+      <h2>업데이트 유저를 빼고<br>설치 빌드 기준으로 봤다</h2>
+      <div class="timeline">
+        <div class="stage" style="--stage:var(--green);--stage-t:var(--green-text)"><span class="dot"></span><div class="num">9/16</div><h3>59.2.0 100%</h3><p>비교 기준 빌드. 50% 롤아웃 후 WW·주요국 비교를 거쳐 전체 배포됐다.</p></div>
+        <div class="stage" style="--stage:var(--red);--stage-t:var(--red-text)"><span class="dot"></span><div class="num">9/17–9/20</div><h3>60.1.0 AOS 50%</h3><p>URP 전환 빌드. 9/20 18시 배포 중단. 비교 구간: 설치 9/17~9/20.</p></div>
+        <div class="stage" style="--stage:var(--purple);--stage-t:var(--purple-text)"><span class="dot"></span><div class="num">9/23</div><h3>60.2.0 50%</h3><p>빌트인 롤백 + FPS 30 고정 제거 + 통계 수정. 17시경 배포 요청.</p></div>
+        <div class="stage" style="--stage:var(--blue);--stage-t:var(--blue-text)"><span class="dot"></span><div class="num">9/24–9/25</div><h3>60.2.0 비교 구간</h3><p>배포 후 첫 온전한 이틀. 추석 연휴와 겹치지만 두 빌드에 똑같이 적용된다.</p></div>
+      </div>
+      <div class="grid g3" style="margin-top:28px">
+        <div class="card"><h3>이벤트 선택</h3><p class="note"><code>funnel</code>은 US 전용 meaningful 이벤트라 IN·BR은 1%만 잡힌다. <code>Tutorial:StepNN</code>은 2026년 이후 적재가 없다. WW 전수로 잡히는 <code>Tutorial_XXX_Open</code>을 썼다.</p></div>
+        <div class="card"><h3>퍼널 시작점</h3><p class="note">바이트브루 기본 이벤트 <code>User Install</code>. 해당 빌드로 설치한 유저만 분모가 되어, 59.2.0에서 업데이트된 유저가 섞이지 않는다.</p></div>
+        <div class="card"><h3>왜 중요했나</h3><p class="note">funnel 이벤트로 4일을 합산하면 US 101 격차가 −6.0%p로 나왔다. 업데이트 유저를 빼면 −1.5%p다. 격차의 약 3/4이 집계 착시였다.</p></div>
+      </div>
+      <div class="footer-note">배포 일정: #s2_pizzaready (제이콥 9/16·9/18·9/21·9/23) · 이벤트 정의: 트래킹 플랜 V3(260904) Meaningful(SP60)·Funnel(260416) 시트, 7/23 SP59 데이터 QA 스레드</div>
+    </section>
+
+    <!-- 04 -->
+    <section class="scene" id="chart" data-no="04 / 11">
+      <div class="eyebrow">Key Chart</div>
+      <h2>IN·BR은 101~108에서 격차가 벌어졌고<br>60.2.0에서 절반만 좁혀졌다</h2>
+      <div class="chart-card" style="margin-top:18px">
+        <div class="chart-head">
+          <h3>튜토리얼 스텝 도달률 차이 · 60.x − 59.2.0 (%p)</h3>
+          <div class="legend" id="gapLegend"></div>
+        </div>
+        <div id="gapChart" role="img" aria-label="60.1.0과 60.2.0의 59.2.0 대비 스텝별 도달률 차이. 60.1.0 BR은 스텝 108에서 −4.9%p, IN은 −3.8%p까지 벌어졌고, 60.2.0에서 IN·BR은 −2.5%p 안팎, US는 0 근처."></div>
+        <p class="note" style="margin:8px 0 0">0 아래일수록 60.x에서 해당 스텝까지 도달한 비율이 낮다. 범례를 눌러 선을 켜고 끌 수 있다.</p>
+      </div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card soft"><h3 style="color:var(--blue-text)">US</h3><p class="note">60.1.0은 101 전에 −1.5%p가 생긴 뒤 평행하다. 60.2.0은 0 근처로 돌아왔다.</p></div>
+        <div class="card soft"><h3 style="color:var(--orange-text)">IN</h3><p class="note">60.1.0은 108까지 격차가 계속 커진다(−3.8%p). 60.2.0은 −2.5%p에서 멈춘다.</p></div>
+        <div class="card soft"><h3 style="color:var(--green-text)">BR</h3><p class="note">60.1.0 격차가 가장 크다(−4.9%p). 60.2.0은 IN과 비슷한 −2.4%p.</p></div>
+      </div>
+      <div class="footer-note">116 이후는 조회 기간(2~4일) 안에 도달하지 못한 유저가 많아 차이가 자연히 줄어든다. 해석은 124까지로 한정한다.</div>
+    </section>
+
+    <!-- 05 -->
+    <section class="scene" id="p1" data-no="05 / 11">
+      <div class="eyebrow">60.1.0 vs 59.2.0 · 설치 9/17–9/20</div>
+      <h2>60.1.0은 세 국가 모두<br>도달률이 낮았다</h2>
+      <p class="sub">셀은 60.1.0 도달률, 아래 작은 수치는 59.2.0 대비 차이. 색이 진할수록 격차가 크다.</p>
+      <div class="table-wrap"><table class="matrix" id="tblP1"></table></div>
+      <div class="grid g2" style="margin-top:4px">
+        <div class="callout blue"><b>US · 첫 실행 구간</b> · 설치→101 스텝 이탈만 7.3%에서 8.8%로 늘었다. 101 이후 스텝별 이탈은 대부분 59.2.0과 같다.</div>
+        <div class="callout"><b>IN·BR · 플레이 중 누적</b> · 104→105, 105→106, 106→107, 107→108에서 스텝마다 0.8~2.2%p씩 이탈이 더 생겼다. BR 106→107(HR 사무실)이 +2.2%p로 가장 크다.</div>
+      </div>
+      <div class="footer-note">도달률 = 해당 스텝 도달 유저 ÷ 해당 빌드 User Install 유저 · 표의 IN·BR 격차는 모두 |z| ≥ 4로 우연으로 보기 어렵다 · US는 101~103만 |z| ≥ 2.4, 104 이후는 우연 범위</div>
+    </section>
+
+    <!-- 06 -->
+    <section class="scene" id="p2" data-no="06 / 11">
+      <div class="eyebrow">60.2.0 vs 59.2.0 · 9/24–9/25</div>
+      <h2>60.2.0에서 US는 회복,<br>IN·BR은 격차가 남았다</h2>
+      <p class="sub">같은 방식으로 60.2.0 50% 배포 기간을 비교했다. 60.1.0 때와 격차를 나란히 놓았다.</p>
+      <div class="table-wrap"><table class="matrix" id="tblP2"></table></div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card green metric"><div class="label">US · 스텝 108</div><div class="value flat sm">+0.1%p</div><div class="desc">60.1.0 −1.5%p → 차이 없음</div></div>
+        <div class="card yellow metric"><div class="label">IN · 스텝 108</div><div class="value down sm">−2.5%p</div><div class="desc">60.1.0 −3.8%p → 약 1/3 회복</div></div>
+        <div class="card yellow metric"><div class="label">BR · 스텝 108</div><div class="value down sm">−2.4%p</div><div class="desc">60.1.0 −4.9%p → 약 1/2 회복</div></div>
+      </div>
+      <div class="callout blue" style="margin-top:14px"><b>이 격차는 어디서 오나</b> · 제조사별로 쪼개면 특정 제조사에만 몰려 있다. 9장 제조사별, 10장 한계·가설 참고.</div>
+      <div class="footer-note">60.2.0 신규 설치: US 2,962 · IN 105,029 · BR 11,263명 (59.2.0 3,650 · 102,922 · 11,947명) · IN 격차는 |z| 8~13, BR은 |z| 2~4</div>
+    </section>
+
+    <!-- 07 -->
+    <section class="scene" id="os" data-no="07 / 11">
+      <div class="eyebrow">By Android Version</div>
+      <h2>60.1.0은 Android 11이 따로 튀었고,<br>60.2.0은 모든 OS에 고르게 남았다</h2>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px">
+        <p class="sub" style="margin:0">셀은 59.2.0 대비 도달률 차이(%p). 흐린 셀은 표본이 작아 우연일 수 있는 값(|z| &lt; 2).</p>
+        <div class="seg" role="group" aria-label="국가 선택"><button type="button" data-os="IN" class="on" aria-pressed="true">IN</button><button type="button" data-os="BR" aria-pressed="false">BR</button></div>
+      </div>
+      <div class="grid g2" style="margin-top:8px;align-items:start">
+        <div><h3 style="margin:12px 0 0">60.1.0 − 59.2.0</h3><div class="table-wrap" style="margin-top:6px"><table class="matrix" id="osP1" style="min-width:520px"></table></div></div>
+        <div><h3 style="margin:12px 0 0">60.2.0 − 59.2.0</h3><div class="table-wrap" style="margin-top:6px"><table class="matrix" id="osP2" style="min-width:520px"></table></div></div>
+      </div>
+      <div class="callout"><b>OS 구성은 두 빌드가 같다</b> · IN 신규 중 Android 14+ 71~73%, 12~13 16~17%, 11 6%, 10 이하 5%. 격차는 OS 구성 차이가 아니라 빌드 차이다.</div>
+      <div class="footer-note">OS 버전은 바이트브루 OS Version 필터 기준 · 저사양 여부를 직접 나타내지는 않는다 (RAM 필터 없음). Android 14+에도 3~4GB 기기가 많이 포함된다.</div>
+    </section>
+
+    <!-- 08 -->
+    <section class="scene" id="a11" data-no="08 / 11">
+      <div class="eyebrow">Spotlight · Android 11</div>
+      <h2>Android 11은 60.1.0에서<br>101~104 구간 이탈이 2~3배로 늘었다</h2>
+      <p class="sub">스텝 101 매장 문 오픈 → 102 테이블1 오픈 → 103 머신1 오픈 → 104 카운터 오픈. 스텝 간 이탈률(이전 스텝 도달자 중 다음 스텝에 못 간 비율)을 비교했다.</p>
+      <div class="grid g2" style="margin-top:22px;align-items:start">
+        <div class="card" id="a11IN"></div>
+        <div class="card" id="a11BR"></div>
+      </div>
+      <div class="callout green"><b>60.2.0에서 해소</b> · IN Android 11의 102→104 이탈은 60.2.0에서 2.0%로 59.2.0(2.1%)과 같아졌고, 101→102도 3.6%(59.2.0 3.0%)로 대부분 돌아왔다. 빌트인 롤백과 FPS 고정 제거 중 무엇이 효과를 냈는지는 이 데이터로 구분할 수 없다.</div>
+      <div class="footer-note">60.2.0 막대는 같은 기간의 59.2.0(9/24~25)과 비교한다 · BR Android 11 60.2.0은 696명으로 표본이 작다 · Slack 크래시 분석: MTK 칩셋 · 삼성·Oppo·Vivo · Android 11 집중 (9/18~9/21 #s2_pizzaready)</div>
+    </section>
+
+
+    <!-- MF -->
+    <section class="scene" id="mf" data-no="">
+      <div class="eyebrow">By Manufacturer</div>
+      <h2>격차는 새 빌드 설치 비중이<br>부풀어 있는 제조사에만 있다</h2>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px">
+        <p class="sub" style="margin:0">설치 비중 배율 = 60.x 설치 중 해당 제조사 비중 ÷ 59.2.0 설치 중 비중. 50% 롤아웃이면 1.0 근처여야 한다. 격차는 스텝 108 도달률 차이(%p).</p>
+        <div class="seg" role="group" aria-label="국가 선택"><button type="button" data-mf="IN" class="on" aria-pressed="true">IN</button><button type="button" data-mf="BR" aria-pressed="false">BR</button></div>
+      </div>
+      <div class="table-wrap"><table class="matrix" id="tblMF" style="min-width:760px"></table></div>
+      <div class="grid g2" style="margin-top:4px">
+        <div class="callout"><b>같은 브랜드, 다른 결과</b> · 60.2.0 샤오미는 IN(배율 0.77) +1.3%p, BR(1.39) −9.2%p. 리얼미는 IN(0.91) −0.6%p, BR(1.29) −7.9%p. 기기 성능이 원인이면 국가와 관계없이 같이 나타나야 한다.</div>
+        <div class="callout green"><b>배율이 정상인 제조사는 격차 없음</b> · 60.2.0 IN 삼성 +1.8 · 샤오미 +1.3 · 모토로라 +3.5%p, BR 삼성 +1.6 · 모토로라 +0.3%p.</div>
+      </div>
+      <div class="caution" style="margin-top:12px"><span>※</span><div><b>Vivo 기종별로 쪼개도 같다</b> · 60.2.0 IN Vivo 상위 22개 기종 중 21개가 설치 비중 배율 1.29~1.83배이고, 108 격차는 대부분 −3~−14%p다. 특정 기종이 아니라 <b>Vivo 브랜드 전체</b>에서 비중이 부풀어 있다. 그래서 기종 단위로는 유입 경로와 기기 성능을 가를 수 없고, 브랜드 단위 경로(제조사 스토어)라는 H1과 맞는다. 배율이 1.03배로 정상인 V2204는 −3.0%p였지만, 한 기종이라 표본이 작다.</div></div>
+      <div class="footer-note">제조사는 바이트브루 모델 코드 접두어로 분류 (SM- 삼성 · CPH Oppo · V/I 4자리 Vivo · RMX 리얼미 · 숫자형 샤오미 등), IN 분류율 97.6% · 흐린 셀은 |z| &lt; 2 · 설치 300명 미만 제조사는 표에서 제외</div>
+    </section>
+
+    <!-- HYPO -->
+    <section class="scene" id="hypo" data-no="">
+      <div class="eyebrow">What We Can and Cannot Confirm</div>
+      <h2>확인할 수 있는 범위와<br>그에 근거한 가설</h2>
+      <div class="grid g2" style="margin-top:18px;align-items:start">
+        <div class="chart-card">
+          <div class="chart-head"><h3>스텝 108 도달률 격차 · 설치 비중 정상 vs 급증 제조사</h3></div>
+          <div id="grpChart" role="img" aria-label="60.2.0에서 설치 비중이 정상인 제조사는 IN +0.4%p, BR +1.1%p로 격차가 없고, 급증한 제조사는 IN −7.5%p, BR −9.0%p"></div>
+          <p class="note" style="margin:8px 0 0">급증 = IN Vivo, BR 샤오미·리얼미. 60.1.0은 정상 제조사에도 −2.0~−2.6%p가 있어 빌드 자체 영향이 있었다.</p>
+        </div>
+        <div>
+          <div class="card green" style="padding:16px 18px"><h3 style="font-size:16px;margin-bottom:6px">바이트브루로 확인한 것</h3><p class="note" style="margin:0">국가·빌드·OS·모델 코드 단위 튜토리얼 도달 · 모델 코드로 제조사 분류 · 빌드별 제조사 구성</p></div>
+          <div class="card red" style="padding:16px 18px;margin-top:10px"><h3 style="font-size:16px;margin-bottom:6px">확인할 수 없는 것</h3><ul style="margin-top:4px">
+            <li><b>설치 경로·광고 매체</b> · 바이트브루 어트리뷰션 미사용. 슈센 MMP에만 있다</li>
+            <li><b>RAM·칩셋</b> · 기기 카탈로그 없음. Play Console 기기 카탈로그는 별도 요청이 필요하다</li>
+            <li><b>크래시 기종 원본</b> · Slack 캡처 이미지는 열람 불가. 텍스트의 제조사·OS 비중만 사용했다</li></ul></div>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px"><div class="trait-map hypo-map">
+        <div class="th">가설</div><div class="th">근거</div><div class="th">반대 근거 · 남은 의문</div><div class="th">가능성</div><div class="th">검증 방법</div>
+        <div class="trait">H1 · 제조사 스토어 경유 유입의 구성 차이</div><div class="evidence">해당 제조사만 60.x 설치 비중이 1.3~1.4배. 성능 문제로는 설치 수가 늘 수 없다. 같은 브랜드도 비중이 정상인 국가는 격차 없음. Vivo는 상위 22개 기종 중 21개에서 배율 1.3배 이상(브랜드 전체). 9/16 BigoAds → 샤오미 스토어 경유 선례</div><div class="evidence">유입 경로를 직접 본 데이터는 없다</div><div><span class="pill high">가장 유력</span></div><div class="evidence">슈센 MMP: 해당 제조사 설치의 스토어·매체 구성, 제조사 스토어 60.x 배포 방식</div>
+        <div class="trait">H2 · 60.2.0이 해당 기기에서 여전히 무겁다</div><div class="evidence">60.1.0 크래시(libGLESv2_mtk)가 삼성·Oppo·Vivo·리얼미 3~4GB 기기에 몰렸다 (Slack 9/21). 같은 기기군이 60.2.0에서도 영향받았을 수 있다</div><div class="evidence">비중 정상 제조사 전체 격차 없음. 같은 브랜드의 국가 간 결과가 반대. 단 IN Oppo −1.8%p(z −3.4)는 소폭 남아 있다</div><div><span class="pill low">낮음</span></div><div class="evidence">개발팀 저사양 기기 59.2.0 vs 60.2.0 성능 비교</div>
+        <div class="trait">H3 · 60.2.0 통계 수정으로 이벤트 발송이 바뀌었다</div><div class="evidence">60.2.0에 통계 수정이 포함됐다</div><div class="evidence">발송 로직이 바뀌었다면 모든 제조사에 나타나야 하는데, 정상 제조사는 격차가 없다</div><div><span class="pill low">낮음</span></div><div class="evidence">행크님께 통계 수정 범위 확인</div>
+      </div></div>
+    </section>
+
+    <!-- 09 -->
+    <section class="scene" id="dev" data-no="09 / 11">
+      <div class="eyebrow">For the Dev Team</div>
+      <h2>개발팀과 슈센에<br>확인할 것</h2>
+      <div class="grid g2" style="align-items:start">
+      <div class="askbox"><div class="askhead"><span>개발팀 · #몰입_피자레디</span><button class="copy" data-copy="askDev">복사</button></div>
+<pre id="askDev">[SP60 튜토리얼 이탈 분석 공유 · 확인 요청]
+바이트브루 User Install → Tutorial_XXX_Open 퍼널로 59.2.0과 비교했습니다. (설치 빌드 기준, 업데이트 유저 제외)
+
+- 60.1.0: 설치 비중이 정상인 제조사에서도 스텝 108 도달률이 낮았습니다(IN −2.0%p, BR −2.6%p). Android 11은 스텝 101→104 이탈이 2~3배였습니다.
+- 60.2.0: 설치 비중이 정상인 제조사는 59.2.0과 차이가 없습니다. 빌드 품질 쪽은 회복된 것으로 보고 있습니다.
+
+확인 부탁드릴 부분
+1. 60.1.0에서 테이블1 오픈~카운터 오픈(스텝 102~104) 사이에 처음 로드되는 셰이더·이펙트·리소스가 있었을까요? URP를 다시 적용할 때 우선 점검할 지점으로 보입니다.
+2. 60.2.0 통계 수정에서 Tutorial_XXX_Open 발송 시점이나 조건이 바뀌었을까요?</pre></div>
+      <div class="askbox"><div class="askhead"><span>슈센 · #s2_pizzaready</span><button class="copy" data-copy="askSC">복사</button></div>
+<pre id="askSC">[SP60 튜토리얼 지표 · 유입 구성 확인 요청]
+60.x 신규 설치 중 IN Vivo, BR 샤오미·리얼미 기기의 비중이 59.2.0보다 1.3~1.4배 높습니다. 이 제조사들에서만 튜토리얼 도달률이 낮고, 나머지 제조사는 59.2.0과 차이가 없습니다.
+
+1. 해당 제조사의 9/17~ 설치가 구글 플레이가 아닌 제조사 스토어(Vivo 스토어·샤오미 스토어 등)나 특정 매체로 들어온 비중이 60.x 쪽에 더 많았을까요? Y/N
+2. 제조사 스토어에는 60.1.0·60.2.0이 단계적 배포 없이 100%로 올라가 있었을까요? Y/N
+
+9/16 BigoAds → 샤오미 스토어 건과 같은 구조인지 확인하려고 합니다.</pre></div>
+      </div>
+      <div class="principles">
+        <div class="principle"><b>슈센 · 유입 경로 확인</b><span>H1 검증. Y면 60.2.0 튜토리얼 격차는 빌드 품질이 아닌 구성 차이로 정리</span></div>
+        <div class="principle"><b>개발 · 스텝 102~104 리소스</b><span>60.1.0 Android 11 급증 구간. URP 재적용 시 우선 점검</span></div>
+        <div class="principle"><b>개발 · 이벤트 발송 로직</b><span>H3 확인. 가능성은 낮지만 비교의 전제라 확인해둔다</span></div>
+        <div class="principle"><b>기획 · 100% 배포 후 재확인</b><span>100% 배포 후에는 빌드 간 비교군이 없어진다. 배포 전 59.2.0 기간과 제조사별로 같은 퍼널을 비교해 격차가 남는지 본다</span></div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="scene" id="base" data-no="10 / 11">
+      <div class="eyebrow">Baseline · Regardless of Build</div>
+      <h2>빌드와 무관하게<br>원래 이탈이 큰 스텝</h2>
+      <p class="sub">59.2.0 기준 스텝 간 이탈률. SP60 이슈와 별개로 튜토리얼 설계에서 볼 지점이다.</p>
+      <div class="table-wrap"><table class="matrix" id="tblBase"></table></div>
+      <div class="grid g2" style="margin-top:4px">
+        <div class="callout"><b>106→107 HR 사무실 오픈</b> · US·BR은 단일 스텝 중 이탈이 가장 크다(14.1% · 17.8%). IN도 11.4%.</div>
+        <div class="callout"><b>104→105 · 105→106</b> · IN은 두 스텝 모두 11%대로, US(7%대)보다 이탈이 크다.</div>
+      </div>
+      <div class="footer-note">59.2.0 · 설치 9/17~9/20 · 108→110은 2스텝(109 포함) 합산이라 단일 스텝과 직접 비교하지 않는다</div>
+    </section>
+
+    <!-- 11 -->
+    <section class="scene" id="glossary" data-no="11 / 11">
+      <div class="eyebrow">How to Read the Data</div>
+      <h2>지표와 근거 읽는 법</h2>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card"><h3>도달률</h3><p class="note">해당 스텝까지 온 유저 ÷ 그 빌드로 설치한 유저. 퍼널은 순서대로 도달한 유저만 센다.</p></div>
+        <div class="card"><h3>스텝 간 이탈률</h3><p class="note">이전 스텝 도달자 중 다음 스텝에 못 간 비율. 어느 구간에서 빠지는지 볼 때 쓴다.</p></div>
+        <div class="card"><h3>%p</h3><p class="note">비율끼리의 차이. 도달률 53.6% → 49.8%는 −3.8%p다.</p></div>
+        <div class="card"><h3>|z| (유의성)</h3><p class="note">차이가 표본 오차의 몇 배인지. 2 이상이면 우연일 가능성이 낮고, 4 이상이면 사실상 우연이 아니다.</p></div>
+        <div class="card"><h3>스텝 번호</h3><p class="note">트래킹 플랜 Funnel 시트 기준. 101 매장 문 · 102 테이블1 · 103 머신1 · 104 카운터 · 105 테이블2 · 106 확장1 · 107 HR 사무실 · 108 플레이어 사무실 · 110 확장2 · 116 확장3 · 124 확장4.</p></div>
+        <div class="card"><h3>설치 비중 배율</h3><p class="note">새 빌드 설치 중 특정 제조사 비중 ÷ 기존 빌드 설치 중 비중. 1.0에서 크게 벗어나면 그 제조사는 다른 경로로 빌드가 배포됐을 수 있다.</p></div>
+        <div class="card"><h3>업데이트 유저</h3><p class="note">50% 롤아웃은 기존 설치자도 업데이트시킨다. 이전 빌드에서 이미 101을 지난 유저가 새 빌드 분모에 섞이면 격차가 부풀려진다.</p></div>
+      </div>
+      <div class="caution" style="margin-top:20px"><span>※</span><div><b>자료 범위</b> · 바이트브루 Pizza Ready (AOS) Funnels (Device·OS 브레이크다운 포함) · Breakdowns (funnel/step), #s2_pizzaready 배포·핫픽스·데이터 QA 스레드, 트래킹 플랜 V3(260904). 2026-09-26 기준. 60.1.0은 AOS에만 배포되어 iOS는 제외했다.</div></div>
+    </section>
+  </main>
+
+  <div class="pager-wrap"><nav class="pager" aria-label="장 이동"><button type="button" id="prevBtn" aria-label="이전 장">‹ 이전</button><div class="pager-info" aria-live="polite"><b id="pageNo">01</b> / <span id="pageTotal">11</span> · <span id="pageName">요약</span></div><button type="button" id="nextBtn" aria-label="다음 장">다음 ›</button></nav></div>
+
+  <script>
+    const MFD={"P1|IN|59.2.0":{"xia":[40396,36125,35207,34406,30817,27095,23833,21294,17120],"tec":[8045,7139,6940,6782,6038,5390,4790,4333,3452],"rea":[26008,23509,22943,22481,20224,17803,15748,14168,11424],"sam":[31771,29116,28372,27711,24990,22472,20065,18161,14966],"viv":[74991,66970,65015,63413,55464,48438,42772,38261,30659],"mot":[13834,12776,12428,12119,10766,9640,8581,7702,6281],"opp":[41744,38545,37717,36942,33186,29355,26164,23512,19272],"oth":[9579,8734,8505,8311,7390,6607,5839,5272,4425]},"P1|IN|60.1.0":{"xia":[22054,19687,19067,18648,16794,14777,12843,11452,9348],"opp":[29267,26554,25806,25017,22397,19581,17285,15320,12546],"sam":[18632,17088,16544,15909,14402,12904,11499,10352,8663],"tec":[4589,4098,3948,3843,3442,3048,2667,2378,1915],"viv":[67192,59265,56974,54985,46938,39959,34819,30341,23829],"mot":[7624,7052,6855,6692,6035,5438,4864,4357,3590],"rea":[17512,15705,15053,14623,13026,11375,10014,8897,7151],"oth":[5379,4908,4768,4649,4219,3790,3352,3015,2529]},"P2|IN|59.2.0":{"xia":[16993,15173,14758,14400,12838,11299,9932,8855,6973],"opp":[18780,17310,16916,16584,14889,13114,11677,10424,8460],"viv":[27618,25131,24521,23950,21265,18778,16688,15018,12057],"rea":[11905,10823,10537,10295,9191,8035,7056,6309,5043],"sam":[13414,12258,11932,11696,10519,9358,8327,7531,6141],"tec":[3679,3290,3201,3137,2797,2491,2202,1953,1532],"mot":[6257,5777,5591,5444,4815,4321,3856,3434,2783],"oth":[4276,3881,3778,3689,3292,2915,2574,2327,1911]},"P2|IN|60.2.0":{"xia":[13295,11934,11623,11385,10262,9045,7940,7102,5705],"opp":[18457,16753,16336,15982,14242,12533,11127,9920,8060],"tec":[3065,2743,2673,2614,2352,2112,1858,1664,1330],"rea":[11100,9950,9622,9407,8422,7365,6531,5818,4666],"sam":[11661,10660,10401,10170,9174,8352,7457,6752,5477],"viv":[38981,34452,33141,32211,27499,23623,20699,18289,14221],"mot":[5016,4681,4554,4444,4000,3622,3221,2927,2392],"oth":[3454,3133,3049,2995,2706,2422,2132,1927,1563]},"P1|BR|59.2.0":{"xia":[12342,11319,10985,10742,9633,8642,7100,6392,5353],"opp":[354,327,323,318,299,274,227,203,167],"rea":[2320,2163,2112,2081,1901,1706,1433,1316,1136],"sam":[20164,18734,18308,17915,16279,14883,12326,11171,9371],"mot":[13918,12869,12565,12291,11130,10091,8163,7295,6054],"tec":[510,465,448,441,400,359,299,265,230],"viv":[34,34,31,31,30,28,22,18,16],"oth":[1232,1027,1003,975,869,791,650,578,491]},"P1|BR|60.1.0":{"xia":[9737,8748,8431,8212,7166,6239,4880,4277,3484],"rea":[1737,1573,1508,1471,1309,1142,902,791,673],"sam":[10365,9622,9306,8959,8139,7340,6017,5443,4619],"opp":[343,321,307,299,269,248,197,171,143],"mot":[6904,6355,6177,6030,5438,4885,3880,3446,2855],"viv":[23,23,23,21,19,16,13,13,10],"tec":[249,226,216,207,189,173,138,119,103],"oth":[601,515,487,477,425,385,322,302,240]},"P2|BR|59.2.0":{"xia":[2624,2414,2363,2317,2115,1906,1599,1445,1218],"opp":[92,82,82,81,79,70,54,47,40],"sam":[4884,4493,4390,4299,3882,3532,2922,2634,2169],"mot":[3354,3083,3011,2948,2629,2357,1886,1706,1430],"viv":[8,8,8,7,6,6,4,3,3],"tec":[116,100,98,97,84,77,65,57,50],"rea":[596,544,528,522,477,442,367,334,288],"oth":[273,226,219,212,195,169,137,117,101]},"P2|BR|60.2.0":{"xia":[3444,3099,2988,2905,2563,2279,1796,1578,1293],"rea":[723,645,622,609,545,493,390,348,285],"sam":[4003,3695,3616,3531,3200,2924,2442,2222,1895],"mot":[2657,2437,2368,2314,2067,1876,1505,1359,1128],"opp":[126,109,107,102,97,88,69,62,49],"tec":[86,76,74,73,65,58,45,40,36],"viv":[6,6,6,6,6,5,4,4,3],"oth":[218,179,175,172,155,138,109,101,86]}};
+    const DATA={"R":{"P1|US|59.2.0":[9794,9083,8833,8653,8547,7913,7299,6270,5721,4891,3351,2023,1385,807,515],"P1|US|60.1.0":[5325,4859,4725,4634,4589,4248,3921,3370,3032,2605,1824,1128,792,506,306],"P2|US|59.2.0":[3650,3276,3184,3130,3108,2882,2641,2241,2045,1718,1116,682,467,262,149],"P2|US|60.2.0":[2962,2676,2599,2551,2522,2337,2181,1842,1662,1413,953,583,386,223,135],"P1|IN|59.2.0":[246368,222914,217127,213769,211077,187956,166000,147105,132081,107110,69362,36058,21317,10925,5564],"P1|IN|60.1.0":[172249,154357,149015,145667,143703,126715,110415,96952,85775,69305,45160,23436,14288,7583,4206],"P2|IN|59.2.0":[102922,93643,91234,89819,88742,79223,69982,62024,55595,44693,28225,14029,8083,3909,1898],"P2|IN|60.2.0":[105029,94306,91399,89914,88742,78265,68741,60670,54146,43213,27143,13659,7959,3986,2125],"P1|BR|59.2.0":[50874,46938,45775,45072,44651,40422,36674,30140,27168,22755,14917,8025,4910,2585,1395],"P1|BR|60.1.0":[29959,27383,26455,25885,25610,22895,20377,16308,14527,12096,7934,4238,2716,1498,873],"P2|BR|59.2.0":[11947,10950,10699,10534,10450,9440,8538,7018,6331,5288,3301,1771,1059,510,243],"P2|BR|60.2.0":[11263,10246,9956,9769,9671,8666,7833,6336,5696,4759,2998,1545,944,482,252]},"D":{"P1|IN|59.2.0|A":[12765,10403,10110,9896,8874,7667,6643,5973,4804,3090],"P1|IN|59.2.0|B":[15847,13609,13223,12906,11554,10096,8799,7850,6286,3974],"P1|IN|59.2.0|C":[42460,37994,36984,36151,32158,28316,24798,22118,17906,11538],"P1|IN|59.2.0|D":[175296,160908,156810,153212,136289,120721,107552,96762,78603,51081],"P1|IN|60.1.0|A":[8539,6813,6611,6450,5779,4872,4163,3656,2983,1893],"P1|IN|60.1.0|B":[10530,8989,8340,7496,6722,5890,5063,4492,3613,2328],"P1|IN|60.1.0|C":[28095,24837,23994,23297,20617,17918,15494,13687,11024,7168],"P1|IN|60.1.0|D":[125085,113718,110070,107123,94135,82192,72623,64277,51951,33946],"P2|IN|59.2.0|A":[5252,4372,4234,4154,3711,3198,2762,2456,1942,1182],"P2|IN|59.2.0|B":[6622,5777,5605,5487,4903,4258,3713,3313,2669,1642],"P2|IN|59.2.0|C":[17191,15387,14986,14629,13059,11525,10160,9089,7245,4550],"P2|IN|59.2.0|D":[73857,68107,66409,64925,57933,51330,45677,40993,33044,20987],"P2|IN|60.2.0|A":[5196,4215,4077,3971,3529,3041,2637,2346,1888,1171],"P2|IN|60.2.0|B":[6411,5450,5256,5150,4563,3967,3470,3072,2440,1507],"P2|IN|60.2.0|C":[16619,14704,14229,13892,12300,10780,9401,8371,6698,4213],"P2|IN|60.2.0|D":[76803,69937,67837,66195,58265,51286,45457,40610,32388,20365],"P1|BR|59.2.0|A":[2442,2037,1992,1952,1792,1617,1339,1220,1012,649],"P1|BR|59.2.0|B":[3382,3010,2927,2866,2605,2358,1903,1692,1390,898],"P1|BR|59.2.0|C":[10083,9259,9081,8898,8034,7289,5959,5354,4442,2891],"P1|BR|59.2.0|D":[34967,32632,31775,31078,28110,25510,21019,18972,15974,10524],"P1|BR|60.1.0|A":[1426,1178,1143,1126,1011,884,717,643,506,327],"P1|BR|60.1.0|B":[1734,1544,1435,1397,1271,1124,910,800,640,427],"P1|BR|60.1.0|C":[5552,5069,4939,4770,4281,3853,3068,2729,2296,1516],"P1|BR|60.1.0|D":[21247,19592,18938,18383,16391,14567,11654,10390,8685,5682],"P2|BR|59.2.0|A":[585,483,471,466,416,381,307,273,227,145],"P2|BR|59.2.0|B":[829,728,713,699,631,552,447,401,331,202],"P2|BR|59.2.0|C":[2359,2169,2128,2092,1901,1694,1362,1226,1006,627],"P2|BR|59.2.0|D":[8174,7570,7387,7226,6519,5932,4918,4443,3735,2334],"P2|BR|60.2.0|A":[532,432,422,413,367,323,264,241,193,117],"P2|BR|60.2.0|B":[696,626,605,589,526,476,387,355,304,198],"P2|BR|60.2.0|C":[2014,1830,1790,1754,1568,1406,1149,1033,865,557],"P2|BR|60.2.0|D":[8021,7358,7139,6956,6237,5656,4560,4085,3413,2137]}};
+    const R=DATA.R, D=DATA.D;
+    const STEPS=['Install',101,102,103,104,105,106,107,108,110,116,124,132,144,154];
+    const S2=['Install',101,102,104,105,106,107,108,110,116];
+    const SEG=[['A','≤ 10'],['B','11'],['C','12–13'],['D','14+']];
+    const CTRY=[['US','US','--c-us'],['IN','IN','--c-in'],['BR','BR','--c-br']];
+    const fmt=(v,d=1)=>{const r=Math.round(v*Math.pow(10,d))/Math.pow(10,d);return (r>0?'+':r<0?'−':'±')+Math.abs(r).toFixed(d);};
+    const pct=v=>(v*100).toFixed(1)+'%';
+    function cmp(a,b,i){const ra=a[i]/a[0],rb=b[i]/b[0];const se=Math.sqrt(ra*(1-ra)/a[0]+rb*(1-rb)/b[0]);return{ra,rb,d:(rb-ra)*100,z:(rb-ra)/se};}
+    function cls(d,z){if(Math.abs(z)<2)return 'ns';if(d<=-4)return 'bad2';if(d<=-2)return 'bad';if(d<=-1)return 'warn';if(d>=1)return 'good';return '';}
+
+    /* ---- gap chart ---- */
+    const CH_STEPS=[101,102,103,104,105,106,107,108,110,116,124];
+    const series=[];
+    CTRY.forEach(([c,label,col])=>{
+      [['P1','60.1.0',false],['P2','60.2.0',true]].forEach(([p,b,dash])=>{
+        const a=R[p+'|'+c+'|59.2.0'], x=R[p+'|'+c+'|'+b];
+        series.push({key:c+b,label:label+' · '+b,col,dash,vals:CH_STEPS.map(s=>cmp(a,x,STEPS.indexOf(s)).d),on:true});
+      });
+    });
+    const legendEl=document.getElementById('gapLegend');
+    series.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='sw';b.setAttribute('aria-pressed','true');b.innerHTML=`<i class="${s.dash?'dash':''}" style="--c:var(${s.col})"></i>${s.label}`;b.addEventListener('click',()=>{s.on=!s.on;b.setAttribute('aria-pressed',String(s.on));gapChart();});legendEl.appendChild(b);});
+    const chartEl=document.getElementById('gapChart');
+    function gapChart(){
+      const cw=Math.round(chartEl.clientWidth)||1000,W=Math.max(320,Math.min(cw,1240)),H=W<640?300:400;
+      const p={l:W<640?40:54,r:W<640?56:96,t:24,b:44},minY=-6,maxY=2,n=CH_STEPS.length;
+      const x=i=>p.l+i*(W-p.l-p.r)/(n-1),y=v=>p.t+(maxY-v)*(H-p.t-p.b)/(maxY-minY);
+      const ticks=[-6,-5,-4,-3,-2,-1,0,1,2];
+      let svg=`<svg class="svg-chart" viewBox="0 0 ${W} ${H}">`;
+      svg+=`<rect x="${x(0)}" y="${p.t}" width="${x(7)-x(0)}" height="${H-p.t-p.b}" style="fill:var(--red);opacity:.05"/>`;
+      svg+=`<text class="anntext" x="${(x(0)+x(7))/2}" y="${H-p.b+34}" text-anchor="middle">격차가 벌어지는 구간 (101~108)</text>`;
+      ticks.forEach(t=>{svg+=`<line class="gridline" x1="${p.l}" x2="${W-p.r}" y1="${y(t)}" y2="${y(t)}" ${t===0?'style="stroke:var(--axis);stroke-width:1.6"':''}/><text class="axistext" x="${p.l-8}" y="${y(t)+4}" text-anchor="end">${t>0?'+'+t:t}</text>`;});
+      CH_STEPS.forEach((s,i)=>{svg+=`<text class="axistext" x="${x(i)}" y="${H-p.b+16}" text-anchor="middle">${s}</text>`;});
+      series.filter(s=>s.on).forEach(s=>{
+        const d=s.vals.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+        svg+=`<path d="${d}" style="fill:none;stroke:var(${s.col});stroke-width:${s.dash?2.4:3.4};stroke-linejoin:round;stroke-linecap:round;${s.dash?'stroke-dasharray:7 6;':''}"/>`;
+        s.vals.forEach((v,i)=>{svg+=`<circle cx="${x(i)}" cy="${y(v)}" r="${s.dash?2.6:3.4}" style="fill:var(${s.col})"><title>${s.label} · 스텝 ${CH_STEPS[i]} · ${fmt(v)}%p</title></circle>`;});
+        const li=7,v=s.vals[li];
+        if(!s.dash&&(s.key==='BR60.1.0'||s.key==='IN60.1.0')){svg+=`<text class="valtext" x="${x(li)}" y="${y(v)+18}" text-anchor="middle" style="fill:var(${s.col})">${fmt(v)}</text>`;}
+      });
+      const ends=series.filter(s=>s.on).map(s=>({s,y:y(s.vals[n-1])})).sort((a,b)=>a.y-b.y);
+      for(let k=1;k<ends.length;k++){if(ends[k].y-ends[k-1].y<14)ends[k].y=ends[k-1].y+14;}
+      const over=ends.length?ends[ends.length-1].y-(H-p.b):0;if(over>0)ends.forEach(e=>e.y-=over);
+      ends.forEach(e=>{svg+=`<text class="valtext" x="${x(n-1)+8}" y="${e.y+4}" style="fill:var(${e.s.col});font-size:11px">${e.s.label.replace(' · ',' ')}</text>`;});
+      svg+=`<text class="anntext" x="${p.l}" y="${p.t-8}">%p</text></svg>`;
+      chartEl.innerHTML=svg;
+    }
+    gapChart();
+
+    /* ---- country tables ---- */
+    const T_STEPS=[101,104,106,108,110,116];
+    function countryTable(el,p,nb,withPrev){
+      let h='<thead><tr><th></th><th>신규 설치<small>59.2.0 / '+nb+'</small></th>'+T_STEPS.map(s=>`<th>${s}</th>`).join('')+'</tr></thead><tbody>';
+      CTRY.forEach(([c])=>{
+        const a=R[p+'|'+c+'|59.2.0'],b=R[p+'|'+c+'|'+nb];
+        h+=`<tr><td class="rowh">${c}</td><td class="dim">${a[0].toLocaleString()}<br>${b[0].toLocaleString()}</td>`;
+        T_STEPS.forEach(s=>{const i=STEPS.indexOf(s);const r=cmp(a,b,i);let extra='';if(withPrev){const r1=cmp(R['P1|'+c+'|59.2.0'],R['P1|'+c+'|60.1.0'],i);extra=`<small>60.1.0 때 ${fmt(r1.d)}</small>`;}h+=`<td class="${cls(r.d,r.z)}">${pct(r.rb)}<small>${fmt(r.d)}%p</small>${extra}</td>`;});
+        h+='</tr>';
+      });
+      el.innerHTML=h+'</tbody>';
+    }
+    countryTable(document.getElementById('tblP1'),'P1','60.1.0',false);
+    countryTable(document.getElementById('tblP2'),'P2','60.2.0',true);
+
+    /* ---- OS tables ---- */
+    const O_STEPS=[101,102,104,106,108,110];
+    function osTable(el,c,p,nb){
+      let h='<thead><tr><th>OS</th><th>신규<small>59.2.0 / '+nb+'</small></th>'+O_STEPS.map(s=>`<th>${s}</th>`).join('')+'</tr></thead><tbody>';
+      SEG.forEach(([g,lab])=>{
+        const a=D[p+'|'+c+'|59.2.0|'+g],b=D[p+'|'+c+'|'+nb+'|'+g];
+        h+=`<tr><td class="rowh">Android ${lab}</td><td class="dim" style="font-size:12px">${a[0].toLocaleString()}<br>${b[0].toLocaleString()}</td>`;
+        O_STEPS.forEach(s=>{const i=S2.indexOf(s);const r=cmp(a,b,i);h+=`<td class="${cls(r.d,r.z)}" title="|z| ${Math.abs(r.z).toFixed(1)}">${fmt(r.d)}</td>`;});
+        h+='</tr>';
+      });
+      el.innerHTML=h+'</tbody>';
+    }
+    function renderOS(c){osTable(document.getElementById('osP1'),c,'P1','60.1.0');osTable(document.getElementById('osP2'),c,'P2','60.2.0');document.querySelectorAll('[data-os]').forEach(b=>{const on=b.dataset.os===c;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});}
+    document.querySelectorAll('[data-os]').forEach(b=>b.addEventListener('click',()=>renderOS(b.dataset.os)));
+    renderOS('IN');
+
+    /* ---- Android 11 spotlight ---- */
+    function drop(arr,from,to){const i=S2.indexOf(from),j=S2.indexOf(to);return 1-arr[j]/arr[i];}
+    function a11(el,c){
+      const rows=[['59.2.0','P1|'+c+'|59.2.0|B','9/17–20','var(--axis)'],['60.1.0','P1|'+c+'|60.1.0|B','9/17–20','var(--red)'],['59.2.0','P2|'+c+'|59.2.0|B','9/24–25','var(--axis)'],['60.2.0','P2|'+c+'|60.2.0|B','9/24–25','var(--purple)']];
+      const segs=[[101,102,'101 → 102 (테이블1)'],[102,104,'102 → 104 (머신1·카운터)']];
+      const max=12;
+      let h=`<h3>${c} · Android 11</h3>`;
+      segs.forEach(([f,t,lab])=>{
+        h+=`<div class="bar-group"><h4>${lab} 스텝 이탈률</h4><div class="bars">`;
+        rows.forEach(([b,k,per,col])=>{const v=drop(D[k],f,t)*100;h+=`<div class="bar-row"><div class="lab">${b}<small>${per} · ${D[k][0].toLocaleString()}명</small></div><div class="track"><i style="--w:${Math.min(100,v/max*100)}%;--c:${col}"></i></div><b>${v.toFixed(1)}%</b></div>`;});
+        h+='</div></div>';
+      });
+      el.innerHTML=h;
+    }
+    a11(document.getElementById('a11IN'),'IN');a11(document.getElementById('a11BR'),'BR');
+
+    /* ---- baseline step drops (59.2.0 P1) ---- */
+    (function(){
+      const pairs=[['Install',101,'설치 → 101 매장 문'],[101,102,'101 → 102 테이블1'],[102,103,'102 → 103 머신1'],[103,104,'103 → 104 카운터'],[104,105,'104 → 105 테이블2'],[105,106,'105 → 106 확장1'],[106,107,'106 → 107 HR 사무실'],[107,108,'107 → 108 플레이어 사무실'],[108,110,'108 → 110 확장2 (2스텝)']];
+      let h='<thead><tr><th style="text-align:left">구간</th>'+CTRY.map(([c])=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';
+      pairs.forEach(([f,t,lab])=>{
+        h+=`<tr><td class="rowh">${lab}</td>`;
+        CTRY.forEach(([c])=>{const a=R['P1|'+c+'|59.2.0'];const v=(1-a[STEPS.indexOf(t)]/a[STEPS.indexOf(f)])*100;const k=v>=14?'bad2':v>=10?'bad':v>=7?'warn':'';h+=`<td class="${k}">${v.toFixed(1)}%</td>`;});
+        h+='</tr>';
+      });
+      document.getElementById('tblBase').innerHTML=h+'</tbody>';
+    })();
+
+
+    /* ---- manufacturer table ---- */
+    const MFN={sam:'Samsung',opp:'Oppo',viv:'Vivo',rea:'Realme',xia:'Xiaomi',mot:'Motorola',tec:'Tecno·Infinix·itel',oth:'기타'};
+    const S3=['Install',101,102,104,105,106,107,108,110];const I108=S3.indexOf(108);
+    function mfTable(c){
+      const A1=MFD['P1|'+c+'|59.2.0'],B1=MFD['P1|'+c+'|60.1.0'],A2=MFD['P2|'+c+'|59.2.0'],B2=MFD['P2|'+c+'|60.2.0'];
+      const tot=o=>Object.values(o).reduce((s,a)=>s+a[0],0);
+      const T={A1:tot(A1),B1:tot(B1),A2:tot(A2),B2:tot(B2)};
+      const keys=Object.keys(A1).filter(k=>k!=='oth'&&A1[k][0]>=300).sort((x,y)=>A1[y][0]-A1[x][0]);keys.push('oth');
+      let h='<thead><tr><th style="text-align:left">제조사</th><th>59.2.0 설치 비중<small>9/17–20</small></th><th>60.1.0<br>설치 비중 배율</th><th>60.1.0<br>108 격차</th><th>60.2.0<br>설치 비중 배율</th><th>60.2.0<br>108 격차</th></tr></thead><tbody>';
+      keys.forEach(k=>{
+        const r1=(B1[k][0]/T.B1)/(A1[k][0]/T.A1),r2=(B2[k][0]/T.B2)/(A2[k][0]/T.A2);
+        const g1=cmp(A1[k],B1[k],I108),g2=cmp(A2[k],B2[k],I108);
+        const rc=r=>r>=1.2?'bad':r<=0.7?'warn':'';
+        h+=`<tr><td class="rowh">${MFN[k]}<small>${A1[k][0].toLocaleString()} / ${B1[k][0].toLocaleString()}명</small></td><td class="dim">${(A1[k][0]/T.A1*100).toFixed(1)}%</td><td class="${rc(r1)}">${r1.toFixed(2)}×</td><td class="${cls(g1.d,g1.z)}">${fmt(g1.d)}</td><td class="${rc(r2)}">${r2.toFixed(2)}×</td><td class="${cls(g2.d,g2.z)}">${fmt(g2.d)}</td></tr>`;
+      });
+      document.getElementById('tblMF').innerHTML=h+'</tbody>';
+      document.querySelectorAll('[data-mf]').forEach(b=>{const on=b.dataset.mf===c;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
+    }
+    document.querySelectorAll('[data-mf]').forEach(b=>b.addEventListener('click',()=>mfTable(b.dataset.mf)));
+    mfTable('IN');
+
+    /* ---- group chart (normal vs inflated) ---- */
+    const INF={IN:['viv'],BR:['xia','rea']};
+    function pool(o,keys){const s=Array(9).fill(0);keys.forEach(k=>{if(o[k])o[k].forEach((v,i)=>s[i]+=v)});return s;}
+    const grp=[];
+    [['IN','60.1.0','P1'],['IN','60.2.0','P2'],['BR','60.1.0','P1'],['BR','60.2.0','P2']].forEach(([c,b,p])=>{
+      const A=MFD[p+'|'+c+'|59.2.0'],B=MFD[p+'|'+c+'|'+b];const all=[...new Set([...Object.keys(A),...Object.keys(B)])];
+      const inf=INF[c],nor=all.filter(k=>!inf.includes(k));
+      grp.push({lab:c+' · '+b,nor:cmp(pool(A,nor),pool(B,nor),I108).d,inf:cmp(pool(A,inf),pool(B,inf),I108).d});
+    });
+    const grpEl=document.getElementById('grpChart');
+    function grpChart(){
+      const W=Math.max(300,Math.min(Math.round(grpEl.clientWidth)||600,720)),rowH=58,top=26,H=top+grp.length*rowH+30;
+      const L=W<460?78:96,Rr=16,minV=-10,maxV=3;const x=v=>L+(v-minV)*(W-L-Rr)/(maxV-minV);
+      let s=`<svg class="svg-chart" viewBox="0 0 ${W} ${H}">`;
+      [-10,-8,-6,-4,-2,0,2].forEach(v=>{s+=`<line class="gridline" x1="${x(v)}" x2="${x(v)}" y1="${top-6}" y2="${H-26}" ${v===0?'style="stroke:var(--axis);stroke-width:1.6"':''}/><text class="axistext" x="${x(v)}" y="${H-10}" text-anchor="middle">${v>0?'+'+v:v}</text>`;});
+      s+=`<rect x="${L}" y="4" width="12" height="8" rx="2" style="fill:var(--green)"/><text class="anntext" x="${L+16}" y="12">비중 정상 제조사</text><rect x="${L+130}" y="4" width="12" height="8" rx="2" style="fill:var(--red)"/><text class="anntext" x="${L+146}" y="12">비중 급증 제조사</text>`;
+      grp.forEach((g,i)=>{const y0=top+i*rowH;s+=`<text class="valtext" x="${L-10}" y="${y0+24}" text-anchor="end">${g.lab}</text>`;
+        [['nor','var(--green)',4],['inf','var(--red)',24]].forEach(([k,col,dy])=>{const v=g[k];const x0=Math.min(x(0),x(v)),w=Math.abs(x(v)-x(0));s+=`<rect x="${x0}" y="${y0+dy}" width="${Math.max(w,2)}" height="16" rx="4" style="fill:${col}"/><text class="valtext" x="${v<0?x(v)-5:x(v)+5}" y="${y0+dy+12}" text-anchor="${v<0?'end':'start'}" style="font-size:11px">${fmt(v)}</text>`;});});
+      grpEl.innerHTML=s+'</svg>';
+    }
+    grpChart();
+
+    /* ---- theme ---- */
+    const root=document.documentElement, mq=matchMedia('(prefers-color-scheme: dark)');
+    const effTheme=()=>root.getAttribute('data-theme')||(mq.matches?'dark':'light');
+    function syncToggle(){const e=effTheme();document.querySelectorAll('[data-theme-set]').forEach(b=>{const on=b.dataset.themeSet===e;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});}
+    document.querySelectorAll('[data-theme-set]').forEach(b=>b.addEventListener('click',()=>{root.setAttribute('data-theme',b.dataset.themeSet);try{localStorage.setItem('pr-tut-theme',b.dataset.themeSet);}catch(e){}syncToggle();}));
+    mq.addEventListener&&mq.addEventListener('change',syncToggle);
+    syncToggle();
+    let themeBeforePrint=null;
+    window.addEventListener('beforeprint',()=>{themeBeforePrint=root.getAttribute('data-theme');root.setAttribute('data-theme','light');});
+    window.addEventListener('afterprint',()=>{if(themeBeforePrint)root.setAttribute('data-theme',themeBeforePrint);else root.removeAttribute('data-theme');});
+
+    /* ---- deck navigation ---- */
+    const scenes=[...document.querySelectorAll('.scene')], nav=[...document.querySelectorAll('.nav button')];
+    const names=Object.fromEntries(nav.map(b=>[b.dataset.target,b.textContent]));
+    const prevBtn=document.getElementById('prevBtn'), nextBtn=document.getElementById('nextBtn');
+    document.getElementById('pageTotal').textContent=String(scenes.length).padStart(2,'0');
+    scenes.forEach((s,i)=>s.setAttribute('data-no',String(i+1).padStart(2,'0')+' / '+String(scenes.length).padStart(2,'0')));
+    let cur=0;
+    function showSlide(i,opts={}){
+      cur=Math.max(0,Math.min(scenes.length-1,i));
+      const id=scenes[cur].id;
+      scenes.forEach((s,k)=>{const on=k===cur;s.classList.toggle('active',on);s.setAttribute('aria-hidden',on?'false':'true');});
+      nav.forEach(b=>{const on=b.dataset.target===id;b.classList.toggle('on',on);if(on){b.setAttribute('aria-current','page');b.scrollIntoView({block:'nearest',inline:'center'});}else b.removeAttribute('aria-current');});
+      document.getElementById('pageNo').textContent=String(cur+1).padStart(2,'0');
+      document.getElementById('pageName').textContent=names[id]||'';
+      prevBtn.disabled=cur===0; nextBtn.disabled=cur===scenes.length-1;
+      document.getElementById('progressBar').style.width=((cur+1)/scenes.length*100)+'%';
+      if(!opts.keepHash){try{history.replaceState(null,'','#'+id);}catch(e){}}
+      window.scrollTo({top:0,behavior:'instant'});
+      if(id==='chart') gapChart();
+      if(id==='hypo') grpChart();
+    }
+    nav.forEach(b=>b.addEventListener('click',()=>showSlide(scenes.findIndex(s=>s.id===b.dataset.target))));
+    prevBtn.addEventListener('click',()=>showSlide(cur-1));
+    nextBtn.addEventListener('click',()=>showSlide(cur+1));
+    document.addEventListener('keydown',e=>{
+      if(e.altKey||e.ctrlKey||e.metaKey||(e.target.closest&&e.target.closest('input,textarea,select')))return;
+      if(e.key==='ArrowRight'){e.preventDefault();showSlide(cur+1);}
+      else if(e.key==='ArrowLeft'){e.preventDefault();showSlide(cur-1);}
+    });
+    let tx=null,ty=null;
+    document.querySelector('main').addEventListener('touchstart',e=>{const t=e.changedTouches[0];tx=t.clientX;ty=t.clientY;},{passive:true});
+    document.querySelector('main').addEventListener('touchend',e=>{if(tx===null)return;const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;tx=null;
+      if(Math.abs(dx)>70&&Math.abs(dy)<45&&!e.target.closest('.table-wrap,.chart-card'))showSlide(cur+(dx<0?1:-1));},{passive:true});
+    let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{gapChart();grpChart();},150)});
+    const startIdx=scenes.findIndex(s=>'#'+s.id===location.hash);
+    showSlide(startIdx<0?0:startIdx,{keepHash:startIdx<0});
+    document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
+      const el=document.getElementById(b.dataset.copy);
+      try{await navigator.clipboard.writeText(el.innerText);b.textContent='복사됨';b.classList.add('done');setTimeout(()=>{b.textContent='복사';b.classList.remove('done')},1800);}
+      catch(err){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='선택됨 · Ctrl+C';}
+    }));
+  </script>
+</body>
+</html>
