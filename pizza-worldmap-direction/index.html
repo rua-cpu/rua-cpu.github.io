@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Pizza Ready 월드맵 개선 방향 — 방향, 코어 연결, 유저에게 보이는 방식, 업데이트 단계, 리소스">
+  <title>Pizza Ready · 월드맵 개선 방향</title>
+  <script>try{var t=localStorage.getItem('pr-wmd-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <style>
+    :root{
+      --ink:#20242d;--muted:#5e6674;--paper:#f7f5ef;--panel:#ffffff;--card:#ffffff;--soft:#faf9f5;--line:#dedbd2;
+      --red:#e54b3f;--red-deep:#a72f2b;--yellow:#f4b83f;--green:#168a67;--blue:#2f6fc6;--purple:#7656b6;--orange:#dd7a32;
+      --soft-red:#fff0ec;--soft-yellow:#fff5d7;--soft-green:#eaf7f1;--soft-blue:#edf4ff;
+      --green-ink:#116b50;--red-ink:#9b342f;--yellow-ink:#8b6112;--blue-ink:#2f66aa;
+      --track:#ece9e2;--chip:#eeeae0;--chip-ink:#5d584e;--grid:#e9e5dc;--axis:#5e6674;--text2:#454b57;--text3:#555d69;
+      --deckbar:rgba(247,245,239,.94);--hover:#ffffff;--callout:#fff7f4;--caution:#f4f1ea;--scorebox:#f7f5ef;--cell:#f1eee8;
+      --qbg:#20242d;--qink:#ffffff;--thbg:#20242d;--thtx:#ffffff;--herostat:rgba(255,255,255,.72);
+      --cover:linear-gradient(135deg,#fff 0%,#fff7e4 55%,#ffe1d8 100%);--sceneno:#6f685c;--source:#6f685c;
+      --red-text:#bf3a30;--green-text:#137a5b;--blue-text:#2c6cc4;--orange-text:#b5591b;--purple-text:#7656b6;
+      --dot-empty:#8f897d;--bar-ink:#ffffff;--toggle-bg:#ebe8e0;--toggle-on:#ffffff;
+      --shadow:0 18px 55px rgba(38,34,27,.10);--radius:24px;--safe-top:env(safe-area-inset-top,0px);
+      color-scheme:light;
+    }
+    @media (prefers-color-scheme:dark){
+      :root:not([data-theme="light"]){
+        --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+        --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;--orange:#ea914e;
+        --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;
+        --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;
+        --track:#30343c;--chip:#30343c;--chip-ink:#c9cdd4;--grid:#30343c;--axis:#9aa1ad;--text2:#c8ccd4;--text3:#b3b9c3;
+        --deckbar:rgba(21,23,27,.92);--hover:#262a31;--callout:#2e2220;--caution:#23262d;--scorebox:#262a31;--cell:#2a2e35;
+        --qbg:#2b303a;--qink:#ffffff;--thbg:#2b303a;--thtx:#ffffff;--herostat:rgba(255,255,255,.05);
+        --cover:linear-gradient(135deg,#1d2026 0%,#2a251a 55%,#35211e 100%);--sceneno:#8a919c;--source:#8b919c;
+        --red-text:#f06b5f;--green-text:#34b489;--blue-text:#5b9bea;--orange-text:#ea914e;--purple-text:#9a7fd6;
+        --dot-empty:#6b7280;--bar-ink:#111418;--toggle-bg:#2a2e35;--toggle-on:#3a3f49;
+        --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+      }
+    }
+    :root[data-theme="dark"]{
+      --ink:#eceef2;--muted:#a3aab6;--paper:#15171b;--panel:#1d2026;--card:#23262d;--soft:#262a31;--line:#353a44;
+      --red:#f06b5f;--red-deep:#ff8a7e;--yellow:#f4b83f;--green:#34b489;--blue:#5b9bea;--purple:#9a7fd6;--orange:#ea914e;
+      --soft-red:#3a2522;--soft-yellow:#3a321f;--soft-green:#1b3a30;--soft-blue:#1c2b40;
+      --green-ink:#6fd3ae;--red-ink:#ff9a8f;--yellow-ink:#f0c46a;--blue-ink:#8bb8f2;
+      --track:#30343c;--chip:#30343c;--chip-ink:#c9cdd4;--grid:#30343c;--axis:#9aa1ad;--text2:#c8ccd4;--text3:#b3b9c3;
+      --deckbar:rgba(21,23,27,.92);--hover:#262a31;--callout:#2e2220;--caution:#23262d;--scorebox:#262a31;--cell:#2a2e35;
+      --qbg:#2b303a;--qink:#ffffff;--thbg:#2b303a;--thtx:#ffffff;--herostat:rgba(255,255,255,.05);
+      --cover:linear-gradient(135deg,#1d2026 0%,#2a251a 55%,#35211e 100%);--sceneno:#8a919c;--source:#8b919c;
+        --red-text:#f06b5f;--green-text:#34b489;--blue-text:#5b9bea;--orange-text:#ea914e;--purple-text:#9a7fd6;
+        --dot-empty:#6b7280;--bar-ink:#111418;--toggle-bg:#2a2e35;--toggle-on:#3a3f49;
+      --shadow:0 18px 55px rgba(0,0,0,.35);color-scheme:dark;
+    }
+    :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:calc(74px + env(safe-area-inset-top,0px))}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Segoe UI",sans-serif;font-size:17px;line-height:1.58;word-break:keep-all}
+    button{font:inherit;color:inherit}
+    :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+    b,strong{font-weight:850}
+    .deckbar{position:fixed;top:0;left:0;right:0;height:calc(64px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 22px 0;z-index:50;background:var(--deckbar);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px}
+    .brand{font-weight:900;letter-spacing:-.03em;white-space:nowrap}.brand b{color:var(--red-text)}
+    .nav{display:flex;gap:5px;overflow:auto;scrollbar-width:none;flex:1}.nav::-webkit-scrollbar{display:none}
+    .nav button{border:0;background:transparent;color:var(--muted);padding:7px 9px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:700}
+    .nav button:hover,.nav button.on{background:var(--hover);color:var(--ink)}
+    .actions{display:flex;gap:8px}.actions button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:7px 11px;cursor:pointer;font-size:13px;font-weight:800;color:var(--ink);white-space:nowrap}
+    .theme-toggle{display:inline-flex;padding:3px;background:var(--toggle-bg);border-radius:11px;gap:3px;border:1px solid var(--line)}.actions .theme-toggle button{border:0;background:transparent;padding:5px 11px;border-radius:8px;font-size:13px;font-weight:850;color:var(--muted)}.actions .theme-toggle button.on{background:var(--toggle-on);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+    .progress{position:fixed;top:calc(63px + env(safe-area-inset-top,0px));left:0;width:100%;height:3px;z-index:55}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--yellow));transition:width .15s}
+    main{padding:88px 22px calc(96px + env(safe-area-inset-bottom,0px))}
+    .scene:not(.active){display:none}
+    .scene.active{animation:slidein .22s ease-out}
+    @keyframes slidein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .pager-wrap{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:center;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+    .pager{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--deckbar);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:var(--shadow)}
+    .pager button{border:0;background:var(--card);color:var(--ink);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:850;cursor:pointer;border:1px solid var(--line)}
+    .pager button:disabled{opacity:.35;cursor:default}
+    .pager-info{min-width:150px;text-align:center;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap}.pager-info b{color:var(--ink);font-size:15px}
+    .scene{position:relative;max-width:1360px;min-height:max(600px,calc(100vh - 184px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);padding:56px 62px 64px;overflow:hidden}
+    .scene::after{content:attr(data-no);position:absolute;right:28px;bottom:20px;font-size:12px;font-weight:900;color:var(--sceneno);letter-spacing:.08em}
+    .eyebrow{font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--red-text);margin-bottom:10px}
+    h1,h2,h3,p{margin-top:0}h1,h2,h3{letter-spacing:-.045em;line-height:1.16}
+    h1{font-size:clamp(42px,6vw,82px);max-width:1050px;margin-bottom:22px}
+    h2{font-size:clamp(34px,4.3vw,58px);margin-bottom:20px}
+    h3{font-size:23px;margin-bottom:12px}
+    .lead{font-size:clamp(20px,2.1vw,29px);line-height:1.45;color:var(--text2);max-width:990px}
+    .sub{font-size:18px;color:var(--text2);max-width:900px;margin-bottom:0}
+    .note{color:var(--muted);font-size:14px;line-height:1.55}
+    .source{font-size:12px;color:var(--source);margin-top:12px}
+    .source a{color:inherit}
+    .grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .card{border:1px solid var(--line);border-radius:20px;padding:21px;background:var(--card);min-width:0}
+    .card p:last-child,.card ul:last-child{margin-bottom:0}
+    .card ul{padding-left:19px;margin:8px 0 0}.card li{margin:6px 0;font-size:15px}
+    .card.soft{background:var(--soft)}.card.red{background:var(--soft-red);border-color:color-mix(in srgb,var(--red) 30%,var(--line))}.card.green{background:var(--soft-green);border-color:color-mix(in srgb,var(--green) 30%,var(--line))}.card.blue{background:var(--soft-blue);border-color:color-mix(in srgb,var(--blue) 30%,var(--line))}.card.yellow{background:var(--soft-yellow);border-color:color-mix(in srgb,var(--yellow) 40%,var(--line))}
+    .card h3{font-size:19px}
+    .metric .label{color:var(--muted);font-size:13px;font-weight:800}.metric .value{font-size:42px;line-height:1.08;font-weight:950;letter-spacing:-.055em;margin:6px 0}.metric .value.up{color:var(--green)}.metric .value.down{color:var(--red-deep)}.metric .value.flat{color:var(--ink)}.metric .desc{font-size:14px;color:var(--text3)}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;background:var(--chip);color:var(--chip-ink);white-space:nowrap}.pill.high{background:var(--soft-green);color:var(--green-ink)}.pill.mid{background:var(--soft-yellow);color:var(--yellow-ink)}.pill.low{background:var(--soft-red);color:var(--red-ink)}.pill.info{background:var(--soft-blue);color:var(--blue-ink)}
+    .cover{background:var(--cover);display:flex;flex-direction:column;justify-content:center;padding-bottom:92px}
+    .cover .ring{position:absolute;border-radius:50%;border:32px solid rgba(229,75,63,.08);width:430px;height:430px;right:-130px;top:-130px}.cover .ring.r2{width:230px;height:230px;right:160px;top:110px;border-width:22px;border-color:rgba(244,184,63,.15)}
+    .hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:970px;margin-top:28px}.hero-stat{border-left:5px solid var(--red);padding:10px 18px;background:var(--herostat);border-radius:0 16px 16px 0}.hero-stat:nth-child(2){border-color:var(--yellow)}.hero-stat:nth-child(3){border-color:var(--green)}.hero-stat b{display:block;font-size:28px;letter-spacing:-.04em}.hero-stat span{font-size:14px;color:var(--muted)}
+    .timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:34px;position:relative}.timeline::before{content:"";position:absolute;left:6%;right:6%;top:29px;height:4px;background:var(--track)}.stage{position:relative;padding-top:58px}.stage .dot{position:absolute;top:15px;left:18px;width:31px;height:31px;border-radius:50%;background:var(--panel);border:8px solid var(--stage);box-shadow:0 0 0 5px var(--panel)}.stage .num{color:var(--stage-t,var(--stage));font-weight:950;font-size:18px}.stage h3{font-size:18px;margin:5px 0 8px}.stage p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:0}
+    .question{background:var(--qbg);color:var(--qink);border-radius:20px;padding:22px 25px;font-size:22px;font-weight:900;line-height:1.4}.question em{color:var(--yellow);font-style:normal}
+    .goal-result{display:grid;grid-template-columns:1fr 72px 1fr;align-items:stretch;gap:12px;margin-top:22px}.goal-result .arrow{display:grid;place-items:center;font-size:34px;color:var(--red);font-weight:900}.goal-result h3{font-size:18px}.goal-result ul{padding-left:20px;margin:8px 0 0}.goal-result li{margin:7px 0;font-size:15px}
+    .scorebox{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;padding:16px 19px;border-radius:16px;background:var(--scorebox);flex-wrap:wrap}.dots{display:inline-flex;gap:5px;vertical-align:middle}.dots i{width:13px;height:13px;border-radius:50%;background:transparent;box-shadow:inset 0 0 0 2px var(--dot-empty)}.dots i.fill{box-shadow:none}.dots i.fill{background:var(--green)}.dots.warn i.fill{background:var(--yellow)}.dots.bad i.fill{background:var(--red)}
+    .verdict{font-size:21px;font-weight:950}.verdict span{color:var(--green-text)}.verdict span.neg{color:var(--red-deep)}
+    .chart-card{border:1px solid var(--line);border-radius:20px;padding:19px;background:var(--card)}.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}.chart-head h3{font-size:18px;margin:0}.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.legend span::before{content:"";display:inline-block;width:14px;height:4px;border-radius:3px;background:var(--c);margin-right:6px;vertical-align:middle}
+    .svg-chart{width:100%;height:auto;display:block}.svg-chart text{font-family:inherit}.gridline{stroke:var(--grid);stroke-width:1}.axistext{font-size:12px;fill:var(--axis)}.valtext{font-size:12px;font-weight:900;fill:var(--ink)}.anntext{font-size:12px;font-weight:800;fill:var(--muted)}
+    .callout{border-left:5px solid var(--red);padding:16px 20px;background:var(--callout);border-radius:0 15px 15px 0;margin-top:18px}.callout b{color:var(--red-deep)}.callout.green{border-color:var(--green);background:var(--soft-green)}.callout.green b{color:var(--green-ink)}
+    .split-bars{display:grid;gap:14px;margin-top:6px}.split-row{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:center}.split-row .name{font-size:14px;font-weight:900}.split-pair{display:grid;gap:5px}.split-track{height:30px;background:var(--track);border-radius:8px;position:relative;overflow:hidden}.split-track i{position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--c);display:flex;align-items:center;padding:0 10px;color:var(--bar-ink);font-size:12px;font-weight:900;white-space:nowrap;border-radius:8px}.split-track i{font-style:normal}.split-track.before i{background:color-mix(in srgb,var(--c) 28%,var(--card));color:var(--ink)}
+    .geo{display:grid;gap:9px;margin-top:6px}.geo-row{display:grid;grid-template-columns:118px 1fr 58px 64px;gap:12px;align-items:center}.geo-row .lab{font-size:14px;font-weight:850}.geo-row .lab small{display:block;font-size:11px;color:var(--muted);font-weight:700}.geo-row .track{height:16px;background:var(--track);border-radius:999px;overflow:hidden}.geo-row .track i{display:block;height:100%;width:var(--w);background:var(--c,var(--red));border-radius:999px}.geo-row b{text-align:right;font-size:14px;color:var(--red-deep)}.geo-row b.flat{color:var(--muted)}.geo-row span{text-align:right;font-size:13px;color:var(--muted);font-weight:800}.geo-head{font-size:11px;font-weight:900;color:var(--muted)}.geo-head div:nth-child(n+3){text-align:right}
+    .table-wrap{overflow-x:auto;margin-top:18px;border-radius:20px}
+    .trait-map{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}.trait-map>div{background:var(--card);padding:14px 16px;font-size:14px}.trait-map .th{background:var(--thbg);color:var(--thtx);font-size:12px;font-weight:900;letter-spacing:.02em}.trait-map .trait{font-weight:950}.trait-map .evidence{color:var(--text3)}.trait-map .design{color:var(--green-ink);font-weight:750}
+    .hypo-map{grid-template-columns:1fr 1.25fr 1.5fr .75fr .75fr;min-width:980px}
+    .matrix{width:100%;border-collapse:separate;border-spacing:6px;min-width:640px}.matrix th{font-size:12px;color:var(--muted);padding:7px;font-weight:900}.matrix td{padding:12px 10px;border-radius:12px;background:var(--cell);text-align:center;font-size:14px;font-weight:850;font-variant-numeric:tabular-nums}.matrix td.rowh{background:transparent;text-align:left;font-weight:900}.matrix .good{background:var(--soft-green);color:var(--green-ink)}.matrix .warn{background:var(--soft-yellow);color:var(--yellow-ink)}.matrix .bad{background:var(--soft-red);color:var(--red-ink)}.matrix .dim{color:var(--muted);font-weight:700}
+    .num{font-variant-numeric:tabular-nums}
+    .principles{counter-reset:p;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.principle{position:relative;border:1px solid var(--line);border-radius:18px;padding:18px 18px 18px 62px;background:var(--card)}.principle::before{counter-increment:p;content:counter(p);position:absolute;left:18px;top:17px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--red-text);color:var(--bar-ink);font-size:13px;font-weight:950}.principle b{display:block;margin-bottom:3px}.principle span{color:var(--muted);font-size:14px}
+    .caution{display:flex;gap:12px;align-items:flex-start;background:var(--caution);border:1px solid var(--line);border-radius:15px;padding:14px 16px;font-size:13px;color:var(--text3)}.caution b{color:var(--ink)}
+    .askbox{margin-top:18px;border:1px solid var(--line);border-radius:18px;background:var(--soft);padding:16px 18px}.askbox .askhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;font-weight:900;color:var(--muted)}.askbox pre{margin:0;white-space:pre-wrap;word-break:keep-all;font-family:inherit;font-size:15px;line-height:1.6;color:var(--ink)}.copy{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:850}.copy.done{background:var(--soft-green);color:var(--green-ink);border-color:transparent}
+    .footer-note{position:absolute;left:62px;right:62px;bottom:22px;font-size:11px;color:var(--source);padding-right:80px}
+    @media (max-width:980px){body{font-size:16px}.scene{padding:42px 30px;min-height:auto}.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline{grid-template-columns:1fr}.timeline::before{left:33px;right:auto;top:18px;bottom:18px;width:4px;height:auto}.stage{padding:4px 0 4px 73px}.stage .dot{left:19px;top:9px}.goal-result{grid-template-columns:1fr}.goal-result .arrow{transform:rotate(90deg)}.footer-note{position:static;margin-top:24px;padding-right:0}.deckbar{padding-left:12px;padding-right:12px}}
+    @media (max-width:650px){main{padding:80px 10px 50px}.scene{padding:34px 20px;border-radius:22px}.g2,.g3,.g4,.hero-stats,.principles{grid-template-columns:1fr}.geo-row{grid-template-columns:86px 1fr 48px 52px;gap:8px}.split-row{grid-template-columns:64px 1fr}.nav{display:none}.brand{font-size:15px}.pager-info{min-width:118px}.pager button{padding:9px 13px}.lead{font-size:19px}.metric .value{font-size:34px}.question{font-size:19px}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.progress i{transition:none}.scene.active{animation:none}}
+    @page{size:16in 9in;margin:0}
+    @media print{.deckbar,.progress,.pager-wrap{display:none}.scene:not(.active){display:block}:root{padding:0}body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}main{padding:0}.scene{width:100%;height:9in;min-height:0;margin:0;border:0;border-radius:0;box-shadow:none;page-break-after:always;padding:42px 48px;overflow:hidden}.scene:last-child{page-break-after:auto}.footer-note{left:48px;right:48px}}
+    .metric .value.sm{font-size:30px;letter-spacing:-.04em}
+  
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.chips span{padding:7px 12px;border-radius:999px;background:var(--chip);color:var(--chip-ink);font-size:14px;font-weight:800}
+    .three{display:grid;gap:10px;margin-top:6px}.three div{border-left:5px solid var(--blue);background:var(--card);border-radius:0 12px 12px 0;padding:10px 14px}.three b{display:block;font-size:19px;letter-spacing:-.03em}.three span{font-size:14px;color:var(--muted)}
+    .ladder{display:grid;gap:8px}.lrow{display:grid;grid-template-columns:200px 1fr 200px;gap:12px;align-items:stretch}.lrow>div{border-radius:14px;padding:11px 16px;display:flex;flex-direction:column;justify-content:center}
+    .lrow.head>div{padding:0 16px;font-size:12px;font-weight:900;color:var(--muted)}.lrow .when{font-weight:850;font-size:15px;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px}.lrow .when i{font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--chip);color:var(--chip-ink);font-size:12px;font-weight:950;flex:none}
+    .lrow .what{border:1px solid var(--line);background:var(--card)}.lrow .what b{font-size:16px}.lrow .what span{font-size:13px;color:var(--muted)}.lrow .do{background:var(--caution);border:1px solid var(--line);font-weight:850;font-size:15px;align-items:center}.lrow .do.quiet{color:var(--muted);font-weight:700}
+    .lrow.key .what{background:var(--soft-blue);border:2px solid var(--blue)}.lrow.key .when i{background:var(--blue);color:#fff}
+    table.plain{width:100%;border-collapse:collapse;min-width:620px;font-size:15px}table.plain th{background:var(--thbg);color:var(--thtx);text-align:left;padding:11px 14px;font-size:13px}table.plain td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}table.plain td:first-child{font-weight:850}table.plain td.dim{color:var(--muted)}table.plain tr:nth-child(even) td{background:var(--soft)}
+    .phases{display:grid;grid-template-columns:1fr 92px 1fr 92px 1fr;align-items:stretch;margin-top:24px}.phase{border:1px solid var(--line);border-radius:20px;padding:20px;background:var(--card);display:flex;flex-direction:column}.phase.key{background:var(--soft-blue);border:2px solid var(--blue)}
+    .phase .pn{font-size:20px;font-weight:950;letter-spacing:-.04em}.phase ul{padding-left:18px;margin:10px 0 14px;flex:1}.phase li{margin:6px 0;font-size:15px}.phase .goal{font-size:13px;color:var(--text3);border-top:1px dashed var(--line);padding-top:10px}
+    .gate{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}.gate span{font-size:26px;color:var(--axis);line-height:1}.gate small{font-size:11px;color:var(--muted);font-weight:700;line-height:1.45}
+    @media (max-width:980px){.phases{grid-template-columns:1fr}.gate{flex-direction:row;padding:8px 0}.gate small br{display:none}.lrow{grid-template-columns:150px 1fr 140px}}
+    @media (max-width:650px){.lrow{grid-template-columns:1fr}.lrow.head{display:none}.lrow .do{align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <header class="deckbar">
+    <div class="brand"><b>Pizza Ready</b> · 월드맵 개선 방향</div>
+    <nav class="nav" aria-label="목차">
+      <button data-target="cover" class="on">요약</button><button data-target="direction">방향</button><button data-target="core">코어 연결</button><button data-target="complex">복잡도</button><button data-target="order">여는 순서</button><button data-target="hidden">보이는 것</button><button data-target="legacy">기존 유저</button><button data-target="firstcall">첫 콜</button><button data-target="basis">단계 기준</button><button data-target="phases">단계 범위</button><button data-target="resource">리소스</button><button data-target="retro">성장 반영</button><button data-target="verify">검증</button><button data-target="align">맞춰볼 부분</button><button data-target="ref">참고</button>
+    </nav>
+    <div class="actions"><div class="theme-toggle" role="group" aria-label="화면 테마"><button type="button" data-theme-set="light" aria-pressed="false">라이트</button><button type="button" data-theme-set="dark" aria-pressed="false">다크</button></div></div>
+  </header>
+  <div class="progress"><i id="progressBar"></i></div>
+
+  <main id="deck">
+    <section class="scene cover" id="cover" data-no="01 / 15">
+      <div class="ring"></div><div class="ring r2"></div>
+      <div class="eyebrow">World Map · Direction</div>
+      <h1>월드맵은<br>이렇게 간다</h1>
+      <p class="lead">매장에서 쌓은 성장을 한 화면에 영구히 남기고, 그 성장으로 도시를 복구하는 장기 목표를 만든다. 시스템은 여러 개지만 유저에게는 <b>"내 매장이 커진다 → 본사가 성장한다 → 도시가 복구된다"</b> 하나의 흐름으로만 보이게 한다.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>3가지만</b><span>유저에게 보이는 것 · 매장 · 본사 · 도시</span></div>
+        <div class="hero-stat"><b>S01~S04</b><span>1차 외형 집중 범위 · US RV의 약 92%</span></div>
+        <div class="hero-stat"><b>32 / 55</b><span>1차 매장 외형 수 · G5까지 제작 기준</span></div>
+      </div>
+      <div class="footer-note">상세 기획서 01~04·06 기준 · 데이터: 바이트브루 Pizza Ready AOS·iOS, 2026-08-01~08-31, GEO=US</div>
+    </section>
+
+    <section class="scene" id="direction" data-no="02 / 15">
+      <div class="eyebrow">Direction</div>
+      <h2>기존 플레이는 그대로,<br>결과가 쌓이는 공간을 더한다</h2>
+      <div class="question" style="margin-top:22px">한 줄 정의 · 각 매장의 성장 결과를 월드맵에 영구히 쌓고, 그 성장으로 열린 <em>도시 복구</em>를 완료한 매장의 짧은 특별 주문으로 완성하는 장기 성장 콘텐츠</div>
+      <div class="grid g2" style="margin-top:22px;align-items:start">
+        <div class="card soft"><h3>지금 구조에서 비어 있는 것</h3><ul>
+          <li>매장을 완공하고 넘어가면 그동안의 성과가 화면에 남지 않는다</li>
+          <li>완료한 매장에 다시 갈 이유가 없다</li>
+          <li>유저가 아는 장기 목표가 "다음 지점 해금" 하나뿐이다</li>
+          <li>중반 이후 판매와 업그레이드의 반복감이 커진다</li></ul></div>
+        <div class="grid" style="gap:12px">
+          <div class="card blue"><h3>① 내 매장이 커진다</h3><p class="note">별레벨이 오르면 월드맵의 매장 건물이 한 단계 커진다 · "내가 플레이한 결과가 남았다"</p></div>
+          <div class="card yellow"><h3>② 본사가 성장한다</h3><p class="note">매장이 클 때마다 본사 게이지가 차고, 다 차면 새 공간이 열린다 · "여러 매장의 성장이 쌓이고 있다"</p></div>
+          <div class="card green"><h3>③ 도시가 복구된다</h3><p class="note">완료한 매장에서 특별 주문을 하면 중앙공원이 단계적으로 되살아난다 · "도시를 완성하는 목표가 생겼다"</p></div>
+        </div>
+      </div>
+      <div class="footer-note">근거 · SP55 행동과 결과가 한 화면에서 이어질 때 반응 개선 · SP59 공간·설비 변화 콘텐츠 D7 AOS +1.27%p, iOS +0.92%p · SP56 해금 시점과 학습 순서가 결과에 영향 (01 마스터 기획서)</div>
+    </section>
+
+    <section class="scene" id="core" data-no="03 / 15">
+      <div class="eyebrow">Core Loop</div>
+      <h2>월드맵은 완료한 매장으로<br>유저를 다시 부른다</h2>
+      <div class="chart-card" style="margin-top:18px">
+        <svg class="svg-chart" viewBox="0 0 760 420" role="img" aria-label="매장 플레이에서 월드맵, 본사, 도시 복구, 완료 매장 특별 주문으로 이어지는 순환">
+          <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--axis)"/></marker></defs>
+          <g style="fill:none;stroke:var(--axis);stroke-width:1.4">
+            <path d="M480 56H620V108" marker-end="url(#ar)"/><path d="M620 170V278" marker-end="url(#ar)"/><path d="M440 310H322" marker-end="url(#ar)"/><path d="M220 280V172" marker-end="url(#ar)"/><path d="M140 110V56H278" marker-end="url(#ar)"/>
+          </g>
+          <g class="anntext"><text x="552" y="46" text-anchor="middle">별레벨 상승</text><text x="630" y="228">외형이 클 때마다</text><text x="381" y="300" text-anchor="middle">게이지가 차면</text><text x="230" y="228">하루 1콜</text><text x="209" y="46" text-anchor="middle">매장 재방문</text></g>
+          <g class="anntext" style="font-size:13px"><text x="420" y="196" text-anchor="middle">매장 플레이가 월드맵을 키우고,</text><text x="420" y="216" text-anchor="middle">월드맵이 다시 매장으로 부른다</text></g>
+          <g style="font-size:14px">
+            <rect x="280" y="26" width="200" height="60" rx="10" style="fill:var(--card);stroke:var(--axis);stroke-width:1.3"/><text x="380" y="51" text-anchor="middle" class="valtext" style="font-size:14px">매장 플레이</text><text x="380" y="71" text-anchor="middle" class="axistext">별레벨 · Step 44 진행</text>
+            <rect x="520" y="110" width="200" height="60" rx="10" style="fill:var(--card);stroke:var(--axis);stroke-width:1.3"/><text x="620" y="135" text-anchor="middle" class="valtext" style="font-size:14px">월드맵 매장 외형</text><text x="620" y="155" text-anchor="middle" class="axistext">G1 → G5 건물 성장</text>
+            <rect x="440" y="280" width="200" height="60" rx="10" style="fill:var(--card);stroke:var(--axis);stroke-width:1.3"/><text x="540" y="305" text-anchor="middle" class="valtext" style="font-size:14px">본사 성장 게이지</text><text x="540" y="325" text-anchor="middle" class="axistext">모든 매장의 성장 합산</text>
+            <rect x="120" y="280" width="200" height="60" rx="10" style="fill:var(--card);stroke:var(--axis);stroke-width:1.3"/><text x="220" y="305" text-anchor="middle" class="valtext" style="font-size:14px">도시 복구 목표</text><text x="220" y="325" text-anchor="middle" class="axistext">중앙공원 공개 → 단계 복구</text>
+            <rect x="40" y="110" width="200" height="60" rx="10" style="fill:var(--soft-blue);stroke:var(--blue);stroke-width:2.2"/><text x="140" y="135" text-anchor="middle" class="valtext" style="font-size:14px">완료 매장 특별 주문</text><text x="140" y="155" text-anchor="middle" class="axistext">프랜차이즈 콜 60~90초</text>
+          </g>
+          <rect x="24" y="364" width="712" height="44" rx="10" style="fill:var(--caution);stroke:var(--line)"/><text x="380" y="391" text-anchor="middle" class="valtext" style="font-weight:700">바뀌지 않는 것 · 일반 영업과 직원 자동화 · 메인 스테이지 해금 조건 · 매장 경제 (추가 비용 4% 이내)</text>
+        </svg>
+      </div>
+      <div class="footer-note">01 마스터 기획서 핵심 루프 · 02 성장 비용 밸런스(기존 퍼널 대비 2.8~3.6%) · 04 프랜차이즈 콜</div>
+    </section>
+
+    <section class="scene" id="complex" data-no="04 / 15">
+      <div class="eyebrow">Complexity</div>
+      <h2>배울 것이 열두 가지라,<br>보이는 것은 세 가지로 줄인다</h2>
+      <p class="sub">하이퍼캐주얼 유저에게는 너무 복잡할 수 있다. 시스템과 데이터 규칙은 그대로 두고, 유저가 보고 배우는 양만 줄인다.</p>
+      <div class="grid g2" style="margin-top:24px;align-items:stretch">
+        <div class="card"><h3>시스템이 가진 개념</h3>
+          <div class="chips">
+            <span>월드맵</span><span>매장 외형(G)</span><span>성장 비용</span><span>브랜드 가치</span><span>본사 1층</span><span>본사 2층</span><span>중앙공원</span><span>복구하기</span><span>프랜차이즈 콜</span><span>콜 카드</span><span>최대 3콜 누적</span><span>긴급 콜 RV</span>
+          </div>
+          <p class="note" style="margin-top:14px">한 번에 보여주면 첫 진입에서 새 규칙이 여러 개 겹친다</p></div>
+        <div class="card blue"><h3>유저에게 보이는 것</h3>
+          <div class="three">
+            <div><b>내 매장이 커진다</b><span>건물이 한 단계 커지는 모습</span></div>
+            <div><b>본사가 성장한다</b><span>게이지 하나 · 이름과 숫자 없음</span></div>
+            <div><b>도시가 복구된다</b><span>공원이 되살아나는 모습 · 남은 횟수</span></div>
+          </div></div>
+      </div>
+      <div class="principles" style="margin-top:20px">
+        <div class="principle"><b>세 가지만 보여준다</b><span>매장 · 본사 · 도시 외의 이름과 숫자는 가린다</span></div>
+        <div class="principle"><b>한 번에 하나씩 연다</b><span>진행에 따라 새로 보이는 것은 한 단계에 하나, 강제 안내는 한 세션에 최대 1개</span></div>
+      </div>
+      <div class="footer-note">"한 세션 강제 튜토리얼 최대 1개", "첫 진입은 첫 콜 1가지 행동만 안내" 원칙은 01 마스터 기획서 기준</div>
+    </section>
+
+    <section class="scene" id="order" data-no="05 / 15">
+      <div class="eyebrow">Unlock Order</div>
+      <h2>새로 보이는 것은<br>한 번에 하나씩 열린다</h2>
+      <div class="ladder" style="margin-top:20px">
+        <div class="lrow head"><div>언제</div><div>새로 보이는 것</div><div>유저가 할 일</div></div>
+        <div class="lrow"><div class="when"><i>1</i>S01 별레벨 Lv.3</div><div class="what"><b>월드맵 탭에 UP</b><span>내 매장이 커진 모습</span></div><div class="do">성장 버튼 1번</div></div>
+        <div class="lrow"><div class="when"><i>2</i>매장이 클 때마다</div><div class="what"><b>본사 게이지가 차오름</b><span>이름·숫자 설명 없음</span></div><div class="do quiet">보기만</div></div>
+        <div class="lrow"><div class="when"><i>3</i>게이지가 가득 차면</div><div class="what"><b>중앙공원 공개</b><span>자물쇠·안개가 걷힌 폐허 공원</span></div><div class="do quiet">보기만</div></div>
+        <div class="lrow key"><div class="when"><i>4</i>매장 Step 44</div><div class="what"><b>공원 말풍선 "복구 도와주기"</b><span>첫 특별 주문 · 단체 주문 고정</span></div><div class="do">말풍선 1번 탭</div></div>
+        <div class="lrow"><div class="when"><i>5</i>두 번째 콜</div><div class="what"><b>콜센터 · 남은 횟수 · HUD 아이콘</b><span>요청 카드가 생김</span></div><div class="do">카드 1장 고르기</div></div>
+        <div class="lrow"><div class="when"><i>6</i>콜을 다 쓰면</div><div class="what"><b>다음 날 충전 또는 긴급 콜</b><span>광고는 이때만 제안</span></div><div class="do">기다리기 또는 RV</div></div>
+      </div>
+      <div class="callout"><b>읽는 법</b> · 여섯 단계 중 유저가 직접 하는 것은 네 번이고, 첫 특별 주문까지는 버튼이나 말풍선 한 번 탭이면 된다. 콜센터·카드·누적처럼 규칙이 있는 것은 공원이 바뀐 것을 본 뒤에 등장한다.</div>
+    </section>
+
+    <section class="scene" id="hidden" data-no="06 / 15">
+      <div class="eyebrow">What Users See</div>
+      <h2>이름과 숫자는 가리고,<br>변화하는 모습만 보여준다</h2>
+      <div class="table-wrap"><table class="plain">
+        <thead><tr><th>내부 시스템</th><th>유저에게 보이는 것</th><th>보이지 않게 하는 것</th></tr></thead>
+        <tbody>
+          <tr><td>지점 G 단계</td><td>매장 건물이 커지는 모습, "다음 변화 Lv.n"</td><td class="dim">G 표기와 단계 번호</td></tr>
+          <tr><td>브랜드 가치</td><td>본사 위 게이지 하나 (다음에 열리는 것까지)</td><td class="dim">명칭, 누적 수치, 매장별 기여도</td></tr>
+          <tr><td>본사 1층 브랜드 성장실</td><td>다음에 열리는 콘텐츠와 게이지</td><td class="dim">마일스톤 수치 표</td></tr>
+          <tr><td>타운 프로젝트</td><td>중앙공원 복구, "다음 변화까지 n회"</td><td class="dim">진행도 수치와 퍼센트</td></tr>
+          <tr><td>프랜차이즈 콜</td><td>첫 콜은 "복구 도와주기" 말풍선</td><td class="dim">카드 생성 규칙, 주문 종류 비중</td></tr>
+        </tbody></table></div>
+      <h3 style="margin-top:26px">본사 게이지(브랜드 가치) 연출</h3>
+      <div class="grid g3">
+        <div class="card"><h3>매장이 클 때마다는 짧게</h3><p class="note">왕관 아이콘이 매장에서 본사로 날아가는 연출만 나오고, 탭하거나 확인할 것은 없다.</p></div>
+        <div class="card"><h3>열릴 것이 생겼을 때만 알림</h3><p class="note">게이지가 가득 차면 본사 말풍선과 월드맵 탭 배지를 띄운다.</p></div>
+        <div class="card blue"><h3>들어오면 바로 받는다</h3><p class="note">본사나 월드맵에 들어오는 순간 게이지 MAX → 해금 → 공원 공개까지 자동 재생. 수집 버튼은 없다.</p></div>
+      </div>
+      <div class="footer-note">데이터 지급 규칙(매장 G 확정 시 같은 트랜잭션에서 저장)은 03 기획서 그대로 유지</div>
+    </section>
+
+    <section class="scene" id="legacy" data-no="07 / 15">
+      <div class="eyebrow">First Entry · Existing Users</div>
+      <h2>기존 유저 첫 진입은<br>약 5초 한 호흡으로 묶는다</h2>
+      <p class="sub">기존 유저는 첫 진입 한 번에 여러 매장의 성장, 본사 게이지, 공원 해금을 동시에 받는다. 하나씩 연속으로 보여주지 않고 "내 매장들이 커졌다 → 게이지가 찼다 → 공원이 열렸다"로 묶는다.</p>
+      <div class="timeline">
+        <div class="stage" style="--stage:var(--blue);--stage-t:var(--blue-text)"><span class="dot"></span><div class="num">약 1초</div><h3>왕관이 본사로</h3><p>성장한 모든 매장에서 동시에 모이고, 상단에 "오픈 매장 n개 · 완공 매장 n개"</p></div>
+        <div class="stage" style="--stage:var(--yellow);--stage-t:var(--yellow-ink)"><span class="dot"></span><div class="num">약 1초</div><h3>게이지 MAX</h3><p>본사 위 게이지가 한 번에 가득 참</p></div>
+        <div class="stage" style="--stage:var(--purple);--stage-t:var(--purple-text)"><span class="dot"></span><div class="num">약 0.6초</div><h3>카메라 이동</h3><p>본사에서 중앙공원으로, 이동 중 입력 잠금</p></div>
+        <div class="stage" style="--stage:var(--orange);--stage-t:var(--orange-text)"><span class="dot"></span><div class="num">약 1.2초</div><h3>공원 공개</h3><p>자물쇠·안개가 걷히고 폐허 공원 등장</p></div>
+        <div class="stage" style="--stage:var(--green);--stage-t:var(--green-text)"><span class="dot"></span><div class="num">조작 가능</div><h3>말풍선 하나</h3><p>폐허 위 "복구 도와주기"만 남김</p></div>
+      </div>
+      <div class="grid g3" style="margin-top:26px">
+        <div class="card soft"><h3>공원 기준 미달</h3><p class="note">1~2단계까지만 보고, 다음 목표는 성장 가능한 매장</p></div>
+        <div class="card soft"><h3>Step 44 매장 없음</h3><p class="note">공원은 공개, 말풍선에 "Step 44 달성 시 복구 시작"</p></div>
+        <div class="card soft"><h3>Step 44 매장 있음</h3><p class="note">콜 지급은 데이터로만 처리, 안내는 공원을 탭할 때 시작</p></div>
+      </div>
+      <div class="footer-note">시간은 제안값 · 새 리소스는 본사 위 게이지 1종 · 연출 부품은 03·06 기획서의 왕관 획득, 게이지, 잠금 구름 연출 재사용</div>
+    </section>
+
+    <section class="scene" id="firstcall" data-no="08 / 15">
+      <div class="eyebrow">First Franchise Call</div>
+      <h2>첫 콜은 공원에서 시작해<br>공원으로 돌아온다</h2>
+      <div class="timeline">
+        <div class="stage" style="--stage:var(--blue);--stage-t:var(--blue-text)"><span class="dot"></span><div class="num">1</div><h3>공원 말풍선 1탭</h3><p>콜센터를 거치지 않고 바로 S01로 이동</p></div>
+        <div class="stage" style="--stage:var(--axis);--stage-t:var(--muted)"><span class="dot"></span><div class="num">2</div><h3>단체 주문</h3><p>공사팀 3명에게 박스 전달 · 실패 없음 · 60~90초</p></div>
+        <div class="stage" style="--stage:var(--axis);--stage-t:var(--muted)"><span class="dot"></span><div class="num">3</div><h3>월드맵 자동 이동</h3><p>완료 후 10초 이내에 진행 결과</p></div>
+        <div class="stage" style="--stage:var(--green);--stage-t:var(--green-text)"><span class="dot"></span><div class="num">4</div><h3>복구하기</h3><p>공원 1단계 외형 · 같은 세션 안에서 확인</p></div>
+        <div class="stage" style="--stage:var(--blue);--stage-t:var(--blue-text)"><span class="dot"></span><div class="num">5</div><h3>두 번째 콜</h3><p>여기서 콜센터·카드·남은 횟수를 처음 소개</p></div>
+      </div>
+      <div class="grid g2" style="margin-top:26px">
+        <div class="callout" style="margin-top:0"><b>왜 이 순서인가</b> · 첫 행동 전에 본사 2층, 콜센터, 카드, 보유 수를 한꺼번에 보지 않게 한다. 규칙은 공원이 바뀐 것을 본 다음에 배운다.</div>
+        <div class="callout green" style="margin-top:0"><b>이야기로도 이어진다</b> · 첫 손님은 "중앙공원 공사팀"이다. 공원에서 출발해 매장에서 피자를 전하고, 다시 공원이 바뀌는 것을 본다.</div>
+      </div>
+      <div class="footer-note">1·5번이 상세 기획서와 다르게 가져가는 부분 · 나머지 규칙(단체 주문 고정, 실패 없음, 자동 이동)은 04 기획서 그대로</div>
+    </section>
+
+    <section class="scene" id="basis" data-no="09 / 15">
+      <div class="eyebrow">Update Criteria</div>
+      <h2>두 OS 모두 S3→S4에서<br>전환율이 약 50%에 이른다</h2>
+      <div class="grid" style="grid-template-columns:1.6fr 1fr;gap:18px;margin-top:18px;align-items:start">
+        <div class="chart-card">
+          <div class="chart-head"><h3>직전 스테이지 대비 전환율 · 8월 US 설치 유저</h3><div class="legend"><span style="--c:var(--blue)">AOS</span><span style="--c:var(--axis)">iOS</span></div></div>
+          <div id="convChart" role="img" aria-label="스테이지 간 전환율. S3→S4에서 AOS 50.1%, iOS 49.2%"></div>
+        </div>
+        <div class="grid" style="gap:12px">
+          <div class="card metric"><div class="label">유저가 있는 곳</div><div class="value flat sm">S1~S4 92%</div><div class="desc">US RV 비중 · S1 하나가 70% 이상</div></div>
+          <div class="card metric"><div class="label">코어층으로 굳는 곳</div><div class="value flat sm">S3→S4 약 50%</div><div class="desc">이후 스테이지마다 60~83%가 따라옴</div></div>
+          <div class="card metric"><div class="label">1인당 가치가 오르는 곳</div><div class="value flat sm">AOS S3부터 2배</div><div class="desc">iOS는 1.3배 수준 · 후반 가치는 IAP 쪽일 가능성</div></div>
+        </div>
+      </div>
+      <div class="footer-note">바이트브루 Funnels(Tutorial_Firstopen_Start → Tutorial_StageN_Open) · Breakdowns(ad_rv_complete × playerstage) · 2026-08-01~08-31 · GEO=US · S11은 8월 도달 유저 0명</div>
+    </section>
+
+    <section class="scene" id="phases" data-no="10 / 15">
+      <div class="eyebrow">Update Phases</div>
+      <h2>1차는 루프 검증,<br>2차부터 코어층 외형을 채운다</h2>
+      <div class="phases">
+        <div class="phase key"><div class="pn">1차 · 루프 검증</div><ul><li>월드맵·본사·중앙공원·특별 주문 3종 전체</li><li>S01~S04 외형 전 단계</li><li>S05~S10 외형 G1~G2</li></ul><div class="goal">매장 재방문 → 특별 주문 → 공간 변화가 성립하는지</div></div>
+        <div class="gate"><span>◇</span><small>첫 콜 시작률<br>S2→S3·S3→S4<br>월드맵 진입률</small></div>
+        <div class="phase"><div class="pn">2차 · 코어층 확장</div><ul><li>S05~S10 외형 나머지 단계</li><li>보류된 성장 무료 반영</li><li>기존 유저 재방문 연출</li></ul><div class="goal">코어층의 장기 목표 확장</div></div>
+        <div class="gate"><span>◇</span><small>공원 완공율<br>D7 리텐션<br>DAU당 RV</small></div>
+        <div class="phase"><div class="pn">3차 · 장기 목표</div><ul><li>S11 외형</li><li>다음 타운 프로젝트</li><li>라이브 이벤트·수익화 연계</li></ul><div class="goal">공원 이후의 장기 목표</div></div>
+      </div>
+      <div class="callout"><b>1차에 흐름 전체가 들어가는 이유</b> · 검증하려는 가설이 "특별 주문의 결과로 도시가 바뀌면 다시 돌아온다"이기 때문이다. 외형만 먼저 내면 이 가설을 볼 수 없다.</div>
+      <div class="footer-note">단계 사이 기준의 목표 수치는 데이터 분석 담당과 함께 정한다</div>
+    </section>
+
+    <section class="scene" id="resource" data-no="11 / 15">
+      <div class="eyebrow">Resources</div>
+      <h2>1차 매장 외형은<br>55종 중 32종</h2>
+      <div class="grid g2" style="margin-top:20px;align-items:start">
+        <div class="card"><h3>매장 외형</h3>
+          <div class="table-wrap" style="margin-top:6px"><table class="matrix" style="min-width:420px">
+            <thead><tr><th>단계</th><th>범위</th><th>G5까지</th><th>G4까지</th></tr></thead>
+            <tbody>
+              <tr><td class="rowh">1차</td><td style="text-align:left">S01~S04 전 단계 + S05~S10 G1~G2</td><td class="good">32</td><td>28</td></tr>
+              <tr><td class="rowh">2차</td><td style="text-align:left">S05~S10 나머지 단계</td><td>18</td><td>12</td></tr>
+              <tr><td class="rowh">3차</td><td style="text-align:left">S11 전 단계</td><td>5</td><td>4</td></tr>
+              <tr><td class="rowh">합계</td><td style="text-align:left">11개 매장</td><td><b>55</b></td><td><b>44</b></td></tr>
+            </tbody></table></div>
+          <p class="note" style="margin-top:12px">마지막 단계는 G5 = Lv.11 기본 · G4와 G5의 차이는 크지 않아도 되며, 리소스 대비 효과에 따라 G4 = Lv.11로 줄일 수 있다.</p>
+        </div>
+        <div class="grid" style="gap:12px">
+          <div class="card soft"><h3>공용 아트 · 1차 필요</h3><ul>
+            <li>미해금 표현(G0) · 자물쇠 + 안개, 매장·공원 공용</li>
+            <li>중앙공원 4종 · 폐허 → 1단계 → 2단계 → 완공</li>
+            <li>공사팀 직원 모델 · 첫 특별 주문 손님</li>
+            <li>본사 건물 1종 고정 · 성장 연출(천막 → 구름 → 풍선)</li>
+            <li>월드맵 공간 · 4개 구역 + 중앙 본사</li></ul></div>
+          <div class="card soft"><h3>UI · 연출</h3><ul>
+            <li>본사 1층 성장실, 2층 콜센터, <b>본사 위 게이지(신규)</b></li>
+            <li>콜 카드 3종, HUD 콜 아이콘·진행 UI, 결과창</li>
+            <li>공원 정보 UI, 상태별 말풍선</li>
+            <li>매장 성장·게이지·공원 공개·복구 연출</li></ul></div>
+        </div>
+      </div>
+      <div class="footer-note">06 리소스 리스트, 01 마스터 기획서 MVP 콘텐츠·아트 범위 기준 · 본사 위 게이지만 이 문서에서 새로 제안하는 항목</div>
+    </section>
+
+    <section class="scene" id="retro" data-no="12 / 15">
+      <div class="eyebrow">Existing Users</div>
+      <h2>지금까지 키운 매장은<br>첫 진입에 그대로 커져 있다</h2>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card green"><h3>지금까지의 성장은 무료</h3><p class="note">업데이트 후 월드맵이 처음 켜지는 순간까지의 레벨로 외형을 계산한다. 이미 달러를 써온 매장에 다시 비용을 받지 않는다.</p></div>
+        <div class="card blue"><h3>외형이 준비된 만큼만</h3><p class="note">아직 외형이 없는 단계는 보류하고, 해당 외형이 들어오는 업데이트에서 무료로 채운다. 업데이트마다 "내 매장이 또 커졌다"는 재방문 계기가 생긴다.</p></div>
+        <div class="card"><h3>그 이후는 매장 달러로</h3><p class="note">반영 이후 오른 레벨부터는 상세 기획서의 성장 비용을 따른다. 기존 퍼널 대비 2.8~3.6% 수준이다.</p></div>
+      </div>
+      <div class="table-wrap"><table class="plain">
+        <thead><tr><th>예시</th><th>첫 진입에서 보이는 것</th></tr></thead>
+        <tbody>
+          <tr><td>S04 Lv.10, S04 외형이 모두 준비됨</td><td>S04가 G4 외형으로 바로 반영</td></tr>
+          <tr><td>S07 Lv.9, S07 외형이 G2까지 준비됨</td><td>G2까지 반영, G3·G4는 2차 업데이트에서 무료 반영</td></tr>
+          <tr><td>반영 이후 S04 Lv.11 + 발판 완료</td><td>G5는 S04 달러로 성장</td></tr>
+        </tbody></table></div>
+      <div class="footer-note">서버 없이 클라이언트 세이브 데이터로 계산 · 같은 계산을 다시 실행해도 결과가 바뀌지 않도록 처리</div>
+    </section>
+
+    <section class="scene" id="verify" data-no="13 / 15">
+      <div class="eyebrow">Validation</div>
+      <h2>1차는 루프가<br>성립하는지 본다</h2>
+      <p class="sub">공원 1개는 무료 콜만으로 약 1주에 완공된다. 장기 리텐션 확정이 아니라, 그 기간 안의 행동 변화를 본다.</p>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card"><div class="pill">A · 대조군</div><h3 style="margin-top:10px">현재 라이브</h3><p class="note">기준값</p></div>
+        <div class="card blue"><div class="pill info">B · 콘텐츠</div><h3 style="margin-top:10px">월드맵 적용 · 추가 콜 RV 없음</h3><p class="note">콘텐츠 자체의 반복 참여 효과</p></div>
+        <div class="card yellow"><div class="pill mid">C · RV</div><h3 style="margin-top:10px">월드맵 적용 · 추가 콜 RV 있음</h3><p class="note">맥락 있는 RV의 참여와 광고 효과</p></div>
+      </div>
+      <div class="principles">
+        <div class="principle"><b>핵심 지표</b><span>첫 콜 시작률·완료율, 후속 콜 참여율, 공원 완공율, 완료 매장 재방문율, D3·D7</span></div>
+        <div class="principle"><b>단순화가 통했는지</b><span>월드맵 자발 진입률, 공원 공개 후 첫 콜 시작 전환, 공원 공개 직후·첫 콜 직후 세션 종료율</span></div>
+        <div class="principle"><b>범위가 맞았는지</b><span>S2→S3·S3→S4 전환율, DAU당 RV, iOS IAP 전환</span></div>
+        <div class="principle"><b>보호 지표</b><span>메인 스텝 진행률, 다음 매장 해금률, D1, 오류·진행 불가 발생률</span></div>
+      </div>
+    </section>
+
+    <section class="scene" id="align" data-no="14 / 15">
+      <div class="eyebrow">Alignment with Specs</div>
+      <h2>상세 기획서와<br>맞춰볼 부분</h2>
+      <p class="sub">시스템 규칙은 상세 기획서(01~04)를 그대로 따른다. 아래는 보이는 방식과 제작 범위에서 이 문서가 다르게 가져가는 부분이다.</p>
+      <div class="table-wrap"><table class="plain">
+        <thead><tr><th>항목</th><th>상세 기획서</th><th>이 문서의 방향</th></tr></thead>
+        <tbody>
+          <tr><td>브랜드 가치 노출</td><td class="dim">성장실에 수치·매장별 기여, 매장 성장마다 본사 레드닷</td><td>이름·수치 없이 게이지만, 열릴 것이 생겼을 때만 안내</td></tr>
+          <tr><td>기존 유저 마일스톤 연출</td><td class="dim">낮은 값부터 연속 재생</td><td>공원 공개 1회로 묶음</td></tr>
+          <tr><td>첫 콜 튜토리얼 시점</td><td class="dim">콜이 활성화되는 즉시 1회</td><td>유저가 공원을 탭할 때</td></tr>
+          <tr><td>첫 콜 시작 위치</td><td class="dim">본사 2층 콜센터에서 카드 선택</td><td>공원 말풍선에서 바로, 콜센터는 두 번째 콜부터</td></tr>
+          <tr><td>기존 유저 성장 비용</td><td class="dim">자동 반영과 비용 팝업 두 방식이 함께 적혀 있음</td><td>지금까지의 성장은 무료, 이후부터 매장 달러</td></tr>
+          <tr><td>1차 외형 범위</td><td class="dim">11개 매장 전 단계</td><td>S01~S04 전 단계, S05~S10 G1~G2</td></tr>
+          <tr><td>외형 마지막 단계</td><td class="dim">G5 = Lv.11</td><td>기본 유지, 리소스 협의에 따라 G4 = Lv.11 가능</td></tr>
+        </tbody></table></div>
+    </section>
+
+    <section class="scene" id="ref" data-no="15 / 15">
+      <div class="eyebrow">References</div>
+      <h2>참고 문서와<br>데이터 출처</h2>
+      <div class="grid g2" style="margin-top:22px">
+        <div class="card"><h3>상세 기획서</h3><ul>
+          <li>01. 마스터 기획서</li>
+          <li>02. 월드맵 &amp; 지점 성장 기획서</li>
+          <li>03. HQ &amp; 브랜드 가치 기획서</li>
+          <li>04. 타운 프로젝트 &amp; 프랜차이즈 콜 기획서</li>
+          <li>06. 리소스 리스트</li></ul></div>
+        <div class="card"><h3>데이터</h3><ul>
+          <li>바이트브루 Pizza Ready AOS·iOS</li>
+          <li>기간 2026-08-01~08-31 · 국가 US</li>
+          <li>스테이지 도달 · Funnels (Tutorial_Firstopen_Start → Tutorial_StageN_Open)</li>
+          <li>RV 분포 · Breakdowns (ad_rv_complete × playerstage)</li>
+          <li>RV 횟수는 매출의 대리 지표 · 스테이지별 실제 매출은 별도 확인 필요</li></ul></div>
+      </div>
+      <div class="caution" style="margin-top:20px"><span>※</span><div><b>용어</b> · 브랜드 가치 = 모든 매장의 성장을 합산한 기록값(유저에게는 본사 게이지로 표시) · G = 매장 외형 단계 · 특별 주문 = 프랜차이즈 콜에서 하는 60~90초 미션 · Step 44 = 특별 주문이 열리는 매장 진행 단계</div></div>
+    </section>
+  </main>
+
+  <div class="pager-wrap"><nav class="pager" aria-label="장 이동"><button type="button" id="prevBtn" aria-label="이전 장">‹ 이전</button><div class="pager-info" aria-live="polite"><b id="pageNo">01</b> / <span id="pageTotal">15</span> · <span id="pageName">요약</span></div><button type="button" id="nextBtn" aria-label="다음 장">다음 ›</button></nav></div>
+
+  <script>
+    const convLabels=['S1→S2','S2→S3','S3→S4','S4→S5','S5→S6','S6→S7','S7→S8','S8→S9','S9→S10'];
+    const convAos=[4.8,33.7,50.1,61.0,65.3,69.5,79.3,82.6,81.2], convIos=[8.1,28.4,49.2,57.6,61.1,69.6,72.0,72.7,78.6];
+    function convChart(el){
+      const cw=Math.round(el.clientWidth)||800, W=Math.max(320,Math.min(cw,900)), H=W<560?260:320, small=W<560;
+      const p={l:44,r:small?36:48,t:20,b:36},n=convLabels.length;
+      const x=i=>p.l+i*(W-p.l-p.r)/(n-1), y=v=>p.t+(100-v)*(H-p.t-p.b)/100;
+      const path=d=>d.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+      let s=`<svg class="svg-chart" viewBox="0 0 ${W} ${H}">`;
+      [0,25,50,75,100].forEach(t=>{s+=`<line class="gridline" x1="${p.l}" x2="${W-p.r}" y1="${y(t)}" y2="${y(t)}"/><text class="axistext" x="${p.l-8}" y="${y(t)+4}" text-anchor="end">${t}%</text>`});
+      const bw=(W-p.l-p.r)/(n-1);
+      s+=`<rect x="${x(2)-bw/2}" y="${p.t}" width="${bw}" height="${H-p.t-p.b}" style="fill:var(--green);opacity:.10"/>`;
+      s+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(50)}" y2="${y(50)}" style="stroke:var(--red);stroke-width:1.4;stroke-dasharray:5 5"/><text class="anntext" x="${W-p.r}" y="${y(50)-6}" text-anchor="end">50%</text>`;
+      convLabels.forEach((l,i)=>{if(!small||i%2===0)s+=`<text class="axistext" x="${x(i)}" y="${H-12}" text-anchor="middle" style="${i===2?'font-weight:900;fill:var(--ink)':''}">${l}</text>`});
+      [[convIos,'var(--axis)'],[convAos,'var(--blue)']].forEach(([d,c])=>{s+=`<path d="${path(d)}" style="fill:none;stroke:${c};stroke-width:3;stroke-linejoin:round"/>`;d.forEach((v,i)=>{s+=`<circle cx="${x(i)}" cy="${y(v)}" r="3.6" style="fill:${c}"><title>${convLabels[i]}: ${v}%</title></circle>`})});
+      s+=`<text class="valtext" x="${x(2)-8}" y="${y(50.1)-10}" text-anchor="end">AOS 50.1%</text><text class="anntext" x="${x(2)+8}" y="${y(49.2)+18}">iOS 49.2%</text>`;
+      s+=`<text class="valtext" x="${x(n-1)+6}" y="${y(81.2)-6}" style="fill:var(--blue-text)">AOS</text><text class="anntext" x="${x(n-1)+6}" y="${y(78.6)+14}">iOS</text>`;
+      el.innerHTML=s+'</svg>';
+    }
+    const convEl=document.getElementById('convChart');
+    let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>convChart(convEl),150)});
+
+    const root=document.documentElement, mq=matchMedia('(prefers-color-scheme: dark)');
+    const effTheme=()=>root.getAttribute('data-theme')||(mq.matches?'dark':'light');
+    function syncToggle(){const e=effTheme();document.querySelectorAll('[data-theme-set]').forEach(b=>{const on=b.dataset.themeSet===e;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});}
+    document.querySelectorAll('[data-theme-set]').forEach(b=>b.addEventListener('click',()=>{root.setAttribute('data-theme',b.dataset.themeSet);try{localStorage.setItem('pr-wmd-theme',b.dataset.themeSet);}catch(e){}syncToggle();}));
+    mq.addEventListener&&mq.addEventListener('change',syncToggle);
+    syncToggle();
+    let themeBeforePrint=null;
+    window.addEventListener('beforeprint',()=>{themeBeforePrint=root.getAttribute('data-theme');root.setAttribute('data-theme','light');});
+    window.addEventListener('afterprint',()=>{if(themeBeforePrint)root.setAttribute('data-theme',themeBeforePrint);else root.removeAttribute('data-theme');});
+
+    const scenes=[...document.querySelectorAll('.scene')], nav=[...document.querySelectorAll('.nav button')];
+    const names=Object.fromEntries(nav.map(b=>[b.dataset.target,b.textContent]));
+    const prevBtn=document.getElementById('prevBtn'), nextBtn=document.getElementById('nextBtn');
+    document.getElementById('pageTotal').textContent=String(scenes.length).padStart(2,'0');
+    let cur=0;
+    function showSlide(i,opts={}){
+      cur=Math.max(0,Math.min(scenes.length-1,i));
+      const id=scenes[cur].id;
+      scenes.forEach((s,k)=>{const on=k===cur;s.classList.toggle('active',on);s.setAttribute('aria-hidden',on?'false':'true');});
+      nav.forEach(b=>{const on=b.dataset.target===id;b.classList.toggle('on',on);if(on){b.setAttribute('aria-current','page');b.scrollIntoView({block:'nearest',inline:'center'});}else b.removeAttribute('aria-current');});
+      document.getElementById('pageNo').textContent=String(cur+1).padStart(2,'0');
+      document.getElementById('pageName').textContent=names[id]||'';
+      prevBtn.disabled=cur===0; nextBtn.disabled=cur===scenes.length-1;
+      document.getElementById('progressBar').style.width=((cur+1)/scenes.length*100)+'%';
+      if(!opts.keepHash){try{history.replaceState(null,'','#'+id);}catch(e){}}
+      window.scrollTo({top:0,behavior:'instant'});
+      if(id==='basis') convChart(convEl);
+    }
+    nav.forEach(b=>b.addEventListener('click',()=>showSlide(scenes.findIndex(s=>s.id===b.dataset.target))));
+    prevBtn.addEventListener('click',()=>showSlide(cur-1));
+    nextBtn.addEventListener('click',()=>showSlide(cur+1));
+    document.addEventListener('keydown',e=>{
+      if(e.altKey||e.ctrlKey||e.metaKey||(e.target.closest&&e.target.closest('input,textarea,select')))return;
+      if(e.key==='ArrowRight'){e.preventDefault();showSlide(cur+1);}
+      else if(e.key==='ArrowLeft'){e.preventDefault();showSlide(cur-1);}
+    });
+    let tx=null,ty=null;
+    document.querySelector('main').addEventListener('touchstart',e=>{const t=e.changedTouches[0];tx=t.clientX;ty=t.clientY;},{passive:true});
+    document.querySelector('main').addEventListener('touchend',e=>{if(tx===null)return;const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;tx=null;
+      if(Math.abs(dx)>70&&Math.abs(dy)<45&&!e.target.closest('.table-wrap'))showSlide(cur+(dx<0?1:-1));},{passive:true});
+    const startIdx=scenes.findIndex(s=>'#'+s.id===location.hash);
+    showSlide(startIdx<0?0:startIdx,{keepHash:startIdx<0});
+    window.addEventListener('beforeprint',()=>convChart(convEl));
+  </script>
+</body>
+</html>
