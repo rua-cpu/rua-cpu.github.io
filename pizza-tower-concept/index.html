@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>피자레디 타워 콘셉트 · A안 연결형 / B안 독립형</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem('pr-tower-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<style>
+:root{
+  --bg:#e9eff6;--panel:#ffffff;--soft:#f3f6fa;--ink:#1e2433;--muted:#5b6475;--line:#d6dde8;
+  --tomato:#e8453c;--tomato-soft:#fdebea;--a:#2e62d9;--a-soft:#e8eefc;--b:#1f9467;--b-soft:#e3f4ec;
+  --butter:#f6c443;--butter-soft:#fdf4d6;--common:#6b7385;--common-soft:#eef0f4;
+  --sky1:#cfe0f3;--sky2:#eaf1f8;--wall:#ffffff;--window:#cfe0f3;--lock:#f3f6fa;
+  --shadow:0 1px 2px rgba(30,36,51,.06),0 8px 24px rgba(30,36,51,.06);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161f;--panel:#1a202b;--soft:#202735;--ink:#e8ebf1;--muted:#a1a9b8;--line:#2e3646;
+  --tomato:#ff6a5f;--tomato-soft:#3a2224;--a:#6e95f0;--a-soft:#1d2a47;--b:#3fc08e;--b-soft:#173529;
+  --butter:#f6c443;--butter-soft:#3a3220;--common:#a1a9b8;--common-soft:#262d3a;
+  --sky1:#1b2840;--sky2:#141b28;--wall:#232b3a;--window:#3a4e72;--lock:#1e2532;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#12161f;--panel:#1a202b;--soft:#202735;--ink:#e8ebf1;--muted:#a1a9b8;--line:#2e3646;
+  --tomato:#ff6a5f;--tomato-soft:#3a2224;--a:#6e95f0;--a-soft:#1d2a47;--b:#3fc08e;--b-soft:#173529;
+  --butter:#f6c443;--butter-soft:#3a3220;--common:#a1a9b8;--common-soft:#262d3a;
+  --sky1:#1b2840;--sky2:#141b28;--wall:#232b3a;--window:#3a4e72;--lock:#1e2532;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);color-scheme:dark;}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top,0px))}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;font-size:16px;line-height:1.65;word-break:keep-all}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(34px,5.4vw,58px);line-height:1.12;letter-spacing:-.03em;font-weight:700;margin-bottom:14px}
+h2{font-size:clamp(24px,3vw,32px);line-height:1.25;letter-spacing:-.02em;font-weight:700;margin-bottom:10px}
+h3{font-size:18px;line-height:1.4;font-weight:700;margin-bottom:8px}
+p{margin-bottom:10px}
+b,strong{font-weight:700}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--a);outline-offset:2px;border-radius:6px}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:10px 20px}
+.brand{font-weight:700;white-space:nowrap}
+.brand span{color:var(--tomato)}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:transparent;padding:8px 12px;border-radius:10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:600;font-size:14px}
+.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.tabs button .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.theme{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.theme button{border:0;background:transparent;padding:4px 10px;border-radius:7px;cursor:pointer;font-size:13px;color:var(--muted)}
+.theme button[aria-pressed="true"]{background:var(--panel);color:var(--ink);font-weight:600}
+
+main{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+.panel[hidden]{display:none}
+.lead{font-size:clamp(17px,1.8vw,20px);color:var(--muted);max-width:760px}
+.section-head{margin:40px 0 16px;max-width:760px}
+.section-head:first-child{margin-top:8px}
+.section-head p{color:var(--muted);margin-bottom:0}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:32px;align-items:center;background:linear-gradient(180deg,var(--sky1),var(--sky2));border-radius:28px;padding:44px 44px 0;overflow:hidden;border:1px solid var(--line)}
+.hero-copy{padding-bottom:44px}
+.towers{display:flex;justify-content:center;gap:28px;align-items:flex-end}
+.tower{width:min(200px,40vw);display:flex;flex-direction:column;align-items:stretch}
+.roof{text-align:center;font-weight:700;font-size:14px;padding:8px 0;border-radius:12px 12px 0 0;color:#fff}
+.tower.ta .roof{background:var(--a)}
+.tower.tb .roof{background:var(--b)}
+.floor{position:relative;background:var(--wall);border:2px solid var(--ink);border-top:0;height:78px;padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between}
+.floor:first-of-type{border-top:2px solid var(--ink)}
+.floor .fl{font-size:12px;font-weight:700;color:var(--muted)}
+.floor .who{font-size:13px;font-weight:600}
+.floor .win{position:absolute;right:10px;top:10px;display:flex;gap:6px}
+.floor .win i{width:16px;height:20px;background:var(--window);border-radius:3px;display:block}
+.floor.locked{background:var(--lock);border-style:dashed}
+.floor.locked .who{color:var(--muted)}
+.key{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px}
+.ta .key{background:var(--a-soft);color:var(--a)}
+.tb .key{background:var(--b-soft);color:var(--b)}
+.ground{height:14px;background:var(--ink);border-radius:2px 2px 0 0;margin:0 -10px}
+.tower-cap{font-size:12px;color:var(--muted);text-align:center;margin-top:8px;padding-bottom:16px}
+
+/* cards */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow);min-width:0}
+.card p:last-child,.card ul:last-child,.card ol:last-child{margin-bottom:0}
+.card ul,.card ol{padding-left:20px;margin:6px 0 0}
+.card li{margin:4px 0}
+.card.spine{border-left:6px solid var(--common)}
+.card.spine.a{border-left-color:var(--a)}
+.card.spine.b{border-left-color:var(--b)}
+.card.spine.t{border-left-color:var(--tomato)}
+.card.tint-a{background:var(--a-soft);border-color:transparent;box-shadow:none}
+.card.tint-b{background:var(--b-soft);border-color:transparent;box-shadow:none}
+.card.tint-y{background:var(--butter-soft);border-color:transparent;box-shadow:none}
+.card .muted,.muted{color:var(--muted)}
+.big-quote{font-size:clamp(19px,2.2vw,24px);font-weight:600;line-height:1.5;letter-spacing:-.01em}
+.role{display:flex;flex-direction:column;gap:6px}
+.role .src{align-self:flex-start;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px}
+.src.main{background:var(--tomato-soft);color:var(--tomato)}
+.src.tower{background:var(--common-soft);color:var(--muted)}
+.role .name{font-size:20px;font-weight:700}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;vertical-align:1px;margin-left:4px}
+.tag.common{background:var(--common-soft);color:var(--muted)}
+.tag.a{background:var(--a-soft);color:var(--a)}
+.tag.b{background:var(--b-soft);color:var(--b)}
+.tag.main{background:var(--tomato-soft);color:var(--tomato)}
+
+/* scene steps */
+.scene{counter-reset:s;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;list-style:none;padding:0;margin:0}
+.scene li{counter-increment:s;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px 52px;position:relative;font-size:15px}
+.scene li::before{content:counter(s);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:50%;background:var(--butter);color:#1e2433;font-weight:700;font-size:13px;display:grid;place-items:center}
+
+/* flow */
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:4px}
+.flow .st{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:600}
+.flow .st.m{background:var(--tomato-soft);border-color:transparent;color:var(--ink)}
+.flow .st.gate{border:2px dashed var(--ink)}
+.flow .ar{color:var(--muted);font-weight:700}
+.loops{display:grid;gap:10px;margin-top:14px}
+.loop{display:flex;gap:10px;align-items:baseline;font-size:14px}
+.loop b{white-space:nowrap}
+.branch{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:10px;font-size:15px}
+.branch dt{font-weight:700}
+.branch dd{margin:0}
+
+/* tables */
+.twrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:680px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{background:var(--soft);font-size:13px;color:var(--muted);font-weight:700;position:sticky;top:0}
+tbody tr:last-child td{border-bottom:0}
+td.k{font-weight:700;white-space:nowrap}
+th.ca,td.ca{background:color-mix(in srgb,var(--a-soft) 55%,transparent)}
+th.cb,td.cb{background:color-mix(in srgb,var(--b-soft) 55%,transparent)}
+td.same{color:var(--muted)}
+tr.done td{color:var(--muted)}
+tr.done td.txt{text-decoration:line-through}
+.chk{width:20px;height:20px;accent-color:var(--b);cursor:pointer}
+select.status{border:1px solid var(--line);background:var(--soft);border-radius:8px;padding:4px 8px;font-size:13px;font-weight:600;cursor:pointer}
+select.status[data-v="확정"]{background:var(--b-soft);color:var(--b);border-color:transparent}
+select.status[data-v="유력"]{background:var(--a-soft);color:var(--a);border-color:transparent}
+select.status[data-v="검토 중"]{background:var(--butter-soft);color:var(--ink);border-color:transparent}
+select.status[data-v="보류"]{background:var(--common-soft);color:var(--muted);border-color:transparent}
+.tools{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 0;flex-wrap:wrap}
+.tools .muted{font-size:13px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:600}
+.progress{font-size:13px;font-weight:700}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;font-size:13px;color:var(--muted)}
+footer a{color:inherit}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding:32px 24px 0}
+  .hero-copy{padding-bottom:8px}
+  .g3,.g4,.scene{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:620px){
+  .g2,.g3,.g4,.scene{grid-template-columns:1fr}
+  .brand{display:none}
+  main{padding:20px 14px 60px}
+  .towers{gap:14px}
+  .floor{height:70px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .panel:not([hidden]){animation:in .2s ease-out}
+  @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+}
+@media print{.bar{display:none}.panel[hidden]{display:block}.card,.twrap{box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand"><span>Pizza Ready</span> 타워</div>
+    <nav class="tabs" role="tablist" aria-label="문서 구역">
+      <button role="tab" id="t-over" aria-controls="p-over" aria-selected="true">한눈에</button>
+      <button role="tab" id="t-common" aria-controls="p-common" aria-selected="false"><span class="dot" style="background:var(--common)"></span>공통 경험</button>
+      <button role="tab" id="t-a" aria-controls="p-a" aria-selected="false"><span class="dot" style="background:var(--a)"></span>A안 연결형</button>
+      <button role="tab" id="t-b" aria-controls="p-b" aria-selected="false"><span class="dot" style="background:var(--b)"></span>B안 독립형</button>
+      <button role="tab" id="t-decide" aria-controls="p-decide" aria-selected="false">결정 체크</button>
+      <button role="tab" id="t-mock" aria-controls="p-mock" aria-selected="false">목업 체크</button>
+    </nav>
+    <div class="theme" role="group" aria-label="화면 테마">
+      <button type="button" data-theme-set="light" aria-pressed="false">라이트</button>
+      <button type="button" data-theme-set="dark" aria-pressed="false">다크</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ============ 한눈에 ============ -->
+<section class="panel" id="p-over" role="tabpanel" aria-labelledby="t-over">
+  <div class="hero">
+    <div class="hero-copy">
+      <h1>같은 건물,<br>다른 열쇠</h1>
+      <p class="lead">Pizza Ready 직원들이 사는 '내 건물'을 키우는 타워 메타입니다. 직원이 가구를 쓰며 행복해지는 경험은 두 안이 같고, 다음 층을 여는 열쇠만 다릅니다.</p>
+      <p class="lead" style="margin-bottom:0"><b style="color:var(--a)">A안</b>은 매장 진행이 층을 열고, <b style="color:var(--b)">B안</b>은 아래층 직원의 행복이 층을 엽니다.</p>
+    </div>
+    <div class="towers" aria-hidden="true">
+      <div class="tower ta">
+        <div class="roof">A안 연결형</div>
+        <div class="floor locked"><span class="fl">3F</span><span class="who">직원 2의 방</span><span><span class="key">별 4 필요</span></span></div>
+        <div class="floor"><div class="win"><i></i><i></i></div><span class="fl">2F</span><span class="who">직원 1 입주</span><span><span class="key">별 3</span></span></div>
+        <div class="floor"><div class="win"><i></i><i></i></div><span class="fl">1F</span><span class="who">로비</span><span></span></div>
+        <div class="ground"></div>
+        <div class="tower-cap">매장에서 별을 올려야 열림</div>
+      </div>
+      <div class="tower tb">
+        <div class="roof">B안 독립형</div>
+        <div class="floor locked"><span class="fl">3F</span><span class="who">직원 2의 방</span><span><span class="key">2층 Lv 2 필요</span></span></div>
+        <div class="floor"><div class="win"><i></i><i></i></div><span class="fl">2F</span><span class="who">직원 1 입주</span><span><span class="key">Lv 1</span></span></div>
+        <div class="floor"><div class="win"><i></i><i></i></div><span class="fl">1F</span><span class="who">로비</span><span></span></div>
+        <div class="ground"></div>
+        <div class="tower-cap">아래층을 행복하게 해야 열림</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card spine a">
+      <h3>A안 연결형</h3>
+      <p>Pizza Ready를 잘 플레이할수록 내 직원들이 건물에 입주하고, 건물이 더 높이 자랍니다.</p>
+      <ol>
+        <li>메인에서 별을 올리고 직원을 고용한다</li>
+        <li>타워의 층과 입주자가 열린다</li>
+        <li>매장에서 번 달러로 직원 공간을 꾸민다</li>
+        <li>타워에서 만든 P로 다음 층을 올린다</li>
+      </ol>
+    </div>
+    <div class="card spine b">
+      <h3>B안 독립형</h3>
+      <p>Pizza Ready에서 한 번 해금된 뒤에는 타워 안의 규칙만으로 자랍니다.</p>
+      <ol>
+        <li>메인에서 타워만 최초 해금한다</li>
+        <li>층이 완공되면 직원이 자동 입주한다</li>
+        <li>타워에서 만든 P로 가구를 산다</li>
+        <li>아래층이 행복해지면 P로 위층을 올린다</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>두 안 구조 비교</h2>
+    <p>회색 칸은 두 안이 같은 부분입니다. 갈라지는 줄만 보면 차이가 드러납니다.</p>
+  </div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>영역</th><th class="ca">A안 연결형</th><th class="cb">B안 독립형</th></tr></thead>
+      <tbody>
+        <tr><td class="k">핵심 재미</td><td colspan="2" class="same">직원 캐릭터 경험 → 건물 성장 → 꾸미기 (공통)</td></tr>
+        <tr><td class="k">캐릭터</td><td colspan="2" class="same">Pizza Ready 직원 IP (공통)</td></tr>
+        <tr><td class="k">Happiness</td><td colspan="2" class="same">층별 성장 Progress, 차감 없음 (공통)</td></tr>
+        <tr><td class="k">최초 해금</td><td colspan="2" class="same">메인 진행에서 해금, 부동산 아저씨 연출 (공통)</td></tr>
+        <tr><td class="k">직원 입주</td><td class="ca">메인에서 보유한 직원만 입주</td><td class="cb">층 완공 시 지정 직원 자동 입주</td></tr>
+        <tr><td class="k">직원 미보유 시</td><td class="ca">빈 방 → 직원 고용 유도</td><td class="cb">해당 없음</td></tr>
+        <tr><td class="k">층 해금 조건</td><td class="ca">메인 별 레벨</td><td class="cb">직전 층 Happiness Lv</td></tr>
+        <tr><td class="k">가구 재화</td><td class="ca">매장 달러</td><td class="cb">타워 P</td></tr>
+        <tr><td class="k">증축 재화</td><td colspan="2" class="same">타워 P (공통)</td></tr>
+        <tr><td class="k">메인 플레이 필요성</td><td class="ca">타워를 키우는 내내 필요</td><td class="cb">해금 이후 거의 없음</td></tr>
+        <tr><td class="k">건물 완성 결과</td><td class="ca">완성 연출 + 월드맵 표시, 메인 환류 가능</td><td class="cb">완성 연출 + 월드맵 기록</td></tr>
+        <tr><td class="k">다음 건물 조건</td><td class="ca">다음 스테이지 진행</td><td class="cb">현재 건물 완성</td></tr>
+        <tr><td class="k">강점</td><td class="ca">메인 성장과 직원 시스템에 의미가 더해짐</td><td class="cb">가볍고 빠르게 만들고 확장 가능</td></tr>
+        <tr><td class="k">가장 큰 위험</td><td class="ca">메인이 막히면 타워도 함께 막힘</td><td class="cb">메인과 동떨어진 미니게임처럼 느껴질 수 있음</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 공통 경험 ============ -->
+<section class="panel" id="p-common" role="tabpanel" aria-labelledby="t-common" hidden>
+  <div class="section-head">
+    <h2>두 안이 똑같이 가져가는 것</h2>
+    <p>재미, 캐릭터, Happiness 규칙은 같아야 두 안을 공정하게 비교할 수 있습니다.</p>
+  </div>
+  <div class="card tint-y">
+    <p class="big-quote" style="margin-bottom:0">내가 마련해 준 공간에서 Pizza Ready 직원들이 살아가고, 가구를 쓰며 행복해지는 모습을 보는 콘텐츠.</p>
+  </div>
+
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card">
+      <h3>왜 만드는가</h3>
+      <p>월드맵을 크게 고치는 대신 그대로 두고, 직원 캐릭터를 쓰는 장기 메타를 하단탭에 더합니다.</p>
+      <p class="muted">타워 라이프에서 "층이 늘고, 공간이 채워지고, 캐릭터가 살아 움직인다"만 가져오고 대화 선택과 상태 관리는 뺍니다.</p>
+    </div>
+    <div class="card">
+      <h3>재미의 순위</h3>
+      <ol>
+        <li><b>직원 캐릭터 경험.</b> 직원이 생활하며 행복해지는 모습</li>
+        <li><b>건물 성장.</b> 층이 하나씩 올라가는 것</li>
+        <li><b>꾸미기.</b> 목적이 아니라 행복을 만드는 수단</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>하지 않을 것</h3>
+      <ul>
+        <li>캐릭터 상태치 관리 (IQ·건강·청결)</li>
+        <li>대화 선택지로 진행하는 구조</li>
+        <li>또 하나의 매장 경영 (손님·주문·동선)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>처음 3분 동안 보는 장면</h2>
+    <p>목업은 이 장면이 실제로 클릭되면 성공입니다.</p>
+  </div>
+  <ol class="scene">
+    <li>공장을 연 매장에 부동산 아저씨가 찾아와 건물 열쇠를 건넨다.</li>
+    <li>하단탭 '타워'를 누르면 텅 빈 건물. 2층 첫 방에 직원이 들어온다.</li>
+    <li>직원 머리 위에 말풍선이 뜬다. "소파가 필요해요."</li>
+    <li>말풍선을 누르고 소파 두 개 중 하나를 고른다.</li>
+    <li>직원이 소파에 앉아 웃는다. 하트와 함께 Happiness가 오른다.</li>
+    <li>방에서 P가 쌓이기 시작한다. 가구가 늘수록 빨리 쌓인다.</li>
+    <li>침대, 테이블 순으로 요구가 이어지고 방이 채워진다.</li>
+    <li>게이지가 차면 "레벨업!" 탭하면 새 가구 슬롯과 한마디.</li>
+    <li>P로 다음 층을 올리면 건물이 자라고 새 직원이 들어온다.</li>
+  </ol>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card tint-a"><b>A안에서는</b> 7~9 사이에 메인이 등장합니다. 별 레벨이 모자라면 다음 층이 잠겨 있고, 그 층의 직원을 매장에서 고용해야 입주합니다. 가구는 매장 달러로 삽니다.</div>
+    <div class="card tint-b"><b>B안에서는</b> 1번 이후 메인이 다시 나오지 않습니다. 첫 가구는 무료이고, 이후 가구와 증축은 모두 방에서 쌓인 P로 해결합니다.</div>
+  </div>
+
+  <div class="section-head">
+    <h2>Happiness는 성장도, 내려가지 않는다</h2>
+    <p>오르기만 하는 성장과 오르내리는 현재 상태를 분리했습니다.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card spine t">
+      <h3>Happiness</h3>
+      <p>그 층의 직원과 공간을 얼마나 키웠는지 나타내는 층별 Lv.</p>
+      <p class="muted">오르기만 함</p>
+    </div>
+    <div class="card spine">
+      <h3>Condition</h3>
+      <p>지금 방 상태 (깨끗함 / 보통). 깨끗하면 P 생산 보너스, 지저분하면 기본값.</p>
+      <p class="muted">오르내림 · 목업 v1.1에서 추가</p>
+    </div>
+    <div class="card spine">
+      <h3>타워 Progress</h3>
+      <p>모든 층 Happiness Lv의 합. 건물 단위의 장기 목표.</p>
+      <p class="muted">오르기만 함</p>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card">
+      <h3>Happiness가 차는 이유</h3>
+      <p>항상 "무언가 해줬기 때문에 행복해진다"가 보여야 합니다.</p>
+      <ul>
+        <li><b>크게:</b> 새 가구를 놓아 줌</li>
+        <li><b>조금:</b> 직원이 가구를 사용(자동), 직원 탭</li>
+      </ul>
+      <p class="muted">게이지가 차면 레벨업 말풍선 → 탭 → Lv 상승, 새 슬롯, 한 줄 대사.</p>
+    </div>
+    <div class="card">
+      <h3>왜 차감하지 않나</h3>
+      <p>어제 Lv 3까지 키운 직원이 오늘 접속하지 않았다고 Lv 2가 되면 성장 게임과 맞지 않습니다.</p>
+      <p class="muted">돌볼 이유는 Condition 보너스로 줍니다. 손해가 아니라 보너스를 놓치는 구조입니다.</p>
+    </div>
+    <div class="card">
+      <h3>P가 생기는 방식</h3>
+      <p>가구마다 P 생산력이 있어 가구가 많고 좋을수록 빨리 쌓입니다. 저장 상한에 닿으면 Collect.</p>
+      <p class="muted">상한은 하루 2~3회 접속 리듬에 맞춰 8~12시간분.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ A안 ============ -->
+<section class="panel" id="p-a" role="tabpanel" aria-labelledby="t-a" hidden>
+  <div class="section-head">
+    <h2 style="color:var(--a)">A안 연결형</h2>
+    <p>메인에서 오는 세 가지와 타워가 만드는 하나가 각자 한 가지 일만 합니다. 재화가 여럿이어도 겹치지 않아 헷갈리지 않습니다.</p>
+  </div>
+  <div class="grid g4">
+    <div class="card role"><span class="src main">메인</span><span class="name">별 레벨</span><span class="muted">이 층을 지을 자격이 있는가</span></div>
+    <div class="card role"><span class="src main">메인</span><span class="name">직원 보유</span><span class="muted">이 방에 입주할 직원이 있는가</span></div>
+    <div class="card role"><span class="src main">메인</span><span class="name">달러</span><span class="muted">직원 공간에 무엇을 놓아 줄 것인가</span></div>
+    <div class="card role"><span class="src tower">타워</span><span class="name">P</span><span class="muted">언제 다음 층을 올릴 것인가</span></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>층이 열리는 방식</h3>
+      <p>1층 로비는 해금 즉시, 2층은 별 3, 이후 별 1당 1층씩 자격이 생깁니다(가안). 자격이 생기면 P를 내고 건설 시간을 기다립니다. 건설 시간은 RV로 일부 줄일 수 있습니다.</p>
+    </div>
+    <div class="card">
+      <h3>직원이 입주하는 방식</h3>
+      <dl class="branch">
+        <dt>보유</dt><dd>바로 입주 연출, 첫 가구 요구가 뜬다</dd>
+        <dt>미보유</dt><dd>빈 방에 실루엣과 "직원 고용하기" 버튼. 매장 HR로 이동해 고용하면 입주</dd>
+      </dl>
+      <p class="note"><b>직원 보유는 입주 조건이지 층 해금 조건이 아닙니다.</b> 직원 구매가 층의 관문이 되면 무겁다는 회의 의견을 반영했습니다.</p>
+    </div>
+    <div class="card">
+      <h3>가구를 사는 방식</h3>
+      <p>매장 달러로 삽니다. 슬롯마다 기본과 고급 두 가지가 뜨는 피자레디 인테리어 선택 UX입니다.</p>
+      <p class="muted">매장 업그레이드를 막지 않도록, 가격은 매장 업그레이드 비용 대비 비율로 정합니다.</p>
+    </div>
+    <div class="card">
+      <h3>건물이 완성되면</h3>
+      <p>완성 연출 후 월드맵의 매장 옆에 건물이 세워집니다. 다음 건물은 다음 스테이지로 가면 열립니다.</p>
+      <p class="muted">메인으로 돌려줄 보상은 아직 정하지 않았습니다(TBD). 첫 목업은 시각 보상만 둡니다.</p>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>플레이 흐름</h2>
+    <p>빨간 단계는 메인에서, 점선은 조건을 확인하는 지점입니다.</p>
+  </div>
+  <div class="card">
+    <div class="flow">
+      <span class="st m">Pizza Ready 플레이</span><span class="ar">→</span>
+      <span class="st m">별 레벨 달성</span><span class="ar">→</span>
+      <span class="st">P로 증축</span><span class="ar">→</span>
+      <span class="st gate">직원 보유?</span><span class="ar">→</span>
+      <span class="st">직원 입주</span><span class="ar">→</span>
+      <span class="st">가구 요구 말풍선</span><span class="ar">→</span>
+      <span class="st m">달러로 가구 구매</span><span class="ar">→</span>
+      <span class="st">직원이 가구 사용</span><span class="ar">→</span>
+      <span class="st">Happiness·P 생산 상승</span>
+    </div>
+    <div class="loops">
+      <div class="loop"><b>세션 고리</b><span>레벨업 → 새 가구 슬롯 → 다시 가구 요구</span></div>
+      <div class="loop"><b>하루 고리</b><span>P Collect → 다음 층 증축 (별 조건 확인) → 새 직원</span></div>
+      <div class="loop"><b>미보유 분기</b><span>빈 방 → 매장 HR에서 고용 → 입주</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card spine b">
+      <h3>강점</h3>
+      <ul>
+        <li>별 성장과 직원 고용에 '직원이 사는 건물'이라는 의미가 더해진다</li>
+        <li>메인과 타워가 서로 다음 목표를 만들어 준다</li>
+        <li>매장 달러의 새 소비처가 생긴다</li>
+      </ul>
+    </div>
+    <div class="card spine t">
+      <h3>위험</h3>
+      <ul>
+        <li>메인 진행이 막히면 타워도 함께 멈춘다</li>
+        <li>달러를 타워에 쓰면 매장 업그레이드가 늦어질 수 있다</li>
+        <li>조건이 넷(별·직원·달러·P)이라 처음 이해가 B안보다 느리다</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ B안 ============ -->
+<section class="panel" id="p-b" role="tabpanel" aria-labelledby="t-b" hidden>
+  <div class="section-head">
+    <h2 style="color:var(--b)">B안 독립형</h2>
+    <p>해금 이후에는 P 하나가 가구와 증축을 모두 맡습니다. 메인의 별, 직원 보유, 달러는 확인하지 않습니다.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card role"><span class="src main">메인 · 1회</span><span class="name">최초 해금</span><span class="muted">타워 콘텐츠를 연다</span></div>
+    <div class="card role"><span class="src tower">타워</span><span class="name">P</span><span class="muted">가구 구매와 다음 층 증축</span></div>
+    <div class="card role"><span class="src tower">타워</span><span class="name">아래층 Happiness</span><span class="muted">다음 층을 지을 자격</span></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>층이 열리는 방식</h3>
+      <p>바로 아래층의 Happiness가 다음 층의 자격을 엽니다. 예를 들어 3층은 2층이 Lv 2가 돼야 증축할 수 있습니다(가안). 이후 P와 건설 시간, RV 일부 단축은 A안과 같습니다.</p>
+      <p class="muted">"아래층 직원을 행복하게 해야 위층이 열린다." 직원 경험이 곧 성장의 관문이라 재미 1순위와 성장이 같은 방향을 봅니다.</p>
+    </div>
+    <div class="card">
+      <h3>직원이 입주하는 방식</h3>
+      <p>층이 완공되면 배정된 직원이 자동으로 입주합니다. 메인에서 고용했는지는 보지 않습니다.</p>
+      <p class="muted">IP만 공유하며, 타워 진행 자체가 직원 컬렉션 역할을 합니다.</p>
+    </div>
+    <div class="card">
+      <h3>가구를 사는 방식</h3>
+      <p>가구도 P로 삽니다. 기본과 고급 2택. 처음 P가 없을 때를 위해 첫 방과 첫 가구는 무료입니다.</p>
+    </div>
+    <div class="card">
+      <h3>유저가 고민하는 지점</h3>
+      <p>P를 가구에 쓸지, 증축에 모을지. 가구에 쓰면 생산력과 Happiness가 빨리 오르고, 모으면 새 직원을 빨리 만납니다.</p>
+      <p class="muted">다음 층 자격이 아래층 Happiness에 걸려 있어 가구를 건너뛰고 증축만 할 수는 없습니다.</p>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>플레이 흐름</h2>
+    <p>메인은 맨 앞에 한 번만 나옵니다. 점선은 조건을 확인하는 지점입니다.</p>
+  </div>
+  <div class="card">
+    <div class="flow">
+      <span class="st m">타워 해금 (1회)</span><span class="ar">→</span>
+      <span class="st">첫 방·첫 가구 무료</span><span class="ar">→</span>
+      <span class="st">직원 자동 입주</span><span class="ar">→</span>
+      <span class="st">가구 요구 말풍선</span><span class="ar">→</span>
+      <span class="st">P로 가구 구매</span><span class="ar">→</span>
+      <span class="st">직원이 가구 사용</span><span class="ar">→</span>
+      <span class="st">Happiness·P 생산 상승</span><span class="ar">→</span>
+      <span class="st">P Collect</span><span class="ar">→</span>
+      <span class="st gate">아래층 Lv 충족?</span><span class="ar">→</span>
+      <span class="st">P로 증축</span>
+    </div>
+    <div class="loops">
+      <div class="loop"><b>충족 안 됨</b><span>다시 가구 요구로 돌아가 방을 더 채운다</span></div>
+      <div class="loop"><b>충족</b><span>증축 → 새 층 완공 → 다음 직원 자동 입주</span></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card spine b">
+      <h3>강점</h3>
+      <ul>
+        <li>재화 하나와 조건 하나로 이해된다</li>
+        <li>메인 밸런스를 건드리지 않아 빠르게 만들고 고칠 수 있다</li>
+        <li>메인이 막힌 유저도 타워는 계속 즐길 수 있다</li>
+      </ul>
+    </div>
+    <div class="card spine t">
+      <h3>위험</h3>
+      <ul>
+        <li>메인과 동떨어진 미니게임처럼 느껴질 수 있다</li>
+        <li>매장 진행, 직원 고용 같은 메인 지표에 기여하는 경로가 약하다</li>
+        <li>건물 완성 후 다음 건물까지 할 거리가 비어 있다</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 결정 체크 ============ -->
+<section class="panel" id="p-decide" role="tabpanel" aria-labelledby="t-decide" hidden>
+  <div class="section-head">
+    <h2>확정이 필요한 결정</h2>
+    <p>기준안을 먼저 두고 상태를 고르는 방식입니다. 상태는 이 브라우저에만 저장됩니다.</p>
+  </div>
+  <div class="twrap">
+    <table id="decisions">
+      <thead><tr><th>#</th><th>결정 항목</th><th>적용</th><th>기준안</th><th>근거</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="k">1순위 재미</td><td><span class="tag common">공통</span></td><td>직원 캐릭터형. 성장은 뼈대, 꾸미기는 수단</td><td>"해피니스 타워", 캐릭터를 지켜보는 행복감, 콘텐츠 플라이휠</td><td><select class="status" data-key="d1" data-default="유력"></select></td></tr>
+        <tr><td>2</td><td class="k">Happiness 정의</td><td><span class="tag common">공통</span></td><td>층별 성장 Progress, 차감 없음</td><td>성장도가 내려가면 성장 게임과 충돌</td><td><select class="status" data-key="d2" data-default="유력"></select></td></tr>
+        <tr><td>3</td><td class="k">Condition</td><td><span class="tag common">공통</span></td><td>깨끗하면 P 보너스, 지저분하면 기본값. 목업 v1.1</td><td>"마이너스보다 가속" 의견과 "기분 나쁘면 효율 저하" 원안의 절충</td><td><select class="status" data-key="d3" data-default="검토 중"></select></td></tr>
+        <tr><td>4</td><td class="k">진입 방식</td><td><span class="tag common">공통</span></td><td>공장 오픈 후 부동산 아저씨가 건물 전달</td><td>건물주 판타지가 자연스럽게 시작. 정확한 Step은 퍼널 데이터 확인</td><td><select class="status" data-key="d4" data-default="검토 중"></select></td></tr>
+        <tr><td>5</td><td class="k">P 저장 상한</td><td><span class="tag common">공통</span></td><td>8~12시간분</td><td>하루 2~3회 접속 리듬. 4시간이면 하루 6회 확인 구조</td><td><select class="status" data-key="d5" data-default="유력"></select></td></tr>
+        <tr><td>6</td><td class="k">MVP RV</td><td><span class="tag common">공통</span></td><td>건설 시간 일부 단축 1곳</td><td>코어 재미 검증 전, 메인 RV와의 경쟁 원인 분석을 쉽게</td><td><select class="status" data-key="d6" data-default="유력"></select></td></tr>
+        <tr><td>7</td><td class="k">화면 구조</td><td><span class="tag common">공통</span></td><td>타워 전체 화면 + 층 탭 시 줌인</td><td>건물 전체가 살아 있는 느낌 유지. 별도 방 화면과 비교 가치 있음</td><td><select class="status" data-key="d7" data-default="검토 중"></select></td></tr>
+        <tr><td>8</td><td class="k">완성 보상</td><td><span class="tag common">공통</span></td><td>완성 연출 + 월드맵 건물. 수치 보상 없음</td><td>보상이 크면 메인을 할 이유가 줄어든다는 회의 지적</td><td><select class="status" data-key="d8" data-default="유력"></select></td></tr>
+        <tr><td>9</td><td class="k">직원 입주</td><td><span class="tag a">A안</span></td><td>보유 직원 = 입주 조건. 층 해금 조건 아님</td><td>직원 구매가 층 관문이면 무겁고 수동적이라는 의견</td><td><select class="status" data-key="d9" data-default="유력"></select></td></tr>
+        <tr><td>10</td><td class="k">층 해금</td><td><span class="tag a">A안</span></td><td>별 3 = 2층, 이후 별 1당 1층</td><td>스테이지와 1:1이라 관리가 편함. 실제 별 최대치·직원 수 확인 필요</td><td><select class="status" data-key="d10" data-default="검토 중"></select></td></tr>
+        <tr><td>11</td><td class="k">재화 역할</td><td><span class="tag a">A안</span></td><td>별 = 자격, 달러 = 가구, P = 증축</td><td>"매장 돈과 월세 개념이 겹친다" 지적. 역할을 하나씩 분리</td><td><select class="status" data-key="d11" data-default="유력"></select></td></tr>
+        <tr><td>12</td><td class="k">메인 환류</td><td><span class="tag a">A안</span></td><td>TBD. 첫 목업은 없음</td><td>매장 보너스 시 밸런스 영향 검토 필요</td><td><select class="status" data-key="d12" data-default="보류"></select></td></tr>
+        <tr><td>13</td><td class="k">직원 입주</td><td><span class="tag b">B안</span></td><td>층 완공 시 지정 직원 자동 입주</td><td>최초 해금 이후 메인 조건 없이 돌아가는 독립형 정의</td><td><select class="status" data-key="d13" data-default="유력"></select></td></tr>
+        <tr><td>14</td><td class="k">층 해금</td><td><span class="tag b">B안</span></td><td>직전 층 Happiness Lv 2 + P</td><td>직원 경험이 성장의 관문이 됨</td><td><select class="status" data-key="d14" data-default="검토 중"></select></td></tr>
+        <tr><td>15</td><td class="k">재화 구성</td><td><span class="tag b">B안</span></td><td>P 단일 순환. 대안은 달러(가구) + P(증축)</td><td>A안과 차이를 분명히 하기 위함. 달러를 넣으면 약한 연결형이 됨</td><td><select class="status" data-key="d15" data-default="검토 중"></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tools"><span class="muted" id="decideSummary"></span><button class="btn" type="button" data-reset="decide">상태 기본값으로 되돌리기</button></div>
+
+  <div class="section-head">
+    <h2>대표 판단 포인트</h2>
+    <p>어느 안을 고를지 정할 때 답해야 하는 질문입니다.</p>
+  </div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th></th><th class="ca">A안 연결형</th><th class="cb">B안 독립형</th></tr></thead>
+      <tbody>
+        <tr><td class="k">핵심 가설</td><td class="ca">메인의 별 성장과 직원 고용이 타워 목표와 이어지면, 메인 플레이의 목적도 함께 강해지는가</td><td class="cb">직원 캐릭터와 공간 성장만으로도 Pizza Ready 안에서 따로 반복할 가치가 있는가</td></tr>
+        <tr><td class="k">질문 1</td><td class="ca">타워가 메인 진행을 기다리는 구조를 받아들일 것인가</td><td class="cb">메인 기여가 약해도 리텐션과 IP 효과로 충분한가</td></tr>
+        <tr><td class="k">질문 2</td><td class="ca">완성 시 메인으로 보상을 돌려줄 것인가</td><td class="cb">가구를 P로만 살 것인가, 달러도 쓰게 할 것인가</td></tr>
+        <tr><td class="k">질문 3</td><td class="ca">가구를 달러로 사게 해서 매장 경제와 경쟁시킬 것인가</td><td class="cb">건물 완성 후 공백을 둘 것인가, 다음 건물을 바로 열 것인가</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-head">
+    <h2>v0.1 대비 바뀐 점</h2>
+    <p>세부 기획 v0.1을 교차 검토하면서 조정한 항목입니다.</p>
+  </div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>검토 포인트</th><th>v0.1</th><th>현재</th></tr></thead>
+      <tbody>
+        <tr><td class="k">재미 선언과 루프</td><td>캐릭터형 선언, 고민 지점은 P 투자 효율 위주</td><td>루프를 직원 요구 → 가구 → 반응으로 시작. B안은 아래층 Happiness가 층 관문</td></tr>
+        <tr><td class="k">A안 직원 규칙</td><td>해석이 갈릴 수 있는 문장</td><td>직원 보유 = 입주 조건, 층 해금 조건 아님으로 명시</td></tr>
+        <tr><td class="k">P 사용처</td><td>층, 상위 가구, 업그레이드, 시간 단축</td><td>A안 증축 전용, B안 가구 + 증축</td></tr>
+        <tr><td class="k">저장 상한</td><td>4시간분</td><td>8~12시간분</td></tr>
+        <tr><td class="k">RV</td><td>가구, 건설, Collect 2배 세 곳</td><td>건설 단축 한 곳</td></tr>
+        <tr><td class="k">쓰레기</td><td>MVP 포함</td><td>목업 v1.1로 이동</td></tr>
+        <tr><td class="k">화면</td><td>별도 방 화면</td><td>전체 화면 + 층 줌인</td></tr>
+        <tr><td class="k">Happiness 감소</td><td>보너스 방식</td><td>Happiness(성장)와 Condition(상태)로 개념 분리</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 목업 체크 ============ -->
+<section class="panel" id="p-mock" role="tabpanel" aria-labelledby="t-mock" hidden>
+  <div class="section-head">
+    <h2>HTML 목업 범위</h2>
+    <p>두 목업 모두 3개 층(로비 + 직원 방 2개)입니다. 시간은 압축하고, 수치는 모두 목업용 가안입니다.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <h3>화면</h3>
+      <ul>
+        <li>타워 전체 화면 1개</li>
+        <li>층 탭 → 그 층 줌인</li>
+        <li>팝업 2종: 가구 선택(2택), 증축</li>
+      </ul>
+    </div>
+    <div class="card tint-a">
+      <h3>A안만 추가</h3>
+      <p>화면 구석 메인 시뮬레이터: <b>[별 +1] [달러 +1,000] [직원 2 고용]</b>. 메인이 끼어드는 순간을 직접 눌러 보게 합니다.</p>
+    </div>
+    <div class="card tint-b">
+      <h3>B안만 추가</h3>
+      <p>해금 연출 1장. 이후 메인 정보는 화면에 나오지 않고, 상단에는 P와 타워 Progress만 보입니다.</p>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>상태값 가안</h2>
+  </div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>항목</th><th class="ca">A안 연결형</th><th class="cb">B안 독립형</th></tr></thead>
+      <tbody>
+        <tr><td class="k">시작 상태</td><td class="ca">별 3, 달러 2,000, P 0. 직원 1 보유, 직원 2 미보유</td><td class="cb">P 0. 2F에 무료 기본 소파</td></tr>
+        <tr><td class="k">3F 잠금 표시</td><td class="ca">별 4 필요</td><td class="cb">2층 Lv 2 필요</td></tr>
+        <tr><td class="k">가구 가격</td><td class="ca">기본 200달러, 고급 500달러</td><td class="cb">기본 30 P, 고급 80 P</td></tr>
+        <tr><td class="k">3F 증축</td><td class="ca">별 4 + 300 P + 30초</td><td class="cb">2층 Lv 2 + 300 P + 30초</td></tr>
+        <tr><td class="k">3F 입주</td><td class="ca">직원 2 보유 시 입주, 아니면 빈 방</td><td class="cb">완공 즉시 직원 2 자동 입주</td></tr>
+        <tr><td class="k">가구 슬롯</td><td colspan="2" class="same">Lv 1에 3개, Lv 2에 +2개 (공통)</td></tr>
+        <tr><td class="k">Happiness: 설치</td><td colspan="2" class="same">기본 +40, 고급 +60 (공통)</td></tr>
+        <tr><td class="k">Happiness: 사용</td><td colspan="2" class="same">+5, 직원이 15초마다 가구 하나 사용 (공통)</td></tr>
+        <tr><td class="k">Happiness: 탭</td><td colspan="2" class="same">+3, 쿨다운 30초 (공통)</td></tr>
+        <tr><td class="k">레벨업 필요량</td><td colspan="2" class="same">Lv 1→2: 100, Lv 2→3: 150 (공통)</td></tr>
+        <tr><td class="k">P 생산력</td><td colspan="2" class="same">기본 1 P/초, 고급 2 P/초, 방 Lv당 +10% (공통)</td></tr>
+        <tr><td class="k">저장 상한</td><td colspan="2" class="same">목업 60초분, 실서비스 8~12시간분 (공통)</td></tr>
+        <tr><td class="k">RV</td><td colspan="2" class="same">건설 남은 시간 −20초, 광고는 더미 연출 (공통)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-head">
+    <h2>동작 체크리스트</h2>
+    <p>개발 확인용입니다. 체크는 이 브라우저에만 저장됩니다.</p>
+  </div>
+  <div class="grid g2" style="align-items:start">
+    <div>
+      <div class="twrap">
+        <table class="checks" data-group="ma" style="min-width:0">
+          <thead><tr><th style="width:44px"></th><th class="ca">A안 동작</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox" class="chk" data-key="ma1" aria-label="완료"></td><td class="txt">첫 직원 입주 연출과 첫 가구 요구 말풍선</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="ma2" aria-label="완료"></td><td class="txt">가구 2택 → 배치 → 직원이 걸어가 사용 → Happiness 상승</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="ma3" aria-label="완료"></td><td class="txt">직원의 자동 가구 사용, 직원 탭 반응</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="ma4" aria-label="완료"></td><td class="txt">레벨업 말풍선 → 탭 → 슬롯 추가와 한 줄 대사</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="ma5" aria-label="완료"></td><td class="txt">P 생산, 저장 상한, Collect</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="ma6" aria-label="완료"></td><td class="txt">3F '별 4 필요' → 시뮬레이터 별 +1 → 증축 가능</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="ma7" aria-label="완료"></td><td class="txt">증축 → 타이머 → RV 단축 → 완공</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="ma8" aria-label="완료"></td><td class="txt">직원 2 미보유 → 빈 방 실루엣 → 시뮬레이터 고용 → 입주</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tools"><span class="progress" data-progress="ma"></span></div>
+    </div>
+    <div>
+      <div class="twrap">
+        <table class="checks" data-group="mb" style="min-width:0">
+          <thead><tr><th style="width:44px"></th><th class="cb">B안 동작</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox" class="chk" data-key="mb1" aria-label="완료"></td><td class="txt">해금 연출 → 타워 첫 진입</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="mb2" aria-label="완료"></td><td class="txt">첫 직원과 무료 소파 → 앉아서 웃음 → Happiness 상승</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="mb3" aria-label="완료"></td><td class="txt">가구 요구 → P로 가구 2택 → 배치 → 직원 사용</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="mb4" aria-label="완료"></td><td class="txt">직원의 자동 가구 사용, 직원 탭 반응</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="mb5" aria-label="완료"></td><td class="txt">레벨업 말풍선 → 탭 → 슬롯 추가와 한 줄 대사</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="mb6" aria-label="완료"></td><td class="txt">P 생산, 저장 상한, Collect</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="mb7" aria-label="완료"></td><td class="txt">3F '2층 Lv 2 필요' → 2층 레벨업 → 잠금 해제</td></tr>
+            <tr><td><input type="checkbox" class="chk" data-key="mb8" aria-label="완료"></td><td class="txt">증축 → 타이머 → RV 단축 → 완공 → 직원 2 자동 입주</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tools"><span class="progress" data-progress="mb"></span></div>
+    </div>
+  </div>
+  <div class="tools" style="justify-content:flex-end"><button class="btn" type="button" data-reset="mock">체크 모두 지우기</button></div>
+
+  <div class="card tint-y" style="margin-top:20px">
+    <h3>두 목업 모두 넣지 않는 것</h3>
+    <p style="margin-bottom:0">쓰레기와 Condition(v1.1), 대화 선택지, 건설 단축 외의 RV, 완성 보상, 여러 건물. A안은 실제 메인 연동 대신 시뮬레이터로, B안은 메인 연동 화면 없이 만듭니다.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  2026-10-02 기준. 근거 자료는 10/2 월드맵 회의 녹취, 세부 기획 v0.1, A안·B안 콘셉트 문서, 교차 검토 대화입니다.
+  A안 문서 ·
+  B안 문서
+</footer>
+
+<script>
+(function(){
+  var store={get:function(k){try{return localStorage.getItem('pr-tower-'+k);}catch(e){return null;}},
+             set:function(k,v){try{localStorage.setItem('pr-tower-'+k,v);}catch(e){}},
+             del:function(k){try{localStorage.removeItem('pr-tower-'+k);}catch(e){}}};
+
+  // tabs
+  var tabs=[].slice.call(document.querySelectorAll('[role="tab"]'));
+  function show(id,push){
+    tabs.forEach(function(t){var on=t.getAttribute('aria-controls')===id;t.setAttribute('aria-selected',on?'true':'false');t.tabIndex=on?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!on;});
+    if(push){try{history.replaceState(null,'','#'+id.replace('p-',''));}catch(e){}}
+    window.scrollTo(0,0);
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){show(t.getAttribute('aria-controls'),true);});
+    t.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();var n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];n.focus();n.click();}
+    });
+  });
+  var h=(location.hash||'').replace('#','');
+  if(h&&document.getElementById('p-'+h))show('p-'+h,false);
+
+  // theme
+  var root=document.documentElement,mq=matchMedia('(prefers-color-scheme: dark)');
+  function eff(){return root.getAttribute('data-theme')||(mq.matches?'dark':'light');}
+  function sync(){document.querySelectorAll('[data-theme-set]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.themeSet===eff()?'true':'false');});}
+  document.querySelectorAll('[data-theme-set]').forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.themeSet);store.set('theme',b.dataset.themeSet);sync();});});
+  if(mq.addEventListener)mq.addEventListener('change',sync);
+  sync();
+
+  // decision status
+  var OPTS=['확정','유력','검토 중','보류'];
+  var selects=[].slice.call(document.querySelectorAll('select.status'));
+  function summarize(){
+    var c={};OPTS.forEach(function(o){c[o]=0;});
+    selects.forEach(function(s){c[s.value]++;});
+    document.getElementById('decideSummary').textContent=OPTS.map(function(o){return o+' '+c[o];}).join(' / ');
+  }
+  selects.forEach(function(s){
+    OPTS.forEach(function(o){var op=document.createElement('option');op.value=o;op.textContent=o;s.appendChild(op);});
+    s.value=store.get(s.dataset.key)||s.dataset.default;
+    s.dataset.v=s.value;
+    s.setAttribute('aria-label',s.closest('tr').querySelector('.k').textContent+' 상태');
+    s.addEventListener('change',function(){s.dataset.v=s.value;store.set(s.dataset.key,s.value);summarize();});
+  });
+  summarize();
+
+  // checklists
+  var checks=[].slice.call(document.querySelectorAll('input.chk'));
+  function prog(){
+    ['ma','mb'].forEach(function(g){
+      var all=checks.filter(function(c){return c.dataset.key.indexOf(g)===0;});
+      var done=all.filter(function(c){return c.checked;}).length;
+      var el=document.querySelector('[data-progress="'+g+'"]');
+      if(el)el.textContent=done+' / '+all.length+' 완료';
+    });
+  }
+  checks.forEach(function(c){
+    c.checked=store.get(c.dataset.key)==='1';
+    c.closest('tr').classList.toggle('done',c.checked);
+    c.addEventListener('change',function(){c.closest('tr').classList.toggle('done',c.checked);if(c.checked)store.set(c.dataset.key,'1');else store.del(c.dataset.key);prog();});
+  });
+  prog();
+
+  // resets
+  document.querySelectorAll('[data-reset]').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.dataset.reset==='decide'){selects.forEach(function(s){store.del(s.dataset.key);s.value=s.dataset.default;s.dataset.v=s.value;});summarize();}
+      else{checks.forEach(function(c){store.del(c.dataset.key);c.checked=false;c.closest('tr').classList.remove('done');});prog();}
+    });
+  });
+})();
+</script>
+</body>
+</html>
